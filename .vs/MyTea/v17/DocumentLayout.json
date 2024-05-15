@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|c:\\users\\y.pereira.vargas\\desktop\\mytea\\mytea\\myteaapp\\testbranch.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|solutionrelative:myteaapp\\testbranch.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|c:\\users\\y.pereira.vargas\\desktop\\mytea\\mytea\\myteaapp\\myteaapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|solutionrelative:myteaapp\\myteaapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|c:\\users\\y.pereira.vargas\\desktop\\mytea\\mytea\\myteaapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|solutionrelative:myteaapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TestBranch.txt",
+              "DocumentMoniker": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\MyTeaApp\\TestBranch.txt",
+              "RelativeDocumentMoniker": "MyTeaApp\\TestBranch.txt",
+              "ToolTip": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\MyTeaApp\\TestBranch.txt",
+              "RelativeToolTip": "MyTeaApp\\TestBranch.txt",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2024-05-15T17:48:54.53Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\MyTeaApp\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "MyTeaApp\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\MyTeaApp\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "MyTeaApp\\Views\\Home\\Index.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-05-15T17:48:27.651Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MyTeaApp",
+              "DocumentMoniker": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\MyTeaApp\\MyTeaApp.csproj",
+              "RelativeDocumentMoniker": "MyTeaApp\\MyTeaApp.csproj",
+              "ToolTip": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\MyTeaApp\\MyTeaApp.csproj",
+              "RelativeToolTip": "MyTeaApp\\MyTeaApp.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-05-15T17:48:20.715Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

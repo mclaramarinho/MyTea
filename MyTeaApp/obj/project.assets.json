@@ -4552,19 +4552,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\c.marinho.barreto\\.nuget\\packages\\": {}
+    "C:\\Users\\y.pereira.vargas\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\c.marinho.barreto\\Documents\\MyTea\\MyTea\\MyTeaApp\\MyTeaApp.csproj",
+      "projectUniqueName": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\MyTeaApp\\MyTeaApp.csproj",
       "projectName": "MyTeaApp",
-      "projectPath": "C:\\Users\\c.marinho.barreto\\Documents\\MyTea\\MyTea\\MyTeaApp\\MyTeaApp.csproj",
-      "packagesPath": "C:\\Users\\c.marinho.barreto\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\c.marinho.barreto\\Documents\\MyTea\\MyTea\\MyTeaApp\\obj\\",
+      "projectPath": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\MyTeaApp\\MyTeaApp.csproj",
+      "packagesPath": "C:\\Users\\y.pereira.vargas\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\y.pereira.vargas\\Desktop\\MyTea\\MyTea\\MyTeaApp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\c.marinho.barreto\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\y.pereira.vargas\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -4584,6 +4584,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -4630,7 +4635,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.104/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

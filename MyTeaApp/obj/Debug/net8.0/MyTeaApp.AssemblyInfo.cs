@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyTeaApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5da967dd967799ad00eeb3c2272c32ff3cafd209")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyTeaApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyTeaApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
