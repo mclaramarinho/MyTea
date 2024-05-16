@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyTeaApp.Models;
 using System.Diagnostics;
@@ -19,6 +20,12 @@ namespace MyTeaApp.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "RequerPerfilAdmin")]
+        public IActionResult SomenteAdmin()
         {
             return View();
         }
