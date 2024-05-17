@@ -224,6 +224,82 @@ namespace MyTeaApp.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MyTeaApp.Models.Department", b =>
+                {
+                    b.Property<int>("DepartmentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentID"));
+
+                    b.Property<string>("DepartmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DepartmentID");
+
+                    b.ToTable("Department");
+                });
+
+            modelBuilder.Entity("MyTeaApp.Models.Record", b =>
+                {
+                    b.Property<int>("RecordID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RecordID"));
+
+                    b.Property<float>("TotalHoursRecord")
+                        .HasColumnType("real");
+
+                    b.HasKey("RecordID");
+
+                    b.ToTable("Record");
+                });
+
+            modelBuilder.Entity("MyTeaApp.Models.RecordFraction", b =>
+                {
+                    b.Property<Guid>("RecordFractionID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("RecordDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<float>("TotalHoursFraction")
+                        .HasColumnType("real");
+
+                    b.HasKey("RecordFractionID");
+
+                    b.ToTable("RecordFraction");
+                });
+
+            modelBuilder.Entity("MyTeaApp.Models.WBS", b =>
+                {
+                    b.Property<int>("WbsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WbsId"));
+
+                    b.Property<string>("CodWbs")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsChargeable")
+                        .IsRequired()
+                        .HasColumnType("bit");
+
+                    b.HasKey("WbsId");
+
+                    b.ToTable("WBS");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
