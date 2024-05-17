@@ -12,7 +12,7 @@ namespace MyTeaApp.Data
         }
        
         public DbSet<MyTeaApp.Models.Department> Department { get; set; } 
-        public DbSet<MyTeaApp.Models.Record> Record { get; set; } = default!;
+        public DbSet<MyTeaApp.Models.Record> Records { get; set; } = default!;
         public DbSet<MyTeaApp.Models.WBS> WBS { get; set; } = default!;
         public DbSet<MyTeaApp.Models.RecordFraction> RecordFraction { get; set; } = default!;
     }
