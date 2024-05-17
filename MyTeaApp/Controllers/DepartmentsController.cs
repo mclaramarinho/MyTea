@@ -20,10 +20,25 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: Departments
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Department.ToListAsync());
+            var departments = from d in _context.Department
+                         select d;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                if (int.TryParse(searchString, out int id))
+                {
+                    departments = departments.Where(d => d.DepartmentID == id);
+                }
+                else
+                {
+                    departments = departments.Where(d => d.DepartmentName!.Contains(searchString));
+                }
+            }
+            return View(await departments.ToListAsync());
         }
+
+        
 
         // GET: Departments/Details/5
         public async Task<IActionResult> Details(int? id)
