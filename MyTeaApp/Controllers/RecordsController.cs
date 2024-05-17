@@ -22,7 +22,7 @@ namespace MyTeaApp.Controllers
         // GET: Records
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Record.ToListAsync());
+            return View(await _context.Records.ToListAsync());
         }
 
         // GET: Records/Details/5
@@ -33,7 +33,7 @@ namespace MyTeaApp.Controllers
                 return NotFound();
             }
 
-            var @record = await _context.Record
+            var @record = await _context.Records
                 .FirstOrDefaultAsync(m => m.RecordID == id);
             if (@record == null)
             {
@@ -73,7 +73,7 @@ namespace MyTeaApp.Controllers
                 return NotFound();
             }
 
-            var @record = await _context.Record.FindAsync(id);
+            var @record = await _context.Records.FindAsync(id);
             if (@record == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace MyTeaApp.Controllers
                 return NotFound();
             }
 
-            var @record = await _context.Record
+            var @record = await _context.Records
                 .FirstOrDefaultAsync(m => m.RecordID == id);
             if (@record == null)
             {
@@ -139,10 +139,10 @@ namespace MyTeaApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @record = await _context.Record.FindAsync(id);
+            var @record = await _context.Records.FindAsync(id);
             if (@record != null)
             {
-                _context.Record.Remove(@record);
+                _context.Records.Remove(@record);
             }
 
             await _context.SaveChangesAsync();
@@ -151,7 +151,7 @@ namespace MyTeaApp.Controllers
 
         private bool RecordExists(int id)
         {
-            return _context.Record.Any(e => e.RecordID == id);
+            return _context.Records.Any(e => e.RecordID == id);
         }
     }
 }
