@@ -13,6 +13,6 @@ namespace MyTeaApp.Models
         [Required(ErrorMessage = "{0} Required")]
         public  string? DepartmentName { get; set; }
 
-        // public ICollection<User>
+        public ICollection<User> users { get; set; }
     }
 }
