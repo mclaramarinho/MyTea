@@ -1,0 +1,7 @@
+Ao dar pull da main com novas alterações no banco de dados, siga o passo a passo abaixo para que não crashe!
+
+1. Vá em View > SQL Server Object Explorer.
+2. Procure o banco de dados com o nome MyTea
+3. Exclua todo o banco de dados.
+4. add-migration
+5. update-database

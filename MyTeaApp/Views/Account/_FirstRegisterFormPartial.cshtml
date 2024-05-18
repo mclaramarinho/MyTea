@@ -1,0 +1,56 @@
+﻿@using MyTeaApp.Models.ViewModels
+
+@model RegisterVM
+
+<div class="container">
+    <form asp-action="Register" method="post" class="row">
+
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="col-6">
+            <div class="mb-3">
+                <label class="form-label" asp-for="FullName"></label>
+                <input class="form-control" asp-for="FullName" />
+                <span asp-validation-for="FullName"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="Email"></label>
+                <input class="form-control" asp-for="Email" />
+                <span asp-validation-for="Email"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="Password"></label>
+                <input class="form-control" asp-for="Password" />
+                <span asp-validation-for="Password"></span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="mb-3">
+                <label class="form-label" asp-for="ConfirmPassword"></label>
+                <input class="form-control" asp-for="ConfirmPassword" />
+                <span asp-validation-for="ConfirmPassword"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="AdmissionDate"></label>
+                <input class="form-control" asp-for="AdmissionDate" />
+                <span asp-validation-for="AdmissionDate"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="DepartmentID"></label>
+                <select asp-for="DepartmentID" asp-items="@Model.Departments">
+                    <option>Select somethig</option>
+                </select>
+                <span asp-validation-for="DepartmentID"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="RoleName"></label>
+                <select asp-for="RoleName" asp-items="@Model.Roles">
+                    <option>Select somethig</option>
+                </select>
+                <span asp-validation-for="RoleName"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success">SUBMIT</button>
+        </div>
+    </form>
+</div>
