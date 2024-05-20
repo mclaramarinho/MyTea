@@ -4,16 +4,33 @@ using MyTeaApp.Models;
 
 namespace MyTeaApp.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
        
-        public DbSet<MyTeaApp.Models.Department> Department { get; set; } 
-        public DbSet<MyTeaApp.Models.Record> Records { get; set; } = default!;
-        public DbSet<MyTeaApp.Models.WBS> WBS { get; set; } = default!;
-        public DbSet<MyTeaApp.Models.RecordFraction> RecordFraction { get; set; } = default!;
+        public DbSet<Department> Department { get; set; } 
+        public DbSet<Record> Records { get; set; } = default!;
+        public DbSet<WBS> WBS { get; set; } = default!;
+        public DbSet<RecordFraction> RecordFraction { get; set; } = default!;
+
+        //public DbSet<User> Users {  get; set; } = default!;
+        private static int _uid = 10000;
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            builder.Entity<User>()
+                .Property(u => u.UserID)
+                .HasComputedColumnSql((++_uid).ToString());
+            
+        }
+
     }
 }
