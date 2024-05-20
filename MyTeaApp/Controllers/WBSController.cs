@@ -54,7 +54,7 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WbsId,CodWbs,Description,IsChargeable")] WBS wBS)
+        public async Task<IActionResult> Create([Bind("WbsId,WbsName,CodWbs,Description,IsChargeable")] WBS wBS)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WbsId,CodWbs,Description,IsChargeable")] WBS wBS)
+        public async Task<IActionResult> Edit(int id, [Bind("WbsId,WbsName,CodWbs,Description,IsChargeable")] WBS wBS)
         {
             if (id != wBS.WbsId)
             {
