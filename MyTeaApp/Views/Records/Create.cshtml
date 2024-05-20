@@ -1,21 +1,66 @@
 ﻿@model MyTeaApp.Models.Record
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Record";
+    var quinzenas = new List<SelectListItem>();
+    var currentYear = 2024;
+    for (int i = 0; i < 24; i++)
+    {
+        var startDate = new DateTime(currentYear, 1, 1).AddDays(i * 15);
+        var endDate = startDate.AddDays(14);
+        quinzenas.Add(new SelectListItem
+                {
+                    Value = $"{startDate:yyyy-MM-dd}",
+                    Text = $"{startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy}"
+                });
+    }
 }
 
-<h1>Create</h1>
+<h1>Create Record</h1>
 
 <h4>Record</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="col-md-12">
+        <form asp-action="Create" method="post">
             <div class="form-group">
-                <label asp-for="TotalHoursRecord" class="control-label"></label>
-                <input asp-for="TotalHoursRecord" class="form-control" />
-                <span asp-validation-for="TotalHoursRecord" class="text-danger"></span>
+                <label for="quinzenaSelector">Select Fortnight</label>
+                <select id="quinzenaSelector" class="form-control">
+                    @foreach (var quinzena in quinzenas)
+                    {
+                        <option value="@quinzena.Value">@quinzena.Text</option>
+                    }
+                </select>
+            </div>
+            <div id="records-list">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Charge Codes</th>
+                            @for (int i = 0; i < 15; i++)
+                            {
+                                <th>@DateTime.Now.AddDays(i).ToString("dd/MM/yyyy")</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < 4; i++) 
+                        {
+                            <tr>
+                                <td>
+                                    <input name="RecordFraction.ChargeCode" class="form-control" />
+                                </td>
+                                @for (int j = 0; j < 15; j++)
+                                {
+                                    <td>
+                                        <input name="RecordFraction.TotalHoursFraction" class="form-control" />
+                                        <input name="RecordFraction.RecordDate" type="hidden" value="@DateTime.Now.AddDays(j).ToString("yyyy-MM-dd")" />
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -29,5 +74,66 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var quinzenaSelector = document.getElementById('quinzenaSelector');
+            var recordsList = document.getElementById('records-list');
+            var currentYear = 2024;
+
+            function generateTable(startDate) {
+                var tbody = recordsList.querySelector('tbody');
+                var thead = recordsList.querySelector('thead tr');
+                tbody.innerHTML = '';
+                thead.innerHTML = '<th>Charge Codes</th>';
+
+                for (var i = 0; i < 15; i++) {
+                    var th = document.createElement('th');
+                    var date = new Date(startDate);
+                    date.setDate(date.getDate() + i);
+                    th.textContent = date.toISOString().split('T')[0].split('-').reverse().join('/');
+                    thead.appendChild(th);
+                }
+
+                for (var i = 0; i < 4; i++) {
+                    var tr = document.createElement('tr');
+                    var tdChargeCode = document.createElement('td');
+                    var inputChargeCode = document.createElement('input');
+                    inputChargeCode.name = 'RecordFraction.ChargeCode';
+                    inputChargeCode.className = 'form-control';
+                    tdChargeCode.appendChild(inputChargeCode);
+                    tr.appendChild(tdChargeCode);
+
+                    for (var j = 0; j < 15; j++) {
+                        var td = document.createElement('td');
+                        var inputHours = document.createElement('input');
+                        inputHours.name = 'RecordFraction.TotalHoursFraction';
+                        inputHours.className = 'form-control';
+
+                        var inputDate = document.createElement('input');
+                        inputDate.type = 'hidden';
+                        inputDate.name = 'RecordFraction.RecordDate';
+                        var date = new Date(startDate);
+                        date.setDate(date.getDate() + j);
+                        inputDate.value = date.toISOString().split('T')[0];
+
+                        td.appendChild(inputHours);
+                        td.appendChild(inputDate);
+                        tr.appendChild(td);
+                    }
+                    tbody.appendChild(tr);
+                }
+            }
+
+            quinzenaSelector.addEventListener('change', function () {
+                var selectedDate = new Date(this.value);
+                generateTable(selectedDate);
+            });
+
+            generateTable(new Date(quinzenaSelector.value));
+        });
+    </script>
 }
