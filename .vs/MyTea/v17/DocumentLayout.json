@@ -3,12 +3,8 @@
   "WorkspaceRootPath": "C:\\DecolaTech\\MyTea\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|c:\\decolatech\\mytea\\myteaapp\\views\\wbs\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|solutionrelative:myteaapp\\views\\wbs\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|c:\\decolatech\\mytea\\myteaapp\\views\\wbs\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|solutionrelative:myteaapp\\views\\wbs\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|c:\\decolatech\\mytea\\myteaapp\\data\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|solutionrelative:myteaapp\\data\\dbinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{32EE4D41-364C-43FA-9971-E5732172ACEC}|MyTeaApp\\MyTeaApp.csproj|c:\\decolatech\\mytea\\myteaapp\\models\\wbs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -27,38 +23,25 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Edit.cshtml",
-              "DocumentMoniker": "C:\\DecolaTech\\MyTea\\MyTeaApp\\Views\\WBS\\Edit.cshtml",
-              "RelativeDocumentMoniker": "MyTeaApp\\Views\\WBS\\Edit.cshtml",
-              "ToolTip": "C:\\DecolaTech\\MyTea\\MyTeaApp\\Views\\WBS\\Edit.cshtml",
-              "RelativeToolTip": "MyTeaApp\\Views\\WBS\\Edit.cshtml",
-              "ViewState": "AQIAABkAAAAAAAAAAAAcwCsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-05-20T19:04:57.693Z",
+              "Title": "DbInitializer.cs",
+              "DocumentMoniker": "C:\\DecolaTech\\MyTea\\MyTeaApp\\Data\\DbInitializer.cs",
+              "RelativeDocumentMoniker": "MyTeaApp\\Data\\DbInitializer.cs",
+              "ToolTip": "C:\\DecolaTech\\MyTea\\MyTeaApp\\Data\\DbInitializer.cs",
+              "RelativeToolTip": "MyTeaApp\\Data\\DbInitializer.cs",
+              "ViewState": "AQIAAGIAAAAAAAAAAAAcwHoAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-20T20:20:43.283Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\DecolaTech\\MyTea\\MyTeaApp\\Views\\WBS\\Create.cshtml",
-              "RelativeDocumentMoniker": "MyTeaApp\\Views\\WBS\\Create.cshtml",
-              "ToolTip": "C:\\DecolaTech\\MyTea\\MyTeaApp\\Views\\WBS\\Create.cshtml",
-              "RelativeToolTip": "MyTeaApp\\Views\\WBS\\Create.cshtml",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAACoAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-05-20T19:03:51.528Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
               "Title": "WBS.cs",
               "DocumentMoniker": "C:\\DecolaTech\\MyTea\\MyTeaApp\\Models\\WBS.cs",
               "RelativeDocumentMoniker": "MyTeaApp\\Models\\WBS.cs",
               "ToolTip": "C:\\DecolaTech\\MyTea\\MyTeaApp\\Models\\WBS.cs",
               "RelativeToolTip": "MyTeaApp\\Models\\WBS.cs",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAAA0AAAAeAAAA",
+              "ViewState": "AQIAAAgAAAAAAAAAAAAAwBoAAAAhAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-05-20T19:02:34.604Z",
               "EditorCaption": ""
