@@ -73,6 +73,56 @@ public class DbInitializer
         await CreateRoles();
 
         await CreateDefaultDepartment();
+
+        if (context.WBS.Any())
+        {
+            return;
+        }
+        else
+        {
+            context.WBS.AddRange(
+                new WBS
+                {
+                    WbsName = "Vacation",
+                    CodWbs = "WBS0085749",
+                    Description = "Vacation - employee",
+                    IsChargeable = true,
+                },
+                new WBS
+                {
+                    WbsName = "Day-Off",
+                    CodWbs = "WBS8574950",
+                    Description = "Day-Off - employee",
+                    IsChargeable = true,
+                },
+                new WBS
+                {
+                    WbsName = "No task",
+                    CodWbs = "WBS4700086",
+                    Description = "No task - employee",
+                    IsChargeable = true,
+                },
+                new WBS
+                {
+                    WbsName = "Implementation",
+                    CodWbs = "WBS9665557",
+                    Description = "Implementation - employee",
+                    IsChargeable = true,
+                },
+                new WBS
+                {
+                    WbsName = "Development",
+                    CodWbs = "WBS2574100",
+                    Description = "Development - employee",
+                    IsChargeable = true,
+                }
+
+
+            );
+
+            context.SaveChanges();
+        }
+
         //var roleManager = serviceProvider
         //    .GetRequiredService<RoleManager<IdentityRole>>();
 
