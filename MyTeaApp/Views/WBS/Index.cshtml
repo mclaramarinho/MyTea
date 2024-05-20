@@ -13,6 +13,9 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.WbsName)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.CodWbs)
             </th>
             <th>
@@ -27,6 +30,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.WbsName)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CodWbs)
             </td>
