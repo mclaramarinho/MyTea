@@ -13,6 +13,11 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <label asp-for="WbsName" class="control-label"></label>
+                <input asp-for="WbsName" class="form-control" />
+                <span asp-validation-for="WbsName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="CodWbs" class="control-label"></label>
                 <input asp-for="CodWbs" class="form-control" />
                 <span asp-validation-for="CodWbs" class="text-danger"></span>
@@ -22,11 +27,20 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+            <!--Radio IsChargeable-->
             <div class="form-group">
                 <label asp-for="IsChargeable" class="control-label"></label>
-                <input asp-for="IsChargeable" class="form-control" />
+                <div class="form-check">
+                    <input type="radio" asp-for="IsChargeable" class="form-check-input" value="true" checked>
+                    <label class="form-check-label">Yes</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" asp-for="IsChargeable" class="form-check-input" value="false">
+                    <label class="form-check-label">Not</label>
+                </div>
                 <span asp-validation-for="IsChargeable" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
