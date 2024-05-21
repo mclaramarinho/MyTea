@@ -7,12 +7,12 @@ namespace MyTeaApp.Models
         [Key]
         [Required]
         [Display(Name = "Department ID")]
-        public int DepartmentID { get; set; }
+        public int DepartmentID { get; set; } 
 
         [Display(Name = "Department Name")]
         [Required(ErrorMessage = "{0} Required")]
-        public  string? DepartmentName { get; set; }
+        public string? DepartmentName { get; set; }
 
-        public ICollection<User> users { get; set; }
+        public ICollection<User> users { get; set; } = new List<User>();
     }
 }

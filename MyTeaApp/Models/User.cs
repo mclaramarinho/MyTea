@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MyTeaApp.Models
 {
     public class User : IdentityUser
-    {
+    { 
         public int UserID { get; set; }
 
         [Required]
@@ -30,6 +30,5 @@ namespace MyTeaApp.Models
 
 
         public ICollection<Record> Records { get; set; } = new List<Record>();
-                
     }
 }
