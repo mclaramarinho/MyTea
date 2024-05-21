@@ -5,26 +5,42 @@
 }
 @using MyTeaApp.Models.ViewModels;
 @model LoginVM
+<div class="container position-fixed top-50 start-50 translate-middle">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="mb-3 row m-auto d-md-none text-center justify-content-center">
+                <h1>MyTea</h1>
+                <h4>LOGIN</h4>
+            </div>
 
-<form asp-action="Login" method="post" class="col-12 m-auto col-md-6 col-lg-4">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <form asp-action="Login" method="post">
 
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="RememberMe" class="form-label"></label>
+                    <input asp-for="RememberMe" class="form-checkbox" />
+                    <span asp-validation-for="RememberMe" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success">LOGIN</button>
+
+            </form>
+        </div>
+
+        <div class="col-6 m-auto d-none d-md-grid m-md-0 text-center justify-content-center align-content-start">
+            <h1>MyTea</h1>
+            <h4>LOGIN</h4>
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="Password" class="form-label"></label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="RememberMe" class="form-label"></label>
-        <input asp-for="RememberMe" class="form-checkbox" />
-        <span asp-validation-for="RememberMe" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-success">LOGIN</button>
-
-</form>
+</div>

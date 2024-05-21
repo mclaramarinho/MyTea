@@ -1,6 +1,0 @@
-
-**/obj/**
-**/bin/**
-**/Data/Migrations/
-!**/ApplicationDbContextModelSnapshot.cs/**
-.vs/

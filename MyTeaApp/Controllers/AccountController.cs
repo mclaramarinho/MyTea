@@ -129,11 +129,11 @@ namespace MyTeaApp.Controllers
 
 
         // LOGOUT ---------------------------------------------------------------------------------------------------
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Login");
+            return RedirectToAction(nameof(Login));
         }
         // LOGOUT END ---------------------------------------------------------------------------------------------------
 
