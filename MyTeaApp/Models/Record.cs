@@ -5,7 +5,7 @@ namespace MyTeaApp.Models
 {
     public class Record
     {
-        public int RecordID { get; set; }
+        public int RecordID { get; set; } 
 
         [Required(ErrorMessage = "{0} Required")]
         [Display(Name = "Total")]

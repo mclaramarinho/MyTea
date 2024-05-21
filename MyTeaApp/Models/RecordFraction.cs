@@ -5,7 +5,7 @@ using MyTeaApp.Models;
 namespace MyTeaApp.Models
 {
     public class RecordFraction
-    {
+    { 
 
         [Key]
         public Guid RecordFractionID { get; set; }
