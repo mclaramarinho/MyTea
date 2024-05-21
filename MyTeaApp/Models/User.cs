@@ -30,6 +30,5 @@ namespace MyTeaApp.Models
 
 
         public ICollection<Record> Records { get; set; } = new List<Record>();
-                
     }
 }

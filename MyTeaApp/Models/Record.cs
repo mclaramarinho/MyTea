@@ -1,19 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyTeaApp.Models
 {
     public class Record
     {
         public int RecordID { get; set; }
-        //public ICollection<RecordFraction> RecordFraction { get; set; }
 
         [Required(ErrorMessage = "{0} Required")]
         [Display(Name = "Total")]
         public float TotalHoursRecord { get; set; }
 
-        //public int? UserID;
+        [ForeignKey("UserID")]
+        public int? UserID;
+        public virtual User User { get; set; }
 
-        //public virtual User user;
-
+        public ICollection<RecordFraction> RecordFraction { get; set; } = new List<RecordFraction>();
     }
 }

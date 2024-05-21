@@ -11,8 +11,8 @@ namespace MyTeaApp.Models
 
         [Display(Name = "Department Name")]
         [Required(ErrorMessage = "{0} Required")]
-        public  string? DepartmentName { get; set; }
+        public string? DepartmentName { get; set; }
 
-        public ICollection<User> users { get; set; }
+        public ICollection<User> users { get; set; } = new List<User>();
     }
 }

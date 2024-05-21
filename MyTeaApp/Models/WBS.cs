@@ -22,7 +22,7 @@ namespace MyTeaApp.Models
         [Required(ErrorMessage = "{0} Required")]
         public bool? IsChargeable { get; set; }
 
-        //public ICollection<RecordFraction> RecordFraction { get; set; }
+        public ICollection<RecordFraction> RecordFraction { get; set; } = new List<RecordFraction>();
 
 
     }
