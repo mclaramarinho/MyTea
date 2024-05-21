@@ -10,6 +10,10 @@ namespace MyTeaApp.Models
         public int WbsId { get; set; }
 
         [Required(ErrorMessage = "{0} Required")]
+        [Display(Name = "Wbs Title")]
+        public string? WbsName { get; set; }
+
+        [Required(ErrorMessage = "{0} Required")]
         [StringLength(10, MinimumLength = 4, ErrorMessage = "Minimum length for WBS code is 4 characters")]
         [Display(Name = "Código WBS")]
         public string? CodWbs { get; set; }
