@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> _signInManager;
+@inject UserManager<User> _userManager;
+
+@using MyTeaApp.Models.ViewModels;
+
+@{
+    var userModel = new UserInfoVM();
+}
+@model IEnumerable<UserInfoVM>;
+
+<div class="container">
+    <h1 class="display-6 mb-4">User Management</h1>
+    <partial name="_UserFilterPartial" model="Model" view-data="ViewData"></partial>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(userModel => userModel.FullName)</th>
+                    <th>@Html.DisplayNameFor(userModel => userModel.AdmissionDate)</th>
+                    <th>@Html.DisplayNameFor(userModel => userModel.DepartmentName)</th>
+                    <th>@Html.DisplayNameFor(userModel => userModel.RoleName)</th>
+                    <th>@Html.DisplayNameFor(userModel => userModel.IsActive)</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if(Model.Count() == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <h4 class="opacity-50">No users to display</h4>
+                        </td>
+                    </tr>
+                }
+                @foreach(UserInfoVM user in Model)
+                {
+                    <tr>
+                        <td>@user.FullName</td>
+                        <td>@user.AdmissionDate.ToString("dd/MM/yyyy")</td>
+                        <td>@user.DepartmentName</td>
+                        <td>@user.RoleName</td>
+                        <td>@user.IsActive</td>
+                        <td>
+                            <span>
+                                <a href="">Del</a>
+                            </span>
+                            <span>
+                                <a href="">Edit</a>
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
