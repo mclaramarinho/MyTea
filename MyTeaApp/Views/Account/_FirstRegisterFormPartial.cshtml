@@ -3,11 +3,15 @@
 @model RegisterVM
 
 <div class="container">
+    <div class="mb-3 row text-center justify-content-center align-content-center">
+        <h1>MyTea</h1>
+        <h4>REGISTER ADMIN</h4>
+    </div>
     <form asp-action="Register" method="post" class="row">
-
+        
         <div asp-validation-summary="ModelOnly"></div>
 
-        <div class="col-6">
+        <div class="col-12 col-md-6">
             <div class="mb-3">
                 <label class="form-label" asp-for="FullName"></label>
                 <input class="form-control" asp-for="FullName" />
@@ -23,34 +27,39 @@
                 <input class="form-control" asp-for="Password" />
                 <span asp-validation-for="Password"></span>
             </div>
-        </div>
-        <div class="col-6">
             <div class="mb-3">
                 <label class="form-label" asp-for="ConfirmPassword"></label>
                 <input class="form-control" asp-for="ConfirmPassword" />
                 <span asp-validation-for="ConfirmPassword"></span>
             </div>
-            <div class="mb-3">
-                <label class="form-label" asp-for="AdmissionDate"></label>
-                <input class="form-control" asp-for="AdmissionDate" />
-                <span asp-validation-for="AdmissionDate"></span>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" asp-for="DepartmentID"></label>
-                <select asp-for="DepartmentID" asp-items="@Model.Departments">
-                    <option>Select somethig</option>
-                </select>
-                <span asp-validation-for="DepartmentID"></span>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" asp-for="RoleName"></label>
-                <select asp-for="RoleName" asp-items="@Model.Roles">
-                    <option>Select somethig</option>
-                </select>
-                <span asp-validation-for="RoleName"></span>
-            </div>
-
-            <button type="submit" class="btn btn-success">SUBMIT</button>
         </div>
+        <div class="col-12 col-md-6 align-content-between">
+            <div class="row">
+                <div class="mb-3 col-6 col-md-12">
+                    <label class="form-label" asp-for="AdmissionDate"></label>
+                    <input class="form-control" asp-for="AdmissionDate" />
+                    <span asp-validation-for="AdmissionDate"></span>
+                </div>
+                <div class="mb-3 col-6 col-md-12">
+                    <label class="form-label" asp-for="DepartmentID"></label>
+                    <select asp-for="DepartmentID" class="form-select" asp-items="@Model.Departments">
+                        <option>Select somethig</option>
+                    </select>
+                    <span asp-validation-for="DepartmentID"></span>
+                </div>
+                <div class="mb-3 mb-md-4 col-6 col-md-12">
+                    <label class="form-label" asp-for="RoleName"></label>
+                    <select asp-for="RoleName" class="form-select" asp-items="@Model.Roles">
+                        <option>Select somethig</option>
+                    </select>
+                    <span asp-validation-for="RoleName"></span>
+                </div>
+                <div class="mt-3 mt-md-4 col-6 align-content-center">
+                    <button type="submit" class="btn btn-md btn-success m-auto m-md-0">SUBMIT</button>
+                </div>
+            </div>
+        </div>
+        
     </form>
+
 </div>
