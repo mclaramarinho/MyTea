@@ -22,7 +22,60 @@ namespace MyTeaApp.Controllers
 
 
 
+        [HttpGet]
+        public async Task<IActionResult> Index(string? userName, DateTime? admissionDate, string? activeOnly, string? department, string? role)
+        {
+            List<User> users = await _db.Users.ToListAsync();
 
+            List<UserInfoVM> viewModel = new List<UserInfoVM>();
+
+            users = userName != null ? 
+                users.FindAll(u => u.FullName.Contains(userName)) : users;
+
+            users = (activeOnly != null && activeOnly.Equals("on")) ?
+                users.FindAll(u => u.UserActive == true) : users;
+
+            users = admissionDate.HasValue
+                ? users.FindAll(u => u.AdmissionDate >= admissionDate.Value) : users;
+
+
+            foreach (User user in users)
+            {
+                string dpt = _db.Department.FirstOrDefault(d => d.DepartmentID == user.DepartmentId).DepartmentName;
+                string userRole = await _userManager.IsInRoleAsync(user, "Admin") ? "Admin"
+                    : await _userManager.IsInRoleAsync(user, "Employee") ? "Employee"
+                    : "Manager";
+
+                if (role==null || role == "all" || role == userRole)
+                {
+                    if (department == null || department == "all" || department == dpt)
+                    {
+                        UserInfoVM temp = new UserInfoVM()
+                        {
+                            DbUserId = user.Id,
+                            UserId = user.UserID,
+                            FullName = user.FullName,
+                            Email = user.Email,
+                            AdmissionDate = user.AdmissionDate,
+                            DepartmentName = dpt,
+                            RoleName = userRole,
+                            Records = user.Records,
+                            IsActive = user.UserActive ? "Yes" : "No"
+                        };
+                        viewModel.Add(temp);
+                    }
+                }
+
+            }
+
+            ViewData["filter.UserName"] = userName;
+            ViewData["filter.admissionDate"] = admissionDate?.ToString("yyyy-MM-dd");
+            ViewData["filter.activeOnly"] = activeOnly;
+            ViewData["filter.role"] = role;
+            ViewData["filter.department"] = department;
+
+            return View(viewModel);
+        }
 
 
         // REGISTER ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -214,5 +267,6 @@ namespace MyTeaApp.Controllers
 
             return true;
         }
+
     }
 }
