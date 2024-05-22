@@ -1,0 +1,41 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container">
+    <div class="row">
+        <h2 class="mb-5">My Dashboard</h2>
+    </div>
+    <div class="row gap-2 mb-3">
+        <div class="col">
+            <h2 class="mb-3">Users</h2>
+            <hr />
+
+            <a asp-action="Register" asp-controller="Account"
+                   class="btn btn-md btn-success">Create user</a>
+            <a asp-action="Index" asp-controller="Account"
+                   class="btn btn-md btn-outline-success">View users</a>
+        </div>
+        <div class="col">
+            <h2 class="mb-3">Departments</h2>
+            <hr />
+
+            <a asp-action="Create" asp-controller="Departments"
+                class="btn btn-md btn-success">Create department</a>
+            <a asp-action="Index" asp-controller="Departments"
+                class="btn btn-md btn-outline-success">View departments</a>
+        </div>
+        <div class="col">
+            <h2 class="mb-3">Wbs</h2>
+            <hr />
+            <a asp-action="Create" asp-controller="WBS" class="btn btn-md btn-success">Create WBS</a>
+            <a asp-action="Index" asp-controller="WBS" class="btn btn-md btn-outline-success">View WBS</a>
+        </div>
+    </div>
+    <br />
+    <hr />
+    <div class="row mt-3">
+        <h2 class="mb-3">Reports</h2>
+    </div>
+</div>
