@@ -84,35 +84,35 @@ public class DbInitializer
                 new WBS
                 {
                     WbsName = "Vacation",
-                    CodWbs = "WBS0085749",
+                    WbsCod = "WBS0085749",
                     Description = "Vacation - employee",
                     IsChargeable = true,
                 },
                 new WBS
                 {
                     WbsName = "Day-Off",
-                    CodWbs = "WBS8574950",
+                    WbsCod = "WBS8574950",
                     Description = "Day-Off - employee",
                     IsChargeable = true,
                 },
                 new WBS
                 {
                     WbsName = "No task",
-                    CodWbs = "WBS4700086",
+                    WbsCod = "WBS4700086",
                     Description = "No task - employee",
                     IsChargeable = true,
                 },
                 new WBS
                 {
                     WbsName = "Implementation",
-                    CodWbs = "WBS9665557",
+                    WbsCod = "WBS9665557",
                     Description = "Implementation - employee",
                     IsChargeable = true,
                 },
                 new WBS
                 {
                     WbsName = "Development",
-                    CodWbs = "WBS2574100",
+                    WbsCod = "WBS2574100",
                     Description = "Development - employee",
                     IsChargeable = true,
                 }
