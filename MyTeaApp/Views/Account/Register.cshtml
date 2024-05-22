@@ -1,21 +1,26 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@using Microsoft.AspNetCore.Identity;
+﻿@using Microsoft.AspNetCore.Identity;
 @inject SignInManager<User> SignInManager;
 @inject UserManager<User> UserManager;
 
 @using MyTeaApp.Models.ViewModels
-
 @model RegisterVM
 
-@if (!SignInManager.IsSignedIn(User))
-{
-        <partial name="_FirstRegisterFormPartial" model="Model"></partial>
+@{
+    string text = "";
+    if (!SignInManager.IsSignedIn(User))
+    {
+        text = "REGISTER ADMIN";
+    }
+    else if (User.IsInRole("Admin"))
+    {
+        text = "REGISTER NEW USER";
+    }
+
 }
-else if(User.IsInRole("Admin"))
-{
-    // Create partial for creating user when an user is signed in and is admin
-}
+
+<div class="mb-3 row text-center justify-content-center align-content-center">
+    <h1>MyTea</h1>
+    <h4>@text</h4>
+</div>
+
+<partial name="_RegisterFormPartial" model="Model"></partial>
