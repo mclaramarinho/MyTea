@@ -19,13 +19,8 @@ namespace MyTeaApp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [Authorize(Policy = "RequerPerfilAdmin")]
-        public IActionResult SomenteAdmin()
+        [Authorize]
+        public IActionResult Dashboard()
         {
             return View();
         }
