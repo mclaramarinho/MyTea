@@ -1,0 +1,31 @@
+﻿@model string
+
+@{
+    string bg = Model == "success" ? "bg-success" : Model == "error" ? "bg-danger" : "bg-warning";
+    string text = Model == "success" ? "Success!" : Model == "error" ? "Error!" : "Something bad happened!";
+}
+
+@if (Model != null)
+{
+    <div class="@bg d-none position-fixed top-0 end-0 mt-5 me-3 px-3 py-2 w-100" id="notification">
+        <p class="fw-bold text-white m-0">@text</p>
+    </div>
+}
+<script>
+    const notif = document.getElementById("notification");
+    
+    if (notif) {
+        notif.classList.toggle("d-none")
+
+        setTimeout(() => {
+            notif.classList.toggle("d-none")
+        }, 5000)
+    }
+</script>
+
+<style>
+    #notification{
+        max-width: 300px;
+        border-radius: 10px;
+    }
+</style>
