@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -110,7 +111,7 @@ namespace MyTeaApp.Controllers
                 }
                 return View(vm);
             }
-            bool shouldLoginAfter = !_isFirstRegister();
+            bool shouldLoginAfter = _isFirstRegister();
             Department dpt = _db.Department.First(d => d.DepartmentID == vm.DepartmentID);
 
             User user = new User()
@@ -123,7 +124,7 @@ namespace MyTeaApp.Controllers
                 Department = dpt,
                 UserActive = true
             };
-
+            user.SetUID();
             var result = await _userManager.CreateAsync(user, vm.Password);
             if (result.Succeeded)
             {
@@ -173,7 +174,6 @@ namespace MyTeaApp.Controllers
                 return _redirectAfterLogin();
             }
 
-
             ModelState.AddModelError("", "Login failed");
 
             return View(vm);
@@ -194,6 +194,58 @@ namespace MyTeaApp.Controllers
         // LOGOUT END ---------------------------------------------------------------------------------------------------
 
 
+        // EDIT ---------------------------------------------------------------------------------------------------
+        
+        [HttpGet]
+        [Authorize(Policy = "RequireAdmin")]
+        public async Task<IActionResult> EditUser(int uid) {
+            User user = await _db.Users.FirstAsync(u => u.UserID == uid);
+            if (user == null)
+            {
+                // do something if no user found
+            }
+            List<Department> departments = await _db.Department.ToListAsync();
+            List<IdentityRole> rolesDb = await _db.Roles.ToListAsync();
+
+            var role = await _userManager.GetRolesAsync(user);
+
+            EditUserVM vm = new EditUserVM();
+            vm.Populate(user, role[0], departments, rolesDb);
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "RequireAdmin")]
+        public async Task<IActionResult> EditUser(int uid, [Bind("UserID, FullName, Email, DepartmentId, RoleName")]EditUserVM data)
+        {
+            User user = await _db.Users.FirstAsync(u => u.UserID == uid);
+
+            var role = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRoleAsync(user, role[0]);
+
+            Department department = await _db.Department.FirstAsync(d => d.DepartmentID == int.Parse(data.DepartmentId));
+
+            user.Department = department;
+            user.FullName = data.FullName;
+            user.Email = data.Email;
+            user.UserName = data.Email;
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return View(data);
+            }
+            var updateRoleResult = await _userManager.AddToRoleAsync(user, data.RoleName);
+            if(!updateRoleResult.Succeeded) { 
+                return View(data);
+            }
+
+            return RedirectToAction(nameof(Index));
+
+        }
+      
+        // EDIT END ---------------------------------------------------------------------------------------------------
 
 
 
@@ -205,7 +257,7 @@ namespace MyTeaApp.Controllers
                 return RedirectToAction("Dashboard", "Home");
             }else if(User.IsInRole("Employee"))
             {
-                return RedirectToAction("Create", "Record");
+                return RedirectToAction("Create", "Records");
             }
             else
             {

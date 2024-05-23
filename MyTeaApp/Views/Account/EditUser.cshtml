@@ -1,0 +1,36 @@
+﻿@using MyTeaApp.Models.ViewModels;
+@model EditUserVM;
+
+<h1>Edit user info</h1>
+<form asp-action="EditUser" asp-controller="Account" asp-route-uid="@Model.UserID" method="post" class="row">
+    <div class="col-12 col-md-6">
+        <div class="mb-3">
+            <label asp-for="UserID" class="form-label"></label>
+            <input asp-for="UserID" class="form-control" disabled />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FullName" class="form-label"></label>
+            <input asp-for="FullName" class="form-control" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="mb-3">
+            <label asp-for="DepartmentId" class="form-label"></label>
+            <select class="form-select" asp-for="DepartmentId" asp-items="@Model.Departments"></select>
+        </div>
+        <div class="mb-3">
+            <label asp-for="RoleName" class="form-label"></label>
+            <select class="form-select" asp-for="RoleName" asp-items="@Model.Roles"></select>
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+    </div>
+    
+</form>
