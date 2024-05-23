@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> _sm;
+
+@if(_sm.IsSignedIn(User)){
+    @if (User.IsInRole("Admin"))
+    {
+        <partial name="_AdminDashboardPartial"></partial>
+    }
+    else if (User.IsInRole("Employee"))
+    {
+
+    }
+    else if (User.IsInRole("Manager"))
+    {
+        
+    }
+}
