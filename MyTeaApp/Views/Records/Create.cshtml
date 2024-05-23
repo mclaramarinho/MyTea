@@ -1,4 +1,4 @@
-﻿@model MyTeaApp.Models.Record
+﻿@model MyTeaApp.Models.ViewModels.RecordVM;
 
 @{
     ViewData["Title"] = "Create Record";
@@ -14,6 +14,15 @@
                     Text = $"{startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy}"
                 });
     }
+
+    var wbsList = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "WBS0085749", Text = "WBS0085749" },
+        new SelectListItem { Value = "WBS8574950", Text = "WBS8574950" },
+        new SelectListItem { Value = "WBS4700086", Text = "WBS4700086" },
+        new SelectListItem { Value = "WBS9665557", Text = "WBS9665557" },
+        new SelectListItem { Value = "WBS2574100", Text = "WBS2574100" }
+    };
 }
 
 <h1>Create Record</h1>
@@ -33,28 +42,36 @@
                 </select>
             </div>
             <div id="records-list">
-                <table class="table">
+                <table id="records-table" class="table">
                     <thead>
                         <tr>
                             <th>Charge Codes</th>
                             @for (int i = 0; i < 15; i++)
                             {
-                                <th>@DateTime.Now.AddDays(i).ToString("dd/MM/yyyy")</th>
+                                <th class="date-column">@DateTime.Now.AddDays(i).ToString("dd/MM/yyyy")</th>
                             }
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < 4; i++) 
+                        @for (int i = 0; i < 4; i++)
                         {
                             <tr>
                                 <td>
-                                    <input name="RecordFraction.ChargeCode" class="form-control" />
+                                    <div>
+                                        <select name="RecordFraction[@i].ChargeCode" class="form-control">
+                                            @foreach (var wbs in wbsList)
+                                            {
+                                                <option value="@wbs.Value">@wbs.Text</option>
+                                            }
+                                        </select>
+                                        @Html.ValidationMessageFor(model => model.SelectedWBS, "")
+                                    </div>
                                 </td>
                                 @for (int j = 0; j < 15; j++)
                                 {
                                     <td>
-                                        <input name="RecordFraction.TotalHoursFraction" class="form-control" />
-                                        <input name="RecordFraction.RecordDate" type="hidden" value="@DateTime.Now.AddDays(j).ToString("yyyy-MM-dd")" />
+                                        <input name="RecordFraction[@i].TotalHoursFraction" class="form-control" />
+                                        <input name="RecordFraction[@i].RecordDate" type="hidden" value="@DateTime.Now.AddDays(j).ToString("yyyy-MM-dd")" />
                                     </td>
                                 }
                             </tr>
@@ -81,50 +98,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var quinzenaSelector = document.getElementById('quinzenaSelector');
-            var recordsList = document.getElementById('records-list');
-            var currentYear = 2024;
+            var recordsTable = document.getElementById('records-table');
+            var dateColumns = recordsTable.querySelectorAll('.date-column');
 
             function generateTable(startDate) {
-                var tbody = recordsList.querySelector('tbody');
-                var thead = recordsList.querySelector('thead tr');
-                tbody.innerHTML = '';
-                thead.innerHTML = '<th>Charge Codes</th>';
-
                 for (var i = 0; i < 15; i++) {
-                    var th = document.createElement('th');
                     var date = new Date(startDate);
-                    date.setDate(date.getDate() + i);
-                    th.textContent = date.toISOString().split('T')[0].split('-').reverse().join('/');
-                    thead.appendChild(th);
-                }
-
-                for (var i = 0; i < 4; i++) {
-                    var tr = document.createElement('tr');
-                    var tdChargeCode = document.createElement('td');
-                    var inputChargeCode = document.createElement('input');
-                    inputChargeCode.name = 'RecordFraction.ChargeCode';
-                    inputChargeCode.className = 'form-control';
-                    tdChargeCode.appendChild(inputChargeCode);
-                    tr.appendChild(tdChargeCode);
-
-                    for (var j = 0; j < 15; j++) {
-                        var td = document.createElement('td');
-                        var inputHours = document.createElement('input');
-                        inputHours.name = 'RecordFraction.TotalHoursFraction';
-                        inputHours.className = 'form-control';
-
-                        var inputDate = document.createElement('input');
-                        inputDate.type = 'hidden';
-                        inputDate.name = 'RecordFraction.RecordDate';
-                        var date = new Date(startDate);
-                        date.setDate(date.getDate() + j);
-                        inputDate.value = date.toISOString().split('T')[0];
-
-                        td.appendChild(inputHours);
-                        td.appendChild(inputDate);
-                        tr.appendChild(td);
-                    }
-                    tbody.appendChild(tr);
+                    date.setDate(date.getDate() + i + 1);
+                    dateColumns[i].textContent = date.toLocaleDateString('pt-BR');
                 }
             }
 

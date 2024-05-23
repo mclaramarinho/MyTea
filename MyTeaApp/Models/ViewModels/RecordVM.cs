@@ -9,5 +9,9 @@ namespace MyTeaApp.Models.ViewModels
         public int[] SelectedWBS = [0, 0, 0, 0];
 
         public List<SelectListItem> WBS;
+
+        public WBS WbsCod;
     }
+
 }
+
