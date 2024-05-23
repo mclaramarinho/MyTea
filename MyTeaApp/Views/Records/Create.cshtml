@@ -49,6 +49,7 @@
                             <tr>
                                 <td>
                                     <div>
+                                        
                                         @Html.LabelFor(model => model.SelectedWBS, "WBS:")
                                         @Html.DropDownListFor(model => model.SelectedWBS, Model.WBS, "Selecione...", new { @class = "form-control", name = "RecordFraction[" + @i + "].ChargeCode" })
                                         @Html.ValidationMessageFor(model => model.SelectedWBS, "")
@@ -57,7 +58,7 @@
                                 </td>
                                 @for (int j = 0; j < 15; j++)
                                 {
-                                    <td>
+                                    <td id="fractionSlot_@i">
                                         <input name="RecordFraction[@i].TotalHoursFraction" class="form-control" />
                                         <input name="RecordFraction[@i].RecordDate" type="hidden" value="@DateTime.Now.AddDays(j).ToString("yyyy-MM-dd")" />
                                     </td>
@@ -83,26 +84,102 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
+
     <script>
+
+        var holidays = [
+            new Date(2024, 0, 1), // Confraternização Universal (feriado nacional)
+            new Date(2024, 1, 12), // Carnaval (ponto facultativo)
+            new Date(2024, 1, 13), // Carnaval (ponto facultativo)
+            new Date(2024, 1, 14), // Carnaval (ponto facultativo até as 14h)
+            new Date(2024, 2, 29), // Paixão de Cristo (feriado nacional)
+            new Date(2024, 3, 21), // Tirandentes (feriado nacional)
+            new Date(2024, 4, 1), // Dia Mundial do Trabalho (feriado nacional)
+            new Date(2024, 4, 30), // Corpus Christi (ponto facultativo)
+            new Date(2024, 8, 7), // Independência do Brasil (feriado nacional)
+            new Date(2024, 9, 12), // Nossa Senhora Aparecida (feriado nacional)
+            new Date(2024, 9, 28), // Dia do Servidor Público federal (ponto facultativo)
+            new Date(2024, 10, 2), // Finados (feriado nacional)
+            new Date(2024, 10, 15), // Proclamação da República (feriado nacional)
+            new Date(2024, 10, 20), // Dia Nacional de Zumbi e da Consciência Negra (feriado nacional)
+            new Date(2024, 11, 24), // Véspera do Natal (ponto facultativo após as 14h)
+            new Date(2024, 11, 25), // Natal (feriado nacional)
+            new Date(2024, 11, 31) // Véspera do Ano Novo (ponto facultativo após as 14h)
+        ];
+
+        function hasHolidayInFortnight(date) {
+            let fortnightHolidays = [];
+            let fortnightDates = [];
+            fortnightDates.push(new Date(date));
+
+            for (let i = 1; i < 16; i++){
+                const tempDate = new Date(date);
+                tempDate.setDate(tempDate.getDate() + i);
+                fortnightDates.push(tempDate);
+            }
+
+            holidays.map(holiday => {
+                fortnightDates.map((d,i) => {
+                    if (holiday.getDate() == d.getDate() && holiday.getMonth() == d.getMonth()) {
+                        fortnightHolidays.push(i);
+                        return;
+                    }
+                })
+            })
+
+            return fortnightHolidays;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             var quinzenaSelector = document.getElementById('quinzenaSelector');
             var recordsTable = document.getElementById('records-table');
             var dateColumns = recordsTable.querySelectorAll('.date-column');
 
-            function generateTable(startDate) {
+            function generateTable(startDate, fortnightHolidays) {
                 for (var i = 0; i < 15; i++) {
                     var date = new Date(startDate);
                     date.setDate(date.getDate() + i + 1);
+                    
                     dateColumns[i].textContent = date.toLocaleDateString('pt-BR');
+
                 }
             }
 
             quinzenaSelector.addEventListener('change', function () {
                 var selectedDate = new Date(this.value);
+
+                const fortnightHolidays = hasHolidayInFortnight(date);
+                
                 generateTable(selectedDate);
             });
 
             generateTable(new Date(quinzenaSelector.value));
+
+
         });
     </script>
+}
+
+
+@{
+
+    DateTime getHolidayDateTime(string stringDate)
+    {
+        string format = "yyyy-MM-dd";
+        DateTime formatted = DateTime.ParseExact(stringDate, format, System.Globalization.CultureInfo.InvariantCulture);
+        return formatted;
+    }
+    List<DateTime> holidays = [
+        getHolidayDateTime("2024-01-01"),
+        getHolidayDateTime("2024-02-12"),
+        getHolidayDateTime("2024-02-13"),
+        getHolidayDateTime("2024-02-14"),
+        getHolidayDateTime("2024-03-29"),
+        getHolidayDateTime("2024-04-21"),
+        getHolidayDateTime("2024-05-01"),
+        getHolidayDateTime("2024-05-30"),
+        getHolidayDateTime("2024-09-07"),
+
+    ];
+
 }
