@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyTeaApp.Data;
@@ -40,29 +44,28 @@ namespace MyTeaApp.Controllers
             return View(@record);
         }
 
-        // GET: Records/Create
         public async Task<IActionResult> Create()
         {
             RecordVM vm = new RecordVM();
             vm.RecordFractions = new List<RecordFraction>();
+            // Recupere os dados do banco de dados para o dropdown
+            var itemsFromDatabase = _context.WBS.ToList();
 
-            // TODO - puxar as informações do banco de dados para montar o select
-            vm.WBS = new List<SelectListItem>()
+            // Mapeie os dados do banco de dados para SelectListItem
+            vm.WBS = itemsFromDatabase.Select(item => new SelectListItem
             {
-                new SelectListItem { Text="Ferias", Value="1" },
-                new SelectListItem { Text="Day-off", Value="2" },
-                new SelectListItem { Text="Desenvolvimento", Value="3" },
-            };
-           
-           
+                Text = item.WbsName + " - " + item.WbsCod,
+                Value = item.WbsCod!.ToString()
+            }).ToList();
+
+            vm.WbsCod = new WBS();
             for (int i = 0; i < 60; i++)
             {
-                vm.RecordFractions.Add(
-                    new RecordFraction()
-                  );
+                vm.RecordFractions.Add(new RecordFraction());
             }
             return View(vm);
         }
+
         [HttpPost]
         public IActionResult Create(RecordVM vm)
         {
@@ -82,6 +85,7 @@ namespace MyTeaApp.Controllers
             }
             return View(vm);
         }
+
 
         // GET: Records/Edit/5
         public async Task<IActionResult> Edit(int? id)

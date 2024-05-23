@@ -14,15 +14,6 @@
                     Text = $"{startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy}"
                 });
     }
-
-    var wbsList = new List<SelectListItem>
-    {
-        new SelectListItem { Value = "WBS0085749", Text = "WBS0085749" },
-        new SelectListItem { Value = "WBS8574950", Text = "WBS8574950" },
-        new SelectListItem { Value = "WBS4700086", Text = "WBS4700086" },
-        new SelectListItem { Value = "WBS9665557", Text = "WBS9665557" },
-        new SelectListItem { Value = "WBS2574100", Text = "WBS2574100" }
-    };
 }
 
 <h1>Create Record</h1>
@@ -58,13 +49,10 @@
                             <tr>
                                 <td>
                                     <div>
-                                        <select name="RecordFraction[@i].ChargeCode" class="form-control">
-                                            @foreach (var wbs in wbsList)
-                                            {
-                                                <option value="@wbs.Value">@wbs.Text</option>
-                                            }
-                                        </select>
+                                        @Html.LabelFor(model => model.SelectedWBS, "WBS:")
+                                        @Html.DropDownListFor(model => model.SelectedWBS, Model.WBS, "Selecione...", new { @class = "form-control", name = "RecordFraction[" + @i + "].ChargeCode" })
                                         @Html.ValidationMessageFor(model => model.SelectedWBS, "")
+                         
                                     </div>
                                 </td>
                                 @for (int j = 0; j < 15; j++)
