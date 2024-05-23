@@ -6,7 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MyTeaApp.Models
 {
     public class User : IdentityUser
-    { 
+    {
+        private static int _uid = 10000;
         public int UserID { get; set; }
 
         [Required]
@@ -30,5 +31,10 @@ namespace MyTeaApp.Models
 
 
         public ICollection<Record> Records { get; set; } = new List<Record>();
+
+        public void SetUID()
+        {
+            this.UserID = ++_uid;
+        }
     }
 }
