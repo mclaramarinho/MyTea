@@ -25,10 +25,6 @@ namespace MyTeaApp.Data
             builder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
-
-            builder.Entity<User>()
-                .Property(u => u.UserID)
-                .HasComputedColumnSql((++_uid).ToString());
             
         }
 
