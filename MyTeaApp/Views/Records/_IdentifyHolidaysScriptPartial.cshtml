@@ -26,6 +26,7 @@
     async function hasHolidayInFortnight(date) {
         return new Promise((res, rej) => {
             let fortnightHolidays = [];
+
             let fortnightDates = [];
 
             for (let i = 1; i < 16; i++) {
@@ -73,11 +74,12 @@
 
 
         slotsValues.forEach((v, i) => {
-            const slotEl = document.querySelector(`#fractionSlot_${v}>input`);
-            if (i !== v.length - 1) {
-                slotEl.setAttribute("disabled", true);
-                slotEl.setAttribute("value", 8);
-            }
+            const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
+            
+            // if (i !== v.length - 1) {
+            slotEl.setAttribute("disabled", true);
+            slotEl.setAttribute("value", 8);
+            // }
         })
     }
 </script>
