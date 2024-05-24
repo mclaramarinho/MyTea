@@ -16,8 +16,6 @@ namespace MyTeaApp.Data
         public DbSet<WBS> WBS { get; set; } = default!;
         public DbSet<RecordFraction> RecordFraction { get; set; } = default!;
 
-        //public DbSet<User> Users {  get; set; } = default!;
-        private static int _uid = 10000;
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
