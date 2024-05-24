@@ -112,7 +112,16 @@ namespace MyTeaApp.Controllers
                 return View(vm);
             }
             bool shouldLoginAfter = _isFirstRegister();
-            Department dpt = _db.Department.First(d => d.DepartmentID == vm.DepartmentID);
+
+            ValidationResponse validateDepId = vm.ValidateDepartmentID();
+            ModelState.AddModelError("DepartmentId", validateDepId.ErrorMessage);
+
+            Department dpt = _db.Department.FirstOrDefault(d => d.DepartmentID == vm.DepartmentID);
+            
+            ValidationResponse validateRoleName = vm.ValidateRole();
+            ModelState.AddModelError("RoleName", validateDepId.ErrorMessage);
+
+            if (!vm.FieldsValid) { return View(vm); }
 
             User user = new User()
             {
@@ -126,6 +135,7 @@ namespace MyTeaApp.Controllers
             };
             user.SetUID();
             var result = await _userManager.CreateAsync(user, vm.Password);
+
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, vm.RoleName);
