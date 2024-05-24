@@ -1,10 +1,9 @@
-﻿@model MyTeaApp.Models.ViewModels.RecordVM;
+@model MyTeaApp.Models.ViewModels.RecordVM;
 
 @{
     ViewData["Title"] = "Create Record";
     var quinzenas = new List<SelectListItem>();
-    var currentYear = DateTime.Now.Year;
-
+    var currentYear = 2024;
     for (int i = 0; i < 24; i++)
     {
         var startDate = new DateTime(currentYear, 1, 1).AddDays(i * 15);
@@ -50,7 +49,6 @@
                             <tr>
                                 <td>
                                     <div>
-                                        
                                         @Html.LabelFor(model => model.SelectedWBS, "WBS:")
                                         @Html.DropDownListFor(model => model.SelectedWBS, Model.WBS, "Selecione...", new { @class = "form-control", name = "RecordFraction[" + @i + "].ChargeCode" })
                                         @Html.ValidationMessageFor(model => model.SelectedWBS, "")
@@ -59,7 +57,7 @@
                                 </td>
                                 @for (int j = 0; j < 15; j++)
                                 {
-                                    <td id="fractionSlot_@((i * 15) + j)">
+                                    <td>
                                         <input name="RecordFraction[@i].TotalHoursFraction" class="form-control" />
                                         <input name="RecordFraction[@i].RecordDate" type="hidden" value="@DateTime.Now.AddDays(j).ToString("yyyy-MM-dd")" />
                                     </td>
@@ -83,9 +81,7 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        await Html.RenderPartialAsync("_IdentifyHolidaysScriptPartial");
     }
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -93,37 +89,20 @@
             var recordsTable = document.getElementById('records-table');
             var dateColumns = recordsTable.querySelectorAll('.date-column');
 
-   
-            function generateTable(startDate, fortnightHolidaysIndexes=[]) {
-                resetHolidaySlots();
-
+            function generateTable(startDate) {
                 for (var i = 0; i < 15; i++) {
                     var date = new Date(startDate);
                     date.setDate(date.getDate() + i + 1);
-                    
                     dateColumns[i].textContent = date.toLocaleDateString('pt-BR');
-
-
-
-                    if (fortnightHolidaysIndexes.includes(i)) {
-                        markHolidaySlots(i);
-                    }
                 }
             }
 
-            quinzenaSelector.addEventListener('change', async function () {
+            quinzenaSelector.addEventListener('change', function () {
                 var selectedDate = new Date(this.value);
-                
-                const fortnightHolidays = await hasHolidayInFortnight(selectedDate);
-
-                generateTable(selectedDate, fortnightHolidays);
+                generateTable(selectedDate);
             });
-            let fortnightHolidays = null;
-            hasHolidayInFortnight(new Date(quinzenaSelector.value)).then(r => {
-                fortnightHolidays = r;
-                generateTable(new Date(quinzenaSelector.value), fortnightHolidays);
 
-            });
+            generateTable(new Date(quinzenaSelector.value));
         });
     </script>
 }
