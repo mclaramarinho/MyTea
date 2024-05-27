@@ -1,0 +1,62 @@
+﻿<script>
+
+    const resultInputs = document.querySelectorAll('.col-total input');
+    let totalsByRow = Array.from({ length: 4 }, () => 0); //cria um array com lenght 4, tendo o valor 0 para cada um
+    let totalsByColumn = Array.from({ length: 15 }, () => 0); //cria um array com lenght 15, tendo o valor 0 para cada um
+    let total = 0;
+
+    function handleInput(event, rowIndex, colIndex) {
+        const value = parseInt(event.target.value) || 0;
+        const oldValue = parseInt(event.target.dataset.oldValue) || 0;
+        const delta = value - oldValue;
+        event.target.dataset.oldValue = value;
+
+        updateTotals(rowIndex, colIndex, delta);
+    }
+
+
+    function updateColumnTotal(colIndex) {
+        let columnTotal = 0;
+        const fractionSlots = document.querySelectorAll(`#records-table td:nth-child(${colIndex + 2}) input[id^="RecordFraction"]`);
+        fractionSlots.forEach(slot => {
+            const value = parseInt(slot.value) || 0;
+            columnTotal += value;
+        });
+        const colTotalInput = document.getElementById(`colTotal_${colIndex}`);
+        colTotalInput.value = columnTotal;
+    }
+
+    function updateTotals(rowIndex, colIndex, delta) {
+        // Limpa o total
+        total = 0;
+
+        // Limpa os totais antigos
+        totalsByRow[rowIndex] = 0;
+        totalsByColumn[colIndex] = 0;
+
+        // Atualizar os totais
+        for (let i = 0; i < 4; i++) {
+            totalsByRow[i] = 0; // Limpar o total da linha atual
+            for (let j = 0; j < 15; j++) {
+                const input = document.querySelector(`#records-table tr:nth-child(${i + 1}) td:nth-child(${j + 2}) input[id^="RecordFraction"]`);
+                const value = parseInt(input.value) || 0;
+                totalsByRow[i] += value;
+                totalsByColumn[j] += value;
+            }
+        }
+
+        // Atualizar os totais exibidos
+        for (let i = 0; i < 4; i++) {
+            const rowTotalInput = document.getElementById(`rowTotal_${i}`);
+            rowTotalInput.value = totalsByRow[i];
+            for (let j = 0; j < 15; j++) {
+                updateColumnTotal(j);
+            }
+        }
+
+        // Atualizar o total geral
+        const totalInput = document.getElementById("result");
+        totalInput.value = total;
+    }
+
+</script>

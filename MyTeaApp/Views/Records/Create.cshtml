@@ -39,8 +39,9 @@
                             <th>Charge Codes</th>
                             @for (int i = 0; i < 15; i++)
                             {
-                                <th class="date-column">@DateTime.Now.AddDays(i).ToString("dd/MM/yyyy")</th>
+                                <th class="date-column">@DateTime.Now.AddDays(i).ToString("dd/MM")</th>
                             }
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,22 +50,38 @@
                             <tr>
                                 <td>
                                     <div>
-                                        @Html.LabelFor(model => model.SelectedWBS, "WBS:")
-                                        @Html.DropDownListFor(model => model.SelectedWBS, Model.WBS, "Selecione...", new { @class = "form-control", name = "RecordFraction[" + @i + "].ChargeCode" })
-                                        @Html.ValidationMessageFor(model => model.SelectedWBS, "")
-                         
+                                        @Html.DropDownListFor(model => model.SelectedWBS, Model.WBS, "WBS", new { @class = "form-control", name = "RecordFraction[" + @i + "].ChargeCode" })
                                     </div>
                                 </td>
                                 @for (int j = 0; j < 15; j++)
                                 {
-                                    <td>
-                                        <input name="RecordFraction[@i].TotalHoursFraction" class="form-control" />
-                                        <input name="RecordFraction[@i].RecordDate" type="hidden" value="@DateTime.Now.AddDays(j).ToString("yyyy-MM-dd")" />
+                                    <td id="fractionSlot_@((i * 15) + j)">
+                                       
+                                        <input name="hours" class="form-control" id="RecordFraction_@(i)_@(j)" min="0" />
+                                        <input name="dates" type="hidden"  value="@DateTime.Now.AddDays(j).ToString("yyyy-MM-dd")" /> 
+
                                     </td>
                                 }
+                                <td>
+                                    <input id="rowTotal_@i" type="text" class="row-total" disabled />
+                                </td>
+
                             </tr>
                         }
                     </tbody>
+                    <tfoot>
+                    <th>Total</th>
+                        @for (int i = 0; i < 15; i++)
+                        {
+                        <td class="col-total">
+                            <input id="colTotal_@i" type="text" class="col-total" disabled />
+                        </td>
+                        }
+                    <td class="col-total">
+                        <input type="text" id="result" disabled />
+                    </td>
+
+                    </tfoot>
                 </table>
             </div>
             <div class="form-group">
@@ -80,8 +97,10 @@
 
 @section Scripts {
     @{
+        await Html.RenderPartialAsync("_CalcInputScriptsPartial");
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -89,20 +108,36 @@
             var recordsTable = document.getElementById('records-table');
             var dateColumns = recordsTable.querySelectorAll('.date-column');
 
+            // Adiciona evento de input
+            const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
+
+            inputElements.forEach(input => {
+                const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
+        
+                input.addEventListener('input', event => handleInput(event, rowIndex, colIndex));
+            });
+
+            // Função para gerar a tabela com base na quinzena selecionada
             function generateTable(startDate) {
                 for (var i = 0; i < 15; i++) {
                     var date = new Date(startDate);
                     date.setDate(date.getDate() + i + 1);
-                    dateColumns[i].textContent = date.toLocaleDateString('pt-BR');
+                    dateColumns[i].textContent = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
                 }
             }
 
+            // Evento de mudança no seletor de quinzena
             quinzenaSelector.addEventListener('change', function () {
                 var selectedDate = new Date(this.value);
+                window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString();
                 generateTable(selectedDate);
             });
 
             generateTable(new Date(quinzenaSelector.value));
+
+
         });
+
+
     </script>
 }
