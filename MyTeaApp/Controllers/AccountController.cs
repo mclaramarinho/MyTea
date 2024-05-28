@@ -198,11 +198,11 @@ namespace MyTeaApp.Controllers
         
         [HttpGet]
         [Authorize(Policy = "RequireAdmin")]
-        public async Task<IActionResult> EditUser(int uid) {
-            User user = await _db.Users.FirstAsync(u => u.UserID == uid);
+        public async Task<IActionResult> EditUser(string uid) {
+            User user = await _db.Users.FirstAsync(u => u.Id == uid);
             if (user == null)
             {
-                // do something if no user found
+                return NotFound();
             }
             List<Department> departments = await _db.Department.ToListAsync();
             List<IdentityRole> rolesDb = await _db.Roles.ToListAsync();
@@ -217,9 +217,9 @@ namespace MyTeaApp.Controllers
 
         [HttpPost]
         [Authorize(Policy = "RequireAdmin")]
-        public async Task<IActionResult> EditUser(int uid, [Bind("UserID, FullName, Email, DepartmentId, RoleName")]EditUserVM data)
+        public async Task<IActionResult> EditUser(string uid, [Bind("UserID, FullName, Email, DepartmentId, RoleName")]EditUserVM data)
         {
-            User user = await _db.Users.FirstAsync(u => u.UserID == uid);
+            User user = await _db.Users.FirstAsync(u => u.Id == uid);
 
             var role = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRoleAsync(user, role[0]);
