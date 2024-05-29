@@ -169,6 +169,7 @@ namespace MyTeaApp.Controllers
                 }
             }
 
+            vm.WBS = _getWbsSelectList();
                 return View(vm);
         }
 
