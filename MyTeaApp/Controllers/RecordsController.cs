@@ -1,23 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using MyTeaApp.Data;
 using MyTeaApp.Models;
 using MyTeaApp.Models.ViewModels;
+using NuGet.Protocol;
 
 namespace MyTeaApp.Controllers
 {
     public class RecordsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<User> _um;
+        private readonly SignInManager<User> _sm;
+        private bool _recordCriada = false;
 
-        public RecordsController(ApplicationDbContext context)
+        public RecordsController(ApplicationDbContext context, UserManager<User> um, SignInManager<User> sm)
         {
             _context = context;
+            _um = um;
+            _sm = sm;
         }
 
         // GET: Records
@@ -44,46 +54,122 @@ namespace MyTeaApp.Controllers
             return View(@record);
         }
 
-        public async Task<IActionResult> Create()
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Create(string? startDate)
         {
             RecordVM vm = new RecordVM();
-            vm.RecordFractions = new List<RecordFraction>();
+           
+
+            DateTime date = DateTime.Now;
+
+            if (startDate != null)
+            {
+                date = DateTime.ParseExact(startDate.Substring(0,19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            // TODO - encontrar a quinzena da data de hj
+            int firstDay = 1;
+            if (date.Day > 15)
+            {
+                firstDay = 16;
+            }
+
+            // TODO - guardar o primeiro dia da quinzena 
+            date = new DateTime(date.Year, date.Month, firstDay);
+
+
+            // TODO - pegar id do user
+            User uid = await _um.FindByEmailAsync(User.Identity.Name);
+            // TODO - user null?
+
+            Record? existingRecord = null;
+            // TODO - procurar no banco de dados os records cuja startDate e userid sejam os procurados
+            if (_context.Records.Count() > 0)
+            {
+                existingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == uid.Id);
+            }
+
+            // TODO - se achar algo no banco, preencher a view model com todas as informações necessárias para preencher o forms 
+            if (existingRecord != null)
+            {
+                vm.ExistingRecord=existingRecord;
+            }
+            // TODO - senao, mandar a view model apenas com o o select list de wbs e o restante nulo
+
+
             // Recupere os dados do banco de dados para o dropdown
             var itemsFromDatabase = _context.WBS.ToList();
-
+            //vm.WBS =
+            //[
+            //    new SelectListItem
+            //    {
+            //        Text = "Select charge code",
+            //        Value = "-1"
+            //    },
+            //];
             // Mapeie os dados do banco de dados para SelectListItem
             vm.WBS = itemsFromDatabase.Select(item => new SelectListItem
             {
                 Text = item.WbsName + " - " + item.WbsCod,
-                Value = item.WbsCod!.ToString()
+                Value = item.WbsCod,
             }).ToList();
 
-            vm.WbsCod = new WBS();
-            for (int i = 0; i < 60; i++)
-            {
-                vm.RecordFractions.Add(new RecordFraction());
-            }
             return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Create(RecordVM vm)
+        public async Task<IActionResult> Create(ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, RecordVM vm)
         {
-            // TODO - Primeiro cria a record para então criar as fractins e indicar a qual record ela pertence
-            Record r = new Record()
-            {
-                //User = colocar o user logado
+            User user = await _um.FindByEmailAsync(User.Identity.Name);
 
+            Record record = new Record()
+            {
+                TotalHoursRecord = hours.Sum().Value,
+                User = user,
+                StartDate = dates.ElementAt(0)
             };
 
-            foreach (var fraction in vm.RecordFractions)
-            {
-                var temp = new RecordFraction()
-                {
+            _context.Records.Add(record);
+            await _context.SaveChangesAsync();
 
-                };
+            int recordId = record.RecordID;
+            
+            for(int linha = 0; linha < 4; linha++)
+            {
+                //if (wbs.ElementAt(linha) == "-1")
+                //{
+                //    continue;
+                //}
+                WBS w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
+
+                for(int col = 0; col < 15; col++)
+                {
+                    if (hours.ElementAt((15 * linha) + col) != null)
+                    {
+                        RecordFraction rf = new RecordFraction()
+                        {
+                            Record = record,
+                            RecordDate = dates.ElementAt((15 * linha) + col),
+                            TotalHoursFraction = hours.ElementAt((15 * linha) + col).Value,
+                            Wbs = w
+                        };
+
+                        _context.RecordFraction.Add(rf);
+                        await _context.SaveChangesAsync();
+
+                        Record relatedRecord = await _context.Records.FirstAsync(r => r.RecordID == recordId);
+                        relatedRecord.RecordFraction.Add(rf);
+                        _context.Records.Update(relatedRecord);
+                        await _context.SaveChangesAsync();
+
+                        _recordCriada = true;
+                        TempData["ToasterType"] = !_recordCriada ? "error" : "success";
+                    }
+                }
             }
-            return View(vm);
+
+                return View(vm);
         }
 
 

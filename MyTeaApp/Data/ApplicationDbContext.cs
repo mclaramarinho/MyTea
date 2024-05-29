@@ -23,7 +23,6 @@ namespace MyTeaApp.Data
             builder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
-          
         }
 
     }

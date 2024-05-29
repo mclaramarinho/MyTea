@@ -84,7 +84,7 @@ namespace MyTeaApp.Controllers
         public async Task<IActionResult> Register()
         {
             // Not allowed to register
-            if (!_isAllowedToRegister()) 
+            if (!await _isAllowedToRegister()) 
             {
                 return RedirectToAction(nameof(Login));
             }
@@ -103,7 +103,7 @@ namespace MyTeaApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM vm)
         {
-            if (!_isAllowedToRegister())
+            if (!await _isAllowedToRegister())
             {
                 if (!_isFirstRegister())
                 {
@@ -112,7 +112,16 @@ namespace MyTeaApp.Controllers
                 return View(vm);
             }
             bool shouldLoginAfter = _isFirstRegister();
-            Department dpt = _db.Department.First(d => d.DepartmentID == vm.DepartmentID);
+
+            ValidationResponse validateDepId = vm.ValidateDepartmentID();
+            ModelState.AddModelError("DepartmentId", validateDepId.ErrorMessage ?? "");
+
+            Department dpt = _db.Department.FirstOrDefault(d => d.DepartmentID == vm.DepartmentID);
+            
+            ValidationResponse validateRoleName = vm.ValidateRole();
+            ModelState.AddModelError("RoleName", validateDepId.ErrorMessage ?? "");
+
+            if (!vm.FieldsValid) { return View(vm); }
 
             User user = new User()
             {
@@ -126,6 +135,7 @@ namespace MyTeaApp.Controllers
             };
             user.SetUID();
             var result = await _userManager.CreateAsync(user, vm.Password);
+
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, vm.RoleName);
@@ -311,7 +321,7 @@ namespace MyTeaApp.Controllers
 
             return selectItems;
         }
-        private bool _isAllowedToRegister()
+        private async Task<bool> _isAllowedToRegister()
         {
             if (!_signInManager.IsSignedIn(User))
             {
@@ -323,9 +333,18 @@ namespace MyTeaApp.Controllers
                     return false;
                 }
             }
-            // If someone is logged in
+            // If someone is logged ins
             else
             {
+                if(User.Identity == null)
+                {
+                    return false;
+                }
+
+                User user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                if(user == null) {
+                    return false;
+                }
                 // Check if the logged user is Admin
                 // If not
                 if (!User.IsInRole("Admin"))

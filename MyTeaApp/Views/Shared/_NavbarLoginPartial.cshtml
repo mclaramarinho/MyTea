@@ -1,0 +1,62 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    bool isSignedIn = false;
+    User? user = null;
+    try
+    {
+        if (SignInManager.IsSignedIn(User))
+        {
+            if(User.Identity == null)
+            {
+                throw new Exception("Not logged in");
+            }
+
+            user = await UserManager.FindByEmailAsync(User.Identity.Name);
+            if(user == null)
+            {
+                throw new Exception("Not logged in");
+            }
+            isSignedIn = true;
+        }
+    }
+    catch(Exception ex)
+    {
+        isSignedIn = false;
+    }
+}
+
+<ul class="navbar-nav">
+@if (isSignedIn)
+{
+        
+        
+        string[] names = user.FullName.Split(' ');
+        string userName = $"{names[0]} {names[names.Length-1]}";
+        int hour = DateTime.Now.Hour ;
+        string emoji = (hour >= 6 && hour <= 14) ? "☀️"
+                        : (hour >= 15 && hour <= 16) ? "🌞"
+                        : (hour >= 17 && hour <= 18) ? "🍵"
+                        : (hour > 18 && hour <= 23) ? "🌝"
+                        : "🧟‍♀️";
+        <li class="nav-item">
+            Hello @userName <span style="font-size: 1.5rem;">@emoji</span>
+        </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-action="Register" asp-controller="Account">Register</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-action="Login" asp-controller="Account">Login</a>
+    </li>
+}
+</ul>
+
+<style>
+
+    
+</style>
