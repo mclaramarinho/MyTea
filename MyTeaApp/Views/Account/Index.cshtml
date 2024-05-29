@@ -45,7 +45,7 @@
                         <td>@user.IsActive</td>
                         <td>
                             <span>
-                                <a href="">Del</a>
+                                <a asp-action="Delete" asp-route-userId="@user.DbUserId">Del</a>
                             </span>
                             <span>
                                 <a asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.UserId">Edit</a>
