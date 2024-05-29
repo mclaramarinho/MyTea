@@ -72,6 +72,36 @@
 
      // =========================================
 
+     // function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
+
+     //     const slotsValues = [
+     //         index,
+     //         index + 15,
+     //         index + (15 * 2),
+     //         index + (15 * 3),
+     //     ];
+
+     //     slotsValues.forEach((v, i) => {
+     //         const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
+
+     //         if (isHoliday) {
+     //             slotEl.disabled = true;
+     //             slotEl.readonly = true;                
+     //             if (i === slotsValues.length - 1) {
+     //                 slotEl.value = 8;
+     //             }  
+     //         } else if (isWeekend) {
+     //             slotEl.disabled = true;
+     //             slotEl.readonly = true;
+     //         } else {
+     //             slotEl.disabled = false;
+     //             slotEl.readonly = false;
+     //         }
+     //     });
+     // }
+     
+     
+         
      function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
 
          const slotsValues = [
@@ -86,9 +116,9 @@
 
              if (isHoliday) {
                  slotEl.disabled = true;
-                 slotEl.readonly = true;                
                  if (i === slotsValues.length - 1) {
-                     slotEl.value = 8;
+                     slotEl.setAttribute("value", 8);
+                     slotEl.readonly = true;
                  }  
              } else if (isWeekend) {
                  slotEl.disabled = true;
