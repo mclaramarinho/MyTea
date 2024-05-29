@@ -133,7 +133,7 @@ namespace MyTeaApp.Controllers
                 Department = dpt,
                 UserActive = true
             };
-            user.SetUID();
+            user.SetUID(_db);
             var result = await _userManager.CreateAsync(user, vm.Password);
 
             if (result.Succeeded)
