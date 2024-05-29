@@ -74,7 +74,8 @@ public class DbInitializer
 
         await CreateDefaultDepartment();
 
-        if (context.WBS.Any())
+        
+        if (context.WBS.Count() >= 6)
         {
             return;
         }
@@ -100,7 +101,7 @@ public class DbInitializer
                     WbsName = "No task",
                     WbsCod = "WBS4700086",
                     Description = "No task - employee",
-                    IsChargeable = true,
+                    IsChargeable = false,
                 },
                 new WBS
                 {
@@ -114,6 +115,13 @@ public class DbInitializer
                     WbsName = "Development",
                     WbsCod = "WBS2574100",
                     Description = "Development - employee",
+                    IsChargeable = true,
+                },
+                new WBS
+                {
+                    WbsName = "Holiday",
+                    WbsCod = "WBS2534102",
+                    Description = "Holiday",
                     IsChargeable = true,
                 }
 
