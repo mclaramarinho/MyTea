@@ -78,10 +78,8 @@ namespace MyTeaApp.Controllers
             // TODO - guardar o primeiro dia da quinzena 
             date = new DateTime(date.Year, date.Month, firstDay);
 
-
             // TODO - pegar id do user
             User uid = await _um.FindByEmailAsync(User.Identity.Name);
-            // TODO - user null?
 
 
             Record? existingRecord = null;
@@ -105,8 +103,6 @@ namespace MyTeaApp.Controllers
 
             return View(vm);
         }
-
-        
 
         [HttpPost]
         public async Task<IActionResult> Create(ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, RecordVM vm)
