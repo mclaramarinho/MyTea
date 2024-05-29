@@ -15,7 +15,6 @@
     {
         fortNight = DateTime.ParseExact(urlStartDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
     }
-    Console.WriteLine(fortNight.Day);
     int firstDayOfFortnight = 1;
     if(fortNight.Day > 15)
     {
@@ -23,10 +22,8 @@
     }
 
     DateTime fortnightStart = new DateTime(fortNight.Year, fortNight.Month, firstDayOfFortnight);
-    Console.WriteLine(fortnightStart);
     var fortnights = new List<SelectListItem>();
 
-    // Troquei o current year pra ser dinamico
     var currentYear = DateTime.Now.Year;
 
     for(int i = 1; i <= 12; i++)
@@ -146,7 +143,7 @@
                                         {
                                             <td class="g-col-1" id="fractionSlot_@((i * 15) + j)">
 
-                                                <input name="hours" type="number" class="" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
+                                                <input name="hours" type="number"  id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
 
                                                 <input name="dates" type="hidden" />
 
@@ -301,8 +298,6 @@
                         validateForm(ev);    
                     }
                 });
-                // e.stopImmediatePropagation()
-                validateForm(e);
             })
 
 
@@ -333,7 +328,6 @@
                 const slots = getSlotValues(index);
                 slots.forEach((v, i) => {
                     const slotEl = document.querySelector(`#fractionSlot_${v} input:nth-child(2)`);
-                    console.log(date);
                     slotEl.setAttribute("value", date);
                 });
             }
