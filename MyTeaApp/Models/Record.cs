@@ -12,8 +12,10 @@ namespace MyTeaApp.Models
         public float TotalHoursRecord { get; set; }
 
         [ForeignKey("UserID")]
-        public int? UserID;
+        public string? UserID;
         public virtual User User { get; set; }
+
+        public DateTime StartDate { get; set; }
 
         public ICollection<RecordFraction> RecordFraction { get; set; } = new List<RecordFraction>();
     }
