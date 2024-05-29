@@ -1,97 +1,265 @@
-@model MyTeaApp.Models.ViewModels.RecordVM;
+@using MyTeaApp.Models.ViewModels;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor _httpContextAccessor;
+@model RecordVM;
 
 @{
     ViewData["Title"] = "Create Record";
-    var quinzenas = new List<SelectListItem>();
+    var _http = _httpContextAccessor.HttpContext;
+
+    string? urlStartDate = _http.Request.Query["startDate"];
+
+    DateTime fortNight = DateTime.Now;
+
+    if (urlStartDate != null)
+    {
+        fortNight = DateTime.ParseExact(urlStartDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+    }
+    Console.WriteLine(fortNight.Day);
+    int firstDayOfFortnight = 1;
+    if(fortNight.Day > 15)
+    {
+        firstDayOfFortnight = 16;
+    }
+
+    DateTime fortnightStart = new DateTime(fortNight.Year, fortNight.Month, firstDayOfFortnight);
+    Console.WriteLine(fortnightStart);
+    var fortnights = new List<SelectListItem>();
+
+    // Troquei o current year pra ser dinamico
     var currentYear = DateTime.Now.Year;
 
-    for (int i = 0; i < 24; i++)
+    for(int i = 1; i <= 12; i++)
     {
-        var startDate = new DateTime(currentYear, 1, 1).AddDays(i * 15);
-        var endDate = startDate.AddDays(14);
-        quinzenas.Add(new SelectListItem
+        int first = 1; 
+        int second = 16;
+
+        // first fortnight
+        DateTime startDate = new DateTime(currentYear, i, first);
+        DateTime endDate = startDate.AddDays(14);
+        bool isSelected = (startDate.Day == fortnightStart.Day && startDate.Month == fortnightStart.Month && startDate.Year == fortnightStart.Year);
+
+        fortnights.Add(new SelectListItem
                 {
                     Value = $"{startDate:yyyy-MM-dd}",
-                    Text = $"{startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy}"
+                    Text = $"{startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy}",
+                    Selected = isSelected
                 });
+
+        // second fortnight
+        int daysInSecondFortnight = 1;
+        DateTime tempDate = new DateTime(currentYear, i, second);
+        do
+        {
+            tempDate = tempDate.AddDays(1);
+            if(tempDate.Month == i)
+            {
+                daysInSecondFortnight++;
+            }
+        } while (tempDate.Month == i);
+
+        startDate = new DateTime(currentYear, i, second);
+        endDate = startDate.AddDays(daysInSecondFortnight);
+        isSelected = (startDate.Day == fortnightStart.Day && startDate.Month == fortnightStart.Month && startDate.Year == fortnightStart.Year);
+
+        fortnights.Add(new SelectListItem
+                {
+                    Value = $"{startDate:yyyy-MM-dd}",
+                    Text = $"{startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy}",
+                    Selected = isSelected
+                });
+
     }
+
+  
 }
 
-<h1>Create Record</h1>
+<div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none" id="mensagemErro">
+    Some weekday did not reach the 8 hour minimum. Please review it, before submitting!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
-<h4>Record</h4>
-<hr />
-<div class="row">
-    <div class="col-md-12">
-        <form asp-action="Create" method="post">
-            <div class="form-group">
-                <label for="quinzenaSelector">Select Fortnight</label>
-                <select id="quinzenaSelector" class="form-control">
-                    @foreach (var quinzena in quinzenas)
-                    {
-                        <option value="@quinzena.Value">@quinzena.Text</option>
-                    }
-                </select>
-            </div>
-            <div id="records-list">
-                <table id="records-table" class="table">
-                    <thead>
-                        <tr>
-                            <th>Charge Codes</th>
-                            @for (int i = 0; i < 15; i++)
-                            {
-                                <th class="date-column">@DateTime.Now.AddDays(i).ToString("dd/MM/yyyy")</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (int i = 0; i < 4; i++)
+<style>
+    #mensagemErro {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
+</style>
+
+
+@* - IF RECORD NOT NULL SHOW FIELDS FILLED WITH DB DATA *@
+
+
+
+@* - SHOW IF EXISTING RECORD IS NULL *@
+    <div class="col flex-wrap text-wrap table-responsive">
+        <h1>Create Record</h1>
+
+        <h4>Record</h4>
+        @* <hr /> *@
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="quinzenaSelector">Select Fortnight</label>
+                    <select id="quinzenaSelector" class="form-control">
+                    @foreach (var quinzena in fortnights)
                         {
-                            <tr>
-                                <td>
-                                    <div>
-
-                                        @Html.LabelFor(model => model.SelectedWBS, "WBS:")
-                                        @Html.DropDownListFor(model => model.SelectedWBS, Model.WBS, "Selecione...", new { @class = "form-control", name = "RecordFraction[" + @i + "].ChargeCode" })
-                                        @Html.ValidationMessageFor(model => model.SelectedWBS, "")
-
-                                    </div>
-                                </td>
-                                @for (int j = 0; j < 15; j++)
+                            <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
+                        }
+                    </select>
+                </div>
+                <form asp-action="Create" method="post">
+                    <div id="records-list" class="">
+                        <table id="records-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap">Charge Codes</th>
+                                    @for (int i = 0; i < 15; i++)
+                                    {
+                                        <th class="date-column text-center"></th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < 4; i++)
                                 {
-                                    <td id="fractionSlot_@((i * 15) + j)">
-                                        <input name="RecordFraction[@i].TotalHoursFraction" class="form-control" />
-                                        <input name="RecordFraction[@i].RecordDate" type="hidden" value="@DateTime.Now.AddDays(j).ToString("yyyy-MM-dd")" />
+                                    <tr class="grid">
+                                        <td class="g-col-auto">
+                                            <div>
+                                                <select class="form-select" asp-items="Model.WBS" name="wbs"></select>
+
+                                            </div>
+                                        </td>
+                                        @for (int j = 0; j < 15; j++)
+                                        {
+                                            <td class="g-col-1" id="fractionSlot_@((i * 15) + j)">
+
+                                                <input name="hours" type="number" class="" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
+
+                                                <input name="dates" type="hidden" />
+
+                                            </td>
+                                        }
+                                        <td class="g-col-1">
+                                        <input id="rowTotal_@i" type="number" class="row-total" disabled style="max-width: 40px;" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <th>Total</th>
+                                @for (int i = 0; i < 15; i++)
+                                {
+                                    <td class="col-total">
+                                        <input id="colTotal_@i" type="number" class="col-total" disabled style="max-width: 40px;" />
                                     </td>
                                 }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+                                <td class="col-total">
+                            <input type="number" id="result" disabled class="" style="max-width: 40px;" />
+                                </td>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <input type="submit" value="Create" class="btn btn-primary" id="submitRecord_btn" />
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
+    </div>
 
 @section Scripts {
     @{
+        await Html.RenderPartialAsync("_CalcInputScriptsPartial");
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
         await Html.RenderPartialAsync("_IdentifyHolidaysScriptPartial");
     }
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        document.addEventListener('DOMContentLoaded', async function () {
+            function validateForm(e) { 
+
+                var divMensagemErro = document.getElementById('mensagemErro'); 
+                var inputs = document.querySelectorAll('.col-total'); 
+                var aprovado = true; 
+                inputs.forEach((input) => { 
+                    var value = parseInt(input.value); 
+                    if (value < 8) { 
+                        divMensagemErro.style.display = 'block'; 
+                        aprovado = false; 
+                    } 
+                }); 
+
+                var toasterType = aprovado ? "success" : "error";
+                // !aprovado && e.stopImmediatePropagation();
+                console.log("ToasterType: " + toasterType); return aprovado; 
+            }
+
+
+            // TODO - INICIAR NA QUINZENA ATUAL OU NO PARAM START DATE
+
+
+            async function getUrlParams() {
+                const url = window.location.href;
+
+                let startDate = new Date();
+
+                if (url.includes("startDate=")) {
+                    const urlStartDate = url.split("startDate=")[1];
+                    const date = new Date(urlStartDate);
+                    date.setDate(date.getDate())
+                    
+                    startDate = date;
+                } else {
+                    const todayDate = startDate.getDate();
+
+                    let firstDayOfFortnight = 1;
+                    if(todayDate > 15){
+                        firstDayOfFortnight = 15;
+                    }
+
+                    const date = new Date();
+                    date.setDate(firstDayOfFortnight);
+                    startDate = date;
+                }
+                const fortnightHolidays = await hasHolidayInFortnight(startDate);
+                generateTable(startDate.toISOString(), fortnightHolidays)
+            }
+
             var quinzenaSelector = document.getElementById('quinzenaSelector');
             var recordsTable = document.getElementById('records-table');
             var dateColumns = recordsTable.querySelectorAll('.date-column');
+
+            await getUrlParams();
+
+            const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
+
+            inputElements.forEach(input => {
+                const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
+
+                input.addEventListener('input', event => handleInput(event, rowIndex, colIndex));
+            });
+
+            /**
+             * description - when no other input (except by holidays) is provided, submitting will update the total hours
+             *  
+             */
+            $("#submitRecord_btn").on("mouseup", (e) => {
+                inputElements.forEach(input => {
+                    const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
+                    handleInput(event, rowIndex, colIndex)
+                });
+                // e.stopImmediatePropagation()
+                validateForm(e);
+            })
 
 
             function generateTable(startDate, fortnightHolidaysIndexes = []) {
@@ -100,9 +268,12 @@
                 for (var i = 0; i < 15; i++) {
                     var date = new Date(startDate);
                     date.setDate(date.getDate() + i + 1);
+                    let month = months[date.getMonth()];
 
-                    dateColumns[i].textContent = date.toLocaleDateString('pt-BR');
-
+                    const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+                    setHiddenDateValues(i, stringDate);
+                    
+                    dateColumns[i].textContent = `${month}\n${date.getDate().toString().padStart(2, '0')}`;
 
                     if (fortnightHolidaysIndexes.includes(i)) {
                         markHolidaySlots(i);
@@ -110,20 +281,35 @@
                 }
             }
 
+            /**
+             * description sets the hidden date values properly
+             * returns void
+             */
+            function setHiddenDateValues(index, date) { 
+                const slots = getSlotValues(index);
+                slots.forEach((v, i) => {
+                    const slotEl = document.querySelector(`#fractionSlot_${v} input:nth-child(2)`);
+                    console.log(date);
+                    slotEl.setAttribute("value", date);
+                });
+            }
+
             quinzenaSelector.addEventListener('change', async function () {
                 var selectedDate = new Date(this.value);
 
-                const fortnightHolidays = await hasHolidayInFortnight(selectedDate);
+                // const fortnightHolidays = await hasHolidayInFortnight(selectedDate);
 
-                generateTable(selectedDate, fortnightHolidays);
+                window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString();
+                
+                // generateTable(selectedDate, fortnightHolidays);
             });
 
-            let fortnightHolidays = null;
-            hasHolidayInFortnight(new Date(quinzenaSelector.value)).then(r => {
-                fortnightHolidays = r;
-                generateTable(new Date(quinzenaSelector.value), fortnightHolidays);
+            // hasHolidayInFortnight(new Date(quinzenaSelector.value)).then(r => {
+            //     fortnightHolidays = r;
+            //     // generateTable(new Date(quinzenaSelector.value), fortnightHolidays);
 
-            });
+            // });
+           
         });
     </script>
 }
