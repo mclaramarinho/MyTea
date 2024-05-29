@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MyTeaApp.Data;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -31,10 +33,11 @@ namespace MyTeaApp.Models
 
 
         public ICollection<Record> Records { get; set; } = new List<Record>();
-
-        public void SetUID()
+        public void SetUID(ApplicationDbContext db)
         {
-            this.UserID = ++_uid;
+            int maxId = db.Users.Max(u => u.UserID);
+
+            this.UserID = maxId + 1;
         }
     }
 }
