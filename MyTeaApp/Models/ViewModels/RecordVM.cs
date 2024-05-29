@@ -1,17 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace MyTeaApp.Models.ViewModels
 {
     public class RecordVM
     {
-        public List<RecordFraction> RecordFractions;
-
-        public int[] SelectedWBS = [0, 0, 0, 0];
-
+        public Record? ExistingRecord { get; set; }
         public List<SelectListItem> WBS;
-
-        public WBS WbsCod;
-
     }
 
 }

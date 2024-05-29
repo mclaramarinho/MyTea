@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -83,7 +84,7 @@ namespace MyTeaApp.Controllers
         public async Task<IActionResult> Register()
         {
             // Not allowed to register
-            if (!_isAllowedToRegister()) 
+            if (!await _isAllowedToRegister()) 
             {
                 return RedirectToAction(nameof(Login));
             }
@@ -102,7 +103,7 @@ namespace MyTeaApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM vm)
         {
-            if (!_isAllowedToRegister())
+            if (!await _isAllowedToRegister())
             {
                 if (!_isFirstRegister())
                 {
@@ -110,8 +111,17 @@ namespace MyTeaApp.Controllers
                 }
                 return View(vm);
             }
-            bool shouldLoginAfter = !_isFirstRegister();
-            Department dpt = _db.Department.First(d => d.DepartmentID == vm.DepartmentID);
+            bool shouldLoginAfter = _isFirstRegister();
+
+            ValidationResponse validateDepId = vm.ValidateDepartmentID();
+            ModelState.AddModelError("DepartmentId", validateDepId.ErrorMessage ?? "");
+
+            Department dpt = _db.Department.FirstOrDefault(d => d.DepartmentID == vm.DepartmentID);
+            
+            ValidationResponse validateRoleName = vm.ValidateRole();
+            ModelState.AddModelError("RoleName", validateDepId.ErrorMessage ?? "");
+
+            if (!vm.FieldsValid) { return View(vm); }
 
             User user = new User()
             {
@@ -123,8 +133,9 @@ namespace MyTeaApp.Controllers
                 Department = dpt,
                 UserActive = true
             };
-
+            user.SetUID();
             var result = await _userManager.CreateAsync(user, vm.Password);
+
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, vm.RoleName);
@@ -159,7 +170,7 @@ namespace MyTeaApp.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginVM vm)
-        {   
+        {
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Verify all the information. Something's wrong...");
@@ -172,7 +183,6 @@ namespace MyTeaApp.Controllers
             {
                 return _redirectAfterLogin();
             }
-
 
             ModelState.AddModelError("", "Login failed");
 
@@ -194,6 +204,58 @@ namespace MyTeaApp.Controllers
         // LOGOUT END ---------------------------------------------------------------------------------------------------
 
 
+        // EDIT ---------------------------------------------------------------------------------------------------
+        
+        [HttpGet]
+        [Authorize(Policy = "RequireAdmin")]
+        public async Task<IActionResult> EditUser(int uid) {
+            User user = await _db.Users.FirstAsync(u => u.UserID == uid);
+            if (user == null)
+            {
+                // do something if no user found
+            }
+            List<Department> departments = await _db.Department.ToListAsync();
+            List<IdentityRole> rolesDb = await _db.Roles.ToListAsync();
+
+            var role = await _userManager.GetRolesAsync(user);
+
+            EditUserVM vm = new EditUserVM();
+            vm.Populate(user, role[0], departments, rolesDb);
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "RequireAdmin")]
+        public async Task<IActionResult> EditUser(int uid, [Bind("UserID, FullName, Email, DepartmentId, RoleName")]EditUserVM data)
+        {
+            User user = await _db.Users.FirstAsync(u => u.UserID == uid);
+
+            var role = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRoleAsync(user, role[0]);
+
+            Department department = await _db.Department.FirstAsync(d => d.DepartmentID == int.Parse(data.DepartmentId));
+
+            user.Department = department;
+            user.FullName = data.FullName;
+            user.Email = data.Email;
+            user.UserName = data.Email;
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                return View(data);
+            }
+            var updateRoleResult = await _userManager.AddToRoleAsync(user, data.RoleName);
+            if(!updateRoleResult.Succeeded) { 
+                return View(data);
+            }
+
+            return RedirectToAction(nameof(Index));
+
+        }
+      
+        // EDIT END ---------------------------------------------------------------------------------------------------
 
 
 
@@ -205,7 +267,7 @@ namespace MyTeaApp.Controllers
                 return RedirectToAction("Dashboard", "Home");
             }else if(User.IsInRole("Employee"))
             {
-                return RedirectToAction("Create", "Record");
+                return RedirectToAction("Create", "Records");
             }
             else
             {
@@ -259,7 +321,7 @@ namespace MyTeaApp.Controllers
 
             return selectItems;
         }
-        private bool _isAllowedToRegister()
+        private async Task<bool> _isAllowedToRegister()
         {
             if (!_signInManager.IsSignedIn(User))
             {
@@ -271,9 +333,18 @@ namespace MyTeaApp.Controllers
                     return false;
                 }
             }
-            // If someone is logged in
+            // If someone is logged ins
             else
             {
+                if(User.Identity == null)
+                {
+                    return false;
+                }
+
+                User user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                if(user == null) {
+                    return false;
+                }
                 // Check if the logged user is Admin
                 // If not
                 if (!User.IsInRole("Admin"))
@@ -285,6 +356,54 @@ namespace MyTeaApp.Controllers
 
             return true;
         }
+
+        public async Task<IActionResult> Delete(string? userId)
+        {
+            if (userId == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null && currentUser.Id == userId)
+            {
+                await _userManager.DeleteAsync(user);
+                return await Logout();
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return BadRequest("Failed to delete user.");
+            }
+        }
+
 
     }
 }

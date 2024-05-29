@@ -11,22 +11,22 @@
             <div class="mb-3">
                 <label class="form-label" asp-for="FullName"></label>
                 <input class="form-control" asp-for="FullName" />
-                <span asp-validation-for="FullName"></span>
+                <span asp-validation-for="FullName" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label class="form-label" asp-for="Email"></label>
                 <input class="form-control" asp-for="Email" />
-                <span asp-validation-for="Email"></span>
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label class="form-label" asp-for="Password"></label>
                 <input class="form-control" asp-for="Password" />
-                <span asp-validation-for="Password"></span>
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label class="form-label" asp-for="ConfirmPassword"></label>
                 <input class="form-control" asp-for="ConfirmPassword" />
-                <span asp-validation-for="ConfirmPassword"></span>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
         </div>
         <div class="col-12 col-md-6 align-content-between">
@@ -34,21 +34,21 @@
                 <div class="mb-3 col-6 col-md-12">
                     <label class="form-label" asp-for="AdmissionDate"></label>
                     <input class="form-control" asp-for="AdmissionDate" />
-                    <span asp-validation-for="AdmissionDate"></span>
+                    <span asp-validation-for="AdmissionDate" class="text-danger"></span>
                 </div>
                 <div class="mb-3 col-6 col-md-12">
                     <label class="form-label" asp-for="DepartmentID"></label>
                     <select asp-for="DepartmentID" class="form-select" asp-items="@Model.Departments">
-                        <option>Select somethig</option>
+                        <option value="0">Select somethig</option>
                     </select>
-                    <span asp-validation-for="DepartmentID"></span>
+                    <span asp-validation-for="DepartmentID" class="text-danger"></span>
                 </div>
                 <div class="mb-3 mb-md-4 col-6 col-md-12">
                     <label class="form-label" asp-for="RoleName"></label>
                     <select asp-for="RoleName" class="form-select" asp-items="@Model.Roles">
-                        <option>Select somethig</option>
+                        <option value="empty">Select something</option>
                     </select>
-                    <span asp-validation-for="RoleName"></span>
+                    <span asp-validation-for="RoleName" class="text-danger"></span>
                 </div>
                 <div class="mt-3 mt-md-4 col-6 align-content-center">
                     <button type="submit" class="btn btn-md btn-success m-auto m-md-0">SUBMIT</button>
