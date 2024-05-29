@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity;
-@inject SignInManager<User> _signInManager;
+
+@inject SignInManager<User> _sm;
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,9 +18,16 @@
         <partial name="_NavbarPartial" />
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        @if(_sm.IsSignedIn(User)){
+            <main class="row">
+                    <partial name="_SideMenuPartial"></partial>
+                @RenderBody()
+            </main>
+        }
+        else
+        {
             @RenderBody()
-        </main>
+        }
     </div>
 
     <footer class="border-top footer text-muted">
