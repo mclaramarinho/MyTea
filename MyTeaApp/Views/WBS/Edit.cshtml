@@ -4,55 +4,56 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<div class="col">
+    <h1>Edit</h1>
 
-<h4>WBS</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="WbsId" />
-            <div class="form-group">
-                <label asp-for="WbsName" class="control-label"></label>
-                <input asp-for="WbsName" class="form-control" />
-                <span asp-validation-for="WbsName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="WbsCod" class="control-label"></label>
-                <input asp-for="WbsCod" class="form-control" />
-                <span asp-validation-for="WbsCod" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <!--Radio IsChargeable-->
-            <div class="form-group">
-                <label asp-for="IsChargeable" class="control-label"></label>
-                <div class="form-check">
-                    <input type="radio" asp-for="IsChargeable" class="form-check-input" value="true" checked>
-                    <label class="form-check-label">Yes</label>
+    <h4>WBS</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="WbsId" />
+                <div class="form-group">
+                    <label asp-for="WbsName" class="control-label"></label>
+                    <input asp-for="WbsName" class="form-control" />
+                    <span asp-validation-for="WbsName" class="text-danger"></span>
                 </div>
-                <div class="form-check">
-                    <input type="radio" asp-for="IsChargeable" class="form-check-input" value="false">
-                    <label class="form-check-label">Not</label>
+                <div class="form-group">
+                    <label asp-for="WbsCod" class="control-label"></label>
+                    <input asp-for="WbsCod" class="form-control" />
+                    <span asp-validation-for="WbsCod" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="IsChargeable" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <!--Radio IsChargeable-->
+                <div class="form-group">
+                    <label asp-for="IsChargeable" class="control-label"></label>
+                    <div class="form-check">
+                        <input type="radio" asp-for="IsChargeable" class="form-check-input" value="true" checked>
+                        <label class="form-check-label">Yes</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" asp-for="IsChargeable" class="form-check-input" value="false">
+                        <label class="form-check-label">Not</label>
+                    </div>
+                    <span asp-validation-for="IsChargeable" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
