@@ -85,15 +85,19 @@
          slotsValues.forEach((v, i) => {
              const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
 
-             if(isHoliday && i === slotsValues.length - 1){
-                 slotEl.setAttribute("value", 8);
-                 slotEl.setAttribute("disabled", true);
-                 slotEl.setAttribute("readonly", true);
-             } else if (isWeekend) {
-                 slotEl.setAttribute("disabled", true);
-                 slotEl.setAttribute("readonly", true);
-             } 
-         })
+             if (slotEl) {
+                 if (isHoliday && i === slotsValues.length - 1) {
+                     slotEl.setAttribute("value", 8);
+                     slotEl.setAttribute("disabled", true);
+                     slotEl.setAttribute("readonly", true);
+                 } else if (isWeekend) {
+                     slotEl.setAttribute("disabled", true);
+                     slotEl.setAttribute("readonly", true);
+                 }
+             } else {
+                 console.log(`Elemento não encontrado: #fractionSlot_${v} > input`);
+             }
+         });
      }
 
      // =========================================
