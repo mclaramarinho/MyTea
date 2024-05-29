@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Create Record";
     var quinzenas = new List<SelectListItem>();
-    var currentYear = DateTime.Now.Year; 
+    var currentYear = DateTime.Now.Year;
 
     for (int i = 0; i < 24; i++)
     {
@@ -14,9 +14,7 @@
                     Value = $"{startDate:yyyy-MM-dd}",
                     Text = $"{startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy}"
                 });
-
     }
-
 }
 
 <h1>Create Record</h1>
@@ -85,10 +83,9 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        // ======================================
-        await Html.RenderPartialAsync("_IdentifyHolidaysOrWeekendScriptPartial");
-        // ======================================
+        await Html.RenderPartialAsync("_IdentifyHolidaysScriptPartial");
     }
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -96,6 +93,7 @@
             var recordsTable = document.getElementById('records-table');
             var dateColumns = recordsTable.querySelectorAll('.date-column');
 
+            // ==================================
 
             function generateTable(startDate, fortnightHolidaysIndexes = []) {
                 resetHolidaySlots();
@@ -106,12 +104,14 @@
 
                     dateColumns[i].textContent = date.toLocaleDateString('pt-BR');
 
-                    // ==========================
+
                     if (fortnightHolidaysIndexes.includes(i) || isWeekend(date)) {
                         markHolidaySlots(i);
                     }
                 }
             }
+
+            // ==================================
 
             quinzenaSelector.addEventListener('change', async function () {
                 var selectedDate = new Date(this.value);
