@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions;
 using MyTeaApp.Data;
 using MyTeaApp.Models;
 using MyTeaApp.Models.ViewModels;
-using NuGet.Protocol;
 
 namespace MyTeaApp.Controllers
 {
@@ -80,7 +73,7 @@ namespace MyTeaApp.Controllers
 
             // TODO - pegar id do user
             User uid = await _um.FindByEmailAsync(User.Identity.Name);
-
+            
 
             Record? existingRecord = null;
             // TODO - procurar no banco de dados os records cuja startDate e userid sejam os procurados
@@ -100,7 +93,7 @@ namespace MyTeaApp.Controllers
             // Recupere os dados do banco de dados para o dropdown
             vm.WBS = _getWbsSelectList();
 
-
+            
             return View(vm);
         }
 
@@ -156,7 +149,7 @@ namespace MyTeaApp.Controllers
             }
 
             vm.WBS = _getWbsSelectList();
-                return View(vm);
+            return View(vm);
         }
 
 
