@@ -357,5 +357,53 @@ namespace MyTeaApp.Controllers
             return true;
         }
 
+        public async Task<IActionResult> Delete(string? userId)
+        {
+            if (userId == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required.");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null && currentUser.Id == userId)
+            {
+                await _userManager.DeleteAsync(user);
+                return await Logout();
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return BadRequest("Failed to delete user.");
+            }
+        }
+
+
     }
 }
