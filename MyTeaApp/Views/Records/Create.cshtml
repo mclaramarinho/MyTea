@@ -120,7 +120,7 @@
                         }
                     </select>
                 </div>
-                <form asp-action="Create" method="post">
+                <form asp-action="Create" method="post" id="registerRecordForm">
                     <div id="records-list" class="">
                         <table id="records-table" class="table">
                             <thead>
@@ -239,8 +239,8 @@
                 }); 
 
                 var toasterType = aprovado ? "success" : "error";
-                // !aprovado && e.stopImmediatePropagation();
-                console.log("ToasterType: " + toasterType); return aprovado; 
+                !aprovado && formEvent.preventDefault();
+                return aprovado; 
             }
 
 
@@ -297,6 +297,9 @@
                 inputElements.forEach(input => {
                     const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
                     handleInput(event, rowIndex, colIndex)
+                    document.getElementById("registerRecordForm").onsubmit = (ev) => {
+                        validateForm(ev);    
+                    }
                 });
                 // e.stopImmediatePropagation()
                 validateForm(e);
