@@ -81,21 +81,21 @@
              index + (15 * 3),
          ];
 
-
          slotsValues.forEach((v, i) => {
              const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
 
-             if (slotEl) {
-                 if (isHoliday && i === slotsValues.length - 1) {
-                     slotEl.setAttribute("value", 8);
-                     slotEl.setAttribute("disabled", true);
-                     slotEl.setAttribute("readonly", true);
-                 } else if (isWeekend) {
-                     slotEl.setAttribute("disabled", true);
-                     slotEl.setAttribute("readonly", true);
-                 }
+             if (isHoliday) {
+                 slotEl.disabled = true;
+                 slotEl.readonly = true;                
+                 if (i === slotsValues.length - 1) {
+                     slotEl.value = 8;
+                 }  
+             } else if (isWeekend) {
+                 slotEl.disabled = true;
+                 slotEl.readonly = true;
              } else {
-                 console.log(`Elemento não encontrado: #fractionSlot_${v} > input`);
+                 slotEl.disabled = false;
+                 slotEl.readonly = false;
              }
          });
      }
@@ -108,3 +108,4 @@
      }
 
 </script>
+    

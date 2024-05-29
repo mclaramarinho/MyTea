@@ -100,21 +100,15 @@
 
                 for (var i = 0; i < 15; i++) {
                     var date = new Date(startDate);
-                    date.setDate(date.getDate() + i);
+                    date.setDate(date.getDate() + i + 1);
 
-                    const isHoliday = fortnightHolidaysIndexes.includes(i);
+                    dateColumns[i].textContent = date.toLocaleDateString('pt-BR');
+
                     const isWeekendDay = isWeekend(date);
+                    const isHoliday = fortnightHolidaysIndexes.includes(i);
 
-                    const dateColumn = document.querySelector(`#dateColumn_${i}`);
-                    
-                    if (dateColumn) {
-                        dateColumn.textContent = date.toLocaleDateString('pt-BR');
-                    } else {
-                        console.log(`Elemento não encontrado: #dateColumn_${i}`);
-                    }
 
-                    markHolidaySlots(i, isWeekendDay, isHoliday);
-                    
+                   markHolidaySlots(i, isWeekendDay, isHoliday);
                 }
             }
 
