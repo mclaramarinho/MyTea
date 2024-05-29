@@ -261,5 +261,29 @@ namespace MyTeaApp.Controllers
         {
             return _context.Records.Any(e => e.RecordID == id);
         }
+
+        /// <summary>
+        /// Retrieves all the WBS from database and returns a List of SelectListItem
+        /// </summary>
+        /// <returns>List with the SelectListItems for each WBS</returns>
+        private List<SelectListItem> _getWbsSelectList()
+        {
+            List<SelectListItem> selectListItems = new List<SelectListItem>();
+            var itemsFromDatabase = _context.WBS.ToList();
+            selectListItems.Add(new SelectListItem
+            {
+                Text = "Select charge code",
+                Value = "-1"
+            });
+            itemsFromDatabase.ForEach(i =>
+            {
+                selectListItems.Add(new SelectListItem
+                {
+                    Text = i.WbsName + " - " + i.WbsCod,
+                    Value = i.WbsCod,
+                });
+            });
+            return selectListItems;
+        }
     }
 }
