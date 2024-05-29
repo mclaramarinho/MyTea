@@ -13,7 +13,6 @@
     rolesNames.ForEach(r => roles.Add(new SelectListItem { Text = r, Value = r, Selected = ViewData["filter.role"]?.ToString() == r }));
 }
 
-
 <form class="row mb-5" asp-action="Index" asp-controller="Account" method="get">
     <div class="col-2">
         <label class="form-label">Search by name</label>
@@ -33,12 +32,12 @@
 
     </div>
     <div class="col-2">
-        <label class="form-label">Filter by department</label>
+        <label class="form-label">By department</label>
         <select class="form-select" asp-items="deps" name="department">
         </select>
     </div>
     <div class="col-2">
-        <label class="form-label">Filter by role</label>
+        <label class="form-label">By role</label>
         <select class="form-select" asp-items="roles" name="role">
         </select>
     </div>
