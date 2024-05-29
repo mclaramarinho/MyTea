@@ -102,12 +102,15 @@
                     var date = new Date(startDate);
                     date.setDate(date.getDate() + i + 1);
 
-                    dateColumns[i].textContent = date.toLocaleDateString('pt-BR');
+                    const isHoliday = fortnightHolidaysIndexes.includes(i);
+                    const isWeekendDay = isWeekend(date);
+
+                    const dateColumn = document.querySelector(`#dateColumn_${i}`);
+                    dateColumn.textContent = date.toLocaleDateString('pt-BR');
 
 
-                    if (fortnightHolidaysIndexes.includes(i) || isWeekend(date)) {
-                        markHolidaySlots(i);
-                    }
+                    markHolidaySlots(i, isWeekendDay, isHoliday);
+                    
                 }
             }
 

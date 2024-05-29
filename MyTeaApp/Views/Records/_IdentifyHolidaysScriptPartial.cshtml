@@ -72,7 +72,7 @@
 
      // =========================================
 
-     function markHolidaySlots(index) {
+     function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
 
          const slotsValues = [
              index,
@@ -85,8 +85,14 @@
          slotsValues.forEach((v, i) => {
              const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
 
-             slotEl.setAttribute("disabled", true);
-             slotEl.setAttribute("value", 8);
+             if(isHoliday && i === slotsValues.length - 1){
+                 slotEl.setAttribute("value", 8);
+                 slotEl.setAttribute("disabled", true);
+                 slotEl.setAttribute("readonly", true);
+             } else if (isWeekend) {
+                 slotEl.setAttribute("disabled", true);
+                 slotEl.setAttribute("readonly", true);
+             } 
          })
      }
 
