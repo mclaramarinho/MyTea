@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions;
 using MyTeaApp.Data;
 using MyTeaApp.Models;
 using MyTeaApp.Models.ViewModels;
-using NuGet.Protocol;
 
 namespace MyTeaApp.Controllers
 {
@@ -97,22 +90,9 @@ namespace MyTeaApp.Controllers
 
 
             // Recupere os dados do banco de dados para o dropdown
-            var itemsFromDatabase = _context.WBS.ToList();
-            //vm.WBS =
-            //[
-            //    new SelectListItem
-            //    {
-            //        Text = "Select charge code",
-            //        Value = "-1"
-            //    },
-            //];
-            // Mapeie os dados do banco de dados para SelectListItem
-            vm.WBS = itemsFromDatabase.Select(item => new SelectListItem
-            {
-                Text = item.WbsName + " - " + item.WbsCod,
-                Value = item.WbsCod,
-            }).ToList();
+            vm.WBS = _getWbsSelectList();
 
+            
             return View(vm);
         }
 
@@ -135,10 +115,10 @@ namespace MyTeaApp.Controllers
             
             for(int linha = 0; linha < 4; linha++)
             {
-                //if (wbs.ElementAt(linha) == "-1")
-                //{
-                //    continue;
-                //}
+                if (wbs.ElementAt(linha) == "-1")
+                {
+                    continue;
+                }
                 WBS w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
 
                 for(int col = 0; col < 15; col++)
@@ -167,7 +147,8 @@ namespace MyTeaApp.Controllers
                 }
             }
 
-                return View(vm);
+            vm.WBS = _getWbsSelectList();
+            return View(vm);
         }
 
 
