@@ -53,28 +53,8 @@ public class DbInitializer
         }
     }
 
-    
-    /// <summary>
-    /// Initializes database.
-    /// </summary>
-    /// 
-    /// <param name="serviceProvider">IServiceProvider</param>
-    /// <returns>Void</returns>
-    public static async Task Initialize(IServiceProvider serviceProvider)
+    private static void CreateDefaultWBS(ApplicationDbContext context)
     {
-        _sp = serviceProvider;
-
-        var context = _sp
-            .GetRequiredService<ApplicationDbContext>();
-
-        
-        context.Database.EnsureCreated();
-
-        await CreateRoles();
-
-        await CreateDefaultDepartment();
-
-        
         if (context.WBS.Count() >= 6)
         {
             return;
@@ -130,5 +110,28 @@ public class DbInitializer
 
             context.SaveChanges();
         }
+    }
+    /// <summary>
+    /// Initializes database.
+    /// </summary>
+    /// 
+    /// <param name="serviceProvider">IServiceProvider</param>
+    /// <returns>Void</returns>
+    public static async Task Initialize(IServiceProvider serviceProvider)
+    {
+        _sp = serviceProvider;
+
+        var context = _sp
+            .GetRequiredService<ApplicationDbContext>();
+
+        
+        context.Database.EnsureCreated();
+
+        await CreateRoles();
+
+        await CreateDefaultDepartment();
+
+        CreateDefaultWBS(context);
+
     }
 }
