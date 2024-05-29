@@ -78,10 +78,8 @@ namespace MyTeaApp.Controllers
             // TODO - guardar o primeiro dia da quinzena 
             date = new DateTime(date.Year, date.Month, firstDay);
 
-
             // TODO - pegar id do user
             User uid = await _um.FindByEmailAsync(User.Identity.Name);
-            // TODO - user null?
 
             Record? existingRecord = null;
             // TODO - procurar no banco de dados os records cuja startDate e userid sejam os procurados
