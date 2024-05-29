@@ -194,7 +194,38 @@
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         document.addEventListener('DOMContentLoaded', async function () {
-            function validateForm(e) { 
+            function isSlotEnabled() {
+                for (let option = 0; option < 4; option++){
+                    const optionEl = document.querySelectorAll(`.wbsSelector`)[option];
+
+                    console.log(optionEl.value);
+                    
+                    if (optionEl.value === "-1") {
+                        for (let slot = 0; slot < 15; slot++) {
+                            const slotIndex = (15 * option) + slot;
+                            const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+                            if (!slotEl.classList.contains("holidaySlot")) {
+                                slotEl.setAttribute("readonly", true);
+                            }
+                        }
+                    } else {
+                        for (let slot = 0; slot < 15; slot++) {
+                            const slotIndex = (15 * option) + slot;
+                            const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+                            if (!slotEl.classList.contains("holidaySlot")) {
+                                slotEl.removeAttribute("readonly");
+                            }
+                        }
+                    }
+                }
+            }
+            document.querySelectorAll(".wbsSelector").forEach(i => { 
+                i.addEventListener("change", e => {
+                    isSlotEnabled();
+                })
+            })
+
+            function validateForm(formEvent) { 
 
                 var divMensagemErro = document.getElementById('mensagemErro'); 
                 var inputs = document.querySelectorAll('.col-total'); 
@@ -248,6 +279,7 @@
             var dateColumns = recordsTable.querySelectorAll('.date-column');
 
             await getUrlParams();
+            isSlotEnabled();
 
             const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
 
