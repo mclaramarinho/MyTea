@@ -4,66 +4,68 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="col">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
-<form asp-controller="WBS" asp-action="Index" method="get">
     <p>
-        Title: <input type="text" name="filtroWbs" />
-        <input type="submit" value="Filter" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Create">Create New</a>
     </p>
-</form>
+
+    <form asp-controller="WBS" asp-action="Index" method="get">
+        <p>
+            Title: <input type="text" name="filtroWbs" />
+            <input type="submit" value="Filter" /> |
+            <a asp-action="Index">Back to List</a>
+        </p>
+    </form>
 
 
-@if (TempData["ToasterType"] != null)
-{
-    Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
-}
+    @if (TempData["ToasterType"] != null)
+    {
+        Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
+    }
 
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.WbsName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.WbsCod)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsChargeable)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.WbsName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WbsCod)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsChargeable)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.WbsId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.WbsId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.WbsId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.WbsName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.WbsCod)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsChargeable)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.WbsName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.WbsCod)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsChargeable)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.WbsId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.WbsId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.WbsId">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+
+</div>
