@@ -53,35 +53,11 @@ public class DbInitializer
         }
     }
 
-    
-    /// <summary>
-    /// Initializes database.
-    /// </summary>
-    /// 
-    /// <param name="serviceProvider">IServiceProvider</param>
-    /// <returns>Void</returns>
-    public static async Task Initialize(IServiceProvider serviceProvider)
+    private static async Task CreateDefaultWBS(ApplicationDbContext context)
     {
-        _sp = serviceProvider;
-
-        var context = _sp
-            .GetRequiredService<ApplicationDbContext>();
-
-        
-        context.Database.EnsureCreated();
-
-        await CreateRoles();
-
-        await CreateDefaultDepartment();
-
-        if (context.WBS.Any())
+        List<WBS> wbs = new List<WBS>()
         {
-            return;
-        }
-        else
-        {
-            context.WBS.AddRange(
-                new WBS
+            new WBS
                 {
                     WbsName = "Vacation",
                     WbsCod = "WBS0085749",
@@ -116,11 +92,32 @@ public class DbInitializer
                     Description = "Development - employee",
                     IsChargeable = true,
                 }
-
-
-            );
-
-            context.SaveChanges();
+        };
+        foreach (var w in wbs)
+        {
+            if (context.WBS.Any(item => w.WbsCod == item.WbsCod) == false)
+            {
+                await context.WBS.AddAsync(w);
+                await context.SaveChangesAsync();
+            }
         }
+    }
+
+    public static async Task Initialize(IServiceProvider serviceProvider)
+    {
+        _sp = serviceProvider;
+
+        var context = _sp
+            .GetRequiredService<ApplicationDbContext>();
+
+
+        context.Database.EnsureCreated();
+
+        await CreateRoles();
+
+        await CreateDefaultDepartment();
+
+        CreateDefaultWBS(context);
+
     }
 }
