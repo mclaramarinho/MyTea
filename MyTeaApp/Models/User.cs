@@ -35,6 +35,12 @@ namespace MyTeaApp.Models
         public ICollection<Record> Records { get; set; } = new List<Record>();
         public void SetUID(ApplicationDbContext db)
         {
+            if(db.Users.ToList().Count() == 0)
+            {
+                Console.WriteLine("zero");
+                this.UserID = 10001;
+                return;
+            }
             int maxId = db.Users.Max(u => u.UserID);
 
             this.UserID = maxId + 1;
