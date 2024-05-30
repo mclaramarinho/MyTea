@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -54,18 +55,19 @@ namespace MyTeaApp.Controllers
             return View(@record);
         }
 
+
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Create(string? startDate)
         {
             RecordVM vm = new RecordVM();
-           
+
 
             DateTime date = DateTime.Now;
 
             if (startDate != null)
             {
-                date = DateTime.ParseExact(startDate.Substring(0,19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                date = DateTime.ParseExact(startDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
             }
 
             // TODO - encontrar a quinzena da data de hj
@@ -93,7 +95,7 @@ namespace MyTeaApp.Controllers
             // TODO - se achar algo no banco, preencher a view model com todas as informações necessárias para preencher o forms 
             if (existingRecord != null)
             {
-                vm.ExistingRecord=existingRecord;
+                vm.ExistingRecord = existingRecord;
             }
             // TODO - senao, mandar a view model apenas com o o select list de wbs e o restante nulo
 
@@ -115,6 +117,7 @@ namespace MyTeaApp.Controllers
                 Value = item.WbsCod,
             }).ToList();
 
+            TempData["ToasterType"] = null;
             return View(vm);
         }
 
@@ -134,8 +137,8 @@ namespace MyTeaApp.Controllers
             await _context.SaveChangesAsync();
 
             int recordId = record.RecordID;
-            
-            for(int linha = 0; linha < 4; linha++)
+
+            for (int linha = 0; linha < 4; linha++)
             {
                 //if (wbs.ElementAt(linha) == "-1")
                 //{
@@ -143,7 +146,7 @@ namespace MyTeaApp.Controllers
                 //}
                 WBS w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
 
-                for(int col = 0; col < 15; col++)
+                for (int col = 0; col < 15; col++)
                 {
                     if (hours.ElementAt((15 * linha) + col) != null)
                     {
@@ -169,7 +172,7 @@ namespace MyTeaApp.Controllers
                 }
             }
 
-                return View(vm);
+            return View(vm);
         }
 
 
@@ -261,5 +264,7 @@ namespace MyTeaApp.Controllers
         {
             return _context.Records.Any(e => e.RecordID == id);
         }
+
     }
+
 }

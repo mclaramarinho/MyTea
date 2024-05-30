@@ -17,7 +17,7 @@
     }
     Console.WriteLine(fortNight.Day);
     int firstDayOfFortnight = 1;
-    if(fortNight.Day > 15)
+    if (fortNight.Day > 15)
     {
         firstDayOfFortnight = 16;
     }
@@ -29,9 +29,9 @@
     // Troquei o current year pra ser dinamico
     var currentYear = DateTime.Now.Year;
 
-    for(int i = 1; i <= 12; i++)
+    for (int i = 1; i <= 12; i++)
     {
-        int first = 1; 
+        int first = 1;
         int second = 16;
 
         // first fortnight
@@ -52,7 +52,7 @@
         do
         {
             tempDate = tempDate.AddDays(1);
-            if(tempDate.Month == i)
+            if (tempDate.Month == i)
             {
                 daysInSecondFortnight++;
             }
@@ -71,7 +71,7 @@
 
     }
 
-  
+
 }
 
 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none" id="mensagemErro">
@@ -95,84 +95,90 @@
 
 
 @* - SHOW IF EXISTING RECORD IS NULL *@
-    <div class="col flex-wrap text-wrap table-responsive">
-        <h1>Create Record</h1>
+<div class="col flex-wrap text-wrap table-responsive">
+    <h1>Create Record</h1>
 
-        <h4>Record</h4>
-        @* <hr /> *@
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label for="quinzenaSelector">Select Fortnight</label>
-                    <select id="quinzenaSelector" class="form-control">
+    <h4>Record</h4>
+    @* <hr /> *@
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="quinzenaSelector">Select Fortnight</label>
+                <select id="quinzenaSelector" class="form-control">
                     @foreach (var quinzena in fortnights)
-                        {
-                            <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
-                        }
-                    </select>
-                </div>
-                <form asp-action="Create" method="post">
-                    <div id="records-list" class="">
-                        <table id="records-table" class="table">
-                            <thead>
-                                <tr>
-                                    <th class="text-nowrap">Charge Codes</th>
-                                    @for (int i = 0; i < 15; i++)
-                                    {
-                                        <th class="date-column text-center"></th>
-                                    }
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @for (int i = 0; i < 4; i++)
-                                {
-                                    <tr class="grid">
-                                        <td class="g-col-auto">
-                                            <div>
-                                                <select class="form-select" asp-items="Model.WBS" name="wbs"></select>
-
-                                            </div>
-                                        </td>
-                                        @for (int j = 0; j < 15; j++)
-                                        {
-                                            <td class="g-col-1" id="fractionSlot_@((i * 15) + j)">
-
-                                                <input name="hours" type="number" class="" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
-
-                                                <input name="dates" type="hidden" />
-
-                                            </td>
-                                        }
-                                        <td class="g-col-1">
-                                        <input id="rowTotal_@i" type="number" class="row-total" disabled style="max-width: 40px;" />
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                            <tfoot>
-                                <th>Total</th>
+                    {
+                        <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
+                    }
+                </select>
+            </div>
+            <form asp-action="Create" method="post">
+                <div id="records-list" class="">
+                    <table id="records-table" class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-nowrap">Charge Codes</th>
                                 @for (int i = 0; i < 15; i++)
                                 {
-                                    <td class="col-total">
-                                        <input id="colTotal_@i" type="number" class="col-total" disabled style="max-width: 40px;" />
-                                    </td>
+                                    <th class="date-column text-center"></th>
                                 }
-                                <td class="col-total">
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < 4; i++)
+                            {
+                                <tr class="grid">
+                                    <td class="g-col-auto">
+                                        <div>
+                                            <select class="form-select" asp-items="Model.WBS" name="wbs"></select>
+
+                                        </div>
+                                    </td>
+                                    @for (int j = 0; j < 15; j++)
+                                    {
+                                        <td class="g-col-1" id="fractionSlot_@((i * 15) + j)">
+
+                                            <input name="hours" type="number" class="" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
+
+                                            <input name="dates" type="hidden" />
+
+                                        </td>
+                                    }
+                                    <td class="g-col-1">
+                                        <input id="rowTotal_@i" type="number" class="row-total" disabled style="max-width: 40px;" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                        <th>Total</th>
+                            @for (int i = 0; i < 15; i++)
+                            {
+                            <td class="col-total">
+                                <input id="colTotal_@i" type="number" class="col-total" disabled style="max-width: 40px;" />
+                            </td>
+                            }
+                        <td class="col-total">
                             <input type="number" id="result" disabled class="" style="max-width: 40px;" />
-                                </td>
+                        </td>
 
-                            </tfoot>
-                        </table>
-                    </div>
-                    <input type="submit" value="Create" class="btn btn-primary" id="submitRecord_btn" />
-                </form>
-            </div>
-        </div>
-
-        <div>
-            <a asp-action="Index">Back to List</a>
+                        </tfoot>
+                    </table>
+                </div>
+                <input type="submit" value="Create" class="btn btn-primary" id="submitRecord_btn" />
+            </form>
         </div>
     </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+@if (TempData["ToasterType"] == "success")
+{
+    Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
+}
+
 
 @section Scripts {
     @{
@@ -185,22 +191,24 @@
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         document.addEventListener('DOMContentLoaded', async function () {
-            function validateForm(e) { 
+            function validateForm(e) {
 
-                var divMensagemErro = document.getElementById('mensagemErro'); 
-                var inputs = document.querySelectorAll('.col-total'); 
-                var aprovado = true; 
-                inputs.forEach((input) => { 
-                    var value = parseInt(input.value); 
-                    if (value < 8) { 
-                        divMensagemErro.style.display = 'block'; 
-                        aprovado = false; 
-                    } 
-                }); 
+                var divMensagemErro = document.getElementById('mensagemErro');
+                var inputs = document.querySelectorAll('.col-total');
+                var aprovado = false;
+                inputs.forEach((input) => {
+                    var value = parseInt(input.value);
+                    if (value < 8) {
+                        divMensagemErro.style.display = 'block';
+                        aprovado = false;
+                    }
 
-                var toasterType = aprovado ? "success" : "error";
-                // !aprovado && e.stopImmediatePropagation();
-                console.log("ToasterType: " + toasterType); return aprovado; 
+                    
+                });
+
+                var toasterType = aprovado ? "success" : "null";
+                //!aprovado && e.stopImmediatePropagation();
+                
             }
 
 
@@ -216,13 +224,13 @@
                     const urlStartDate = url.split("startDate=")[1];
                     const date = new Date(urlStartDate);
                     date.setDate(date.getDate())
-                    
+
                     startDate = date;
                 } else {
                     const todayDate = startDate.getDate();
 
                     let firstDayOfFortnight = 1;
-                    if(todayDate > 15){
+                    if (todayDate > 15) {
                         firstDayOfFortnight = 15;
                     }
 
@@ -230,8 +238,8 @@
                     date.setDate(firstDayOfFortnight);
                     startDate = date;
                 }
-                const fortnightHolidays = await hasHolidayInFortnight(startDate);
-                generateTable(startDate.toISOString(), fortnightHolidays)
+                //const fortnightHolidays = await hasHolidayInFortnight(startDate);
+                generateTable(startDate.toISOString())
             }
 
             var quinzenaSelector = document.getElementById('quinzenaSelector');
@@ -250,7 +258,7 @@
 
             /**
              * description - when no other input (except by holidays) is provided, submitting will update the total hours
-             *  
+             *
              */
             $("#submitRecord_btn").on("mouseup", (e) => {
                 inputElements.forEach(input => {
@@ -272,7 +280,7 @@
 
                     const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
                     setHiddenDateValues(i, stringDate);
-                    
+
                     dateColumns[i].textContent = `${month}\n${date.getDate().toString().padStart(2, '0')}`;
 
                     if (fortnightHolidaysIndexes.includes(i)) {
@@ -285,8 +293,13 @@
              * description sets the hidden date values properly
              * returns void
              */
-            function setHiddenDateValues(index, date) { 
-                const slots = getSlotValues(index);
+            function setHiddenDateValues(index, date) {
+                const slots = [
+                    index,
+                    index + 15,
+                    index + (15 * 2),
+                    index + (15 * 3),
+                ];
                 slots.forEach((v, i) => {
                     const slotEl = document.querySelector(`#fractionSlot_${v} input:nth-child(2)`);
                     console.log(date);
@@ -300,7 +313,7 @@
                 // const fortnightHolidays = await hasHolidayInFortnight(selectedDate);
 
                 window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString();
-                
+
                 // generateTable(selectedDate, fortnightHolidays);
             });
 
@@ -309,7 +322,7 @@
             //     // generateTable(new Date(quinzenaSelector.value), fortnightHolidays);
 
             // });
-           
+
         });
     </script>
 }
