@@ -54,32 +54,47 @@
     function resetHolidaySlots() {
         for (let i = 0; i < 60; i++) {
             const slotEl = document.querySelector(`#fractionSlot_${i}>input`);
-            slotEl.removeAttribute("disabled");
-
+            slotEl.removeAttribute("readonly");
+            slotEl.classList.contains("holidaySlot") && slotEl.classList.remove("holidaySlot");
             slotEl.removeAttribute("value");
         }
     }
 
-    /**
-     * description - Identifies and marks the holiday slots as disabled and defines the default value for them
-     */
-    function markHolidaySlots(index) {
-
-        const slotsValues = [
+    function getSlotValues(index){
+        return [
             index,
             index + 15,
             index + (15 * 2),
             index + (15 * 3),
         ];
+    }
 
+    function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
+
+        const slotsValues = getSlotValues(index);
 
         slotsValues.forEach((v, i) => {
             const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
-            
-            // if (i !== v.length - 1) {
-            slotEl.setAttribute("disabled", true);
-            slotEl.setAttribute("value", 8);
-            // }
-        })
+
+            if (isHoliday) {
+                slotEl.readonly = true;
+                if (i === slotsValues.length - 1) {
+                    slotEl.setAttribute("value", 8);
+                    slotEl.setAttribute("readonly", true);
+                    slotEl.classList.add("holidaySlot");
+
+                }
+            } else if (isWeekend) {
+                // slotEl.readonly = true;
+                slotEl.classList.add("holidaySlot");
+            } else {
+                slotEl.setAttribute("readonly", false);
+            }
+        });
+    }
+
+    function isWeekend(date) {
+        const day = date.getDay(); // 0 (domingo) a 6 (sábado
+        return day === 0 || day === 6; // Retorna true se for fim de semana
     }
 </script>
