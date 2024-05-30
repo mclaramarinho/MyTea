@@ -62,8 +62,7 @@
              const slotEl = document.querySelector(`#fractionSlot_${i}>input`);
              slotEl.removeAttribute("disabled");
              slotEl.removeAttribute("value");
-             slotEl.removeAttribute("readonly");
-             slotEl.classList.remove("holidaySlot");
+             slotEl.classList.contains("holidaySlot") && slotEl.classList.remove("holidaySlot");
          }
      }
 
@@ -72,7 +71,35 @@
       */
 
      // =========================================
-    
+
+     // function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
+
+     //     const slotsValues = [
+     //         index,
+     //         index + 15,
+     //         index + (15 * 2),
+     //         index + (15 * 3),
+     //     ];
+
+     //     slotsValues.forEach((v, i) => {
+     //         const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
+
+     //         if (isHoliday) {
+     //             slotEl.disabled = true;
+     //             if (i === slotsValues.length - 1) {
+     //                 slotEl.setAttribute("value", 8);
+     //                 slotEl.readonly = true;
+     //             }
+     //         } else if (isWeekend) {
+     //             slotEl.disabled = true;
+     //             slotEl.readonly = true;
+     //         } else {
+     //             slotEl.disabled = false;
+     //             slotEl.readonly = false;
+     //         }
+     //     });
+     // } 
+     
      function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
 
          const slotsValues = [
@@ -85,18 +112,13 @@
          slotsValues.forEach((v, i) => {
              const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
 
-             if (isHoliday) {
-                 slotEl.disabled = true;
+             if (isHoliday && i === slotsValues.length - 1) {
+                 slotEl.setAttribute("value", 8);
+                 slotEl.setAttribute("readonly", true);
                  slotEl.classList.add("holidaySlot");
-                 if (i === slotsValues.length - 1) {
-                     slotEl.setAttribute("value", 8);
-                     slotEl.readonly = true;
-                 }  
              } else if (isWeekend) {
-                 slotEl.disabled = true;
-                 slotEl.readonly = true;
+                 slotEl.classList.add("holidaySlot");
              } else {
-                 slotEl.disabled = false;
                  slotEl.readonly = false;
              }
          });
@@ -109,5 +131,13 @@
          return day === 0 || day === 6; // Retorna true se for fim de semana
      }
 
+     function getSlotValues(index) {
+         return [
+             index,
+             index + 15,
+             index + (15 * 2),
+             index + (15 * 3),
+         ];
+     }
+
 </script>
-    
