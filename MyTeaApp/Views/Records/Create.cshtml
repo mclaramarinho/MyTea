@@ -124,6 +124,7 @@
                             </tr>
                         </thead>
                         <tbody>
+
                             @for (int i = 0; i < 4; i++)
                             {
                                 <tr class="grid">
@@ -140,14 +141,18 @@
                                             <input name="hours" type="number" class="" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
 
                                             <input name="dates" type="hidden" />
+                                            
 
                                         </td>
                                     }
+
                                     <td class="g-col-1">
                                         <input id="rowTotal_@i" type="number" class="row-total" disabled style="max-width: 40px;" />
                                     </td>
                                 </tr>
                             }
+                            <input name="email" type="hidden" value="@Model.user" />
+                            
                         </tbody>
                         <tfoot>
                         <th>Total</th>
@@ -312,7 +317,7 @@
 
                 // const fortnightHolidays = await hasHolidayInFortnight(selectedDate);
 
-                window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString();
+                window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString() + + "&uID=" + uid;
 
                 // generateTable(selectedDate, fortnightHolidays);
             });

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -58,10 +60,9 @@ namespace MyTeaApp.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Create(string? startDate)
+        public async Task<IActionResult> Create(string? startDate, int? uid)
         {
             RecordVM vm = new RecordVM();
-
 
             DateTime date = DateTime.Now;
 
@@ -80,16 +81,38 @@ namespace MyTeaApp.Controllers
             // TODO - guardar o primeiro dia da quinzena 
             date = new DateTime(date.Year, date.Month, firstDay);
 
+            User userLog = await _um.FindByEmailAsync(User.Identity.Name);
 
+            //se adm principal muda para id info na url
+            if (userLog.UserID == 10001)
+            {
+                userLog = await _context.Users.FirstAsync(u => u.UserID == uid);
+            }
+
+            vm.user = userLog;
+            
+            
+
+            //if (userID != null)
+            //{
+            //    IList<string> userRoleFromParam = await _um.GetRolesAsync(uid);
+
+            //    if (userRoleFromParam[0] != "Admin")
+            //    {
+            //        return RedirectToAction("Login", "Account");
+            //    }
+
+            //    uid = await _context.Users.FirstAsync(u => u.UserID == userID);
+
+
+            //}
             // TODO - pegar id do user
-            User uid = await _um.FindByEmailAsync(User.Identity.Name);
-            // TODO - user null?
 
-            Record? existingRecord = null;
+            Record ? existingRecord = null;
             // TODO - procurar no banco de dados os records cuja startDate e userid sejam os procurados
             if (_context.Records.Count() > 0)
             {
-                existingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == uid.Id);
+                existingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == userLog.Id);
             }
 
             // TODO - se achar algo no banco, preencher a view model com todas as informações necessárias para preencher o forms 
@@ -101,30 +124,27 @@ namespace MyTeaApp.Controllers
 
 
             // Recupere os dados do banco de dados para o dropdown
-            var itemsFromDatabase = _context.WBS.ToList();
-            //vm.WBS =
-            //[
-            //    new SelectListItem
-            //    {
-            //        Text = "Select charge code",
-            //        Value = "-1"
-            //    },
-            //];
-            // Mapeie os dados do banco de dados para SelectListItem
-            vm.WBS = itemsFromDatabase.Select(item => new SelectListItem
-            {
-                Text = item.WbsName + " - " + item.WbsCod,
-                Value = item.WbsCod,
-            }).ToList();
+            vm.WBS = _getWbsSelectList();
+
+            
 
             TempData["ToasterType"] = null;
             return View(vm);
         }
 
+
+
+
+
+
         [HttpPost]
-        public async Task<IActionResult> Create(ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, RecordVM vm)
+        public async Task<IActionResult> Create(ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, string email, RecordVM vm)
         {
-            User user = await _um.FindByEmailAsync(User.Identity.Name);
+
+
+            //User user = await _um.FindByEmailAsync(User.Identity.Name); 
+            User user = await _context.Users.FirstAsync(u => u.Email == email);
+
 
             Record record = new Record()
             {
@@ -132,6 +152,8 @@ namespace MyTeaApp.Controllers
                 User = user,
                 StartDate = dates.ElementAt(0)
             };
+
+             
 
             _context.Records.Add(record);
             await _context.SaveChangesAsync();
@@ -263,6 +285,26 @@ namespace MyTeaApp.Controllers
         private bool RecordExists(int id)
         {
             return _context.Records.Any(e => e.RecordID == id);
+        }
+
+        private List<SelectListItem> _getWbsSelectList()
+        {
+            List<SelectListItem> selectListItems = new List<SelectListItem>();
+            var itemsFromDatabase = _context.WBS.ToList();
+            //selectListItems.Add(new SelectListItem
+            //{
+            //    Text = "Select charge code",
+            //    Value = "-1"
+            //});
+            itemsFromDatabase.ForEach(i =>
+            {
+                selectListItems.Add(new SelectListItem
+                {
+                    Text = i.WbsName + " - " + i.WbsCod,
+                    Value = i.WbsCod,
+                });
+            });
+            return selectListItems;
         }
 
     }

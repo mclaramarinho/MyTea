@@ -50,6 +50,9 @@
                             <span>
                                 <a asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.UserId">Edit</a>
                             </span>
+                            <span>
+                                <a asp-action="Create" asp-controller="Records" asp-route-uid="@user.UserId">Records</a>
+                            </span>
                         </td>
                     </tr>
                 }
