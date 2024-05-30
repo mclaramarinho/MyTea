@@ -120,7 +120,7 @@
                         }
                     </select>
                 </div>
-                <form asp-action="Create" method="post">
+                <form asp-action="Create" method="post" id="registerRecordForm">
                     <div id="records-list" class="">
                         <table id="records-table" class="table">
                             <thead>
@@ -138,7 +138,7 @@
                                     <tr class="grid">
                                         <td class="g-col-auto">
                                             <div>
-                                                <select class="form-select" asp-items="Model.WBS" name="wbs"></select>
+                                            <select class="form-select wbsSelector" asp-items="Model.WBS" name="wbs" id="wbsSelector"></select>
 
                                             </div>
                                         </td>
@@ -194,7 +194,38 @@
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         document.addEventListener('DOMContentLoaded', async function () {
-            function validateForm(e) { 
+            function isSlotEnabled() {
+                for (let option = 0; option < 4; option++){
+                    const optionEl = document.querySelectorAll(`.wbsSelector`)[option];
+
+                    console.log(optionEl.value);
+                    
+                    if (optionEl.value === "-1") {
+                        for (let slot = 0; slot < 15; slot++) {
+                            const slotIndex = (15 * option) + slot;
+                            const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+                            if (!slotEl.classList.contains("holidaySlot")) {
+                                slotEl.setAttribute("readonly", true);
+                            }
+                        }
+                    } else {
+                        for (let slot = 0; slot < 15; slot++) {
+                            const slotIndex = (15 * option) + slot;
+                            const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+                            if (!slotEl.classList.contains("holidaySlot")) {
+                                slotEl.removeAttribute("readonly");
+                            }
+                        }
+                    }
+                }
+            }
+            document.querySelectorAll(".wbsSelector").forEach(i => { 
+                i.addEventListener("change", e => {
+                    isSlotEnabled();
+                })
+            })
+
+            function validateForm(formEvent) { 
 
                 var divMensagemErro = document.getElementById('mensagemErro'); 
                 var inputs = document.querySelectorAll('.col-total'); 
@@ -208,8 +239,8 @@
                 }); 
 
                 var toasterType = aprovado ? "success" : "error";
-                // !aprovado && e.stopImmediatePropagation();
-                console.log("ToasterType: " + toasterType); return aprovado; 
+                !aprovado && formEvent.preventDefault();
+                return aprovado; 
             }
 
 
@@ -248,6 +279,7 @@
             var dateColumns = recordsTable.querySelectorAll('.date-column');
 
             await getUrlParams();
+            isSlotEnabled();
 
             const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
 
@@ -265,6 +297,9 @@
                 inputElements.forEach(input => {
                     const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
                     handleInput(event, rowIndex, colIndex)
+                    document.getElementById("registerRecordForm").onsubmit = (ev) => {
+                        validateForm(ev);    
+                    }
                 });
                 // e.stopImmediatePropagation()
                 validateForm(e);
