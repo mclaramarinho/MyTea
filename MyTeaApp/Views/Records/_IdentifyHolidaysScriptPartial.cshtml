@@ -1,85 +1,105 @@
+﻿﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
 ﻿<script>
-    const holidays = [
-        new Date(2024, 0, 1), // Confraternização Universal (feriado nacional)
-        new Date(2024, 1, 12), // Carnaval (ponto facultativo)
-        new Date(2024, 1, 13), // Carnaval (ponto facultativo)
-        new Date(2024, 1, 14), // Carnaval (ponto facultativo até as 14h)
-        new Date(2024, 2, 29), // Paixão de Cristo (feriado nacional)
-        new Date(2024, 3, 21), // Tirandentes (feriado nacional)
-        new Date(2024, 4, 1), // Dia Mundial do Trabalho (feriado nacional)
-        new Date(2024, 4, 30), // Corpus Christi (ponto facultativo)
-        new Date(2024, 8, 7), // Independência do Brasil (feriado nacional)
-        new Date(2024, 9, 12), // Nossa Senhora Aparecida (feriado nacional)
-        new Date(2024, 9, 28), // Dia do Servidor Público federal (ponto facultativo)
-        new Date(2024, 10, 2), // Finados (feriado nacional)
-        new Date(2024, 10, 15), // Proclamação da República (feriado nacional)
-        new Date(2024, 10, 20), // Dia Nacional de Zumbi e da Consciência Negra (feriado nacional)
-        new Date(2024, 11, 24), // Véspera do Natal (ponto facultativo após as 14h)
-        new Date(2024, 11, 25), // Natal (feriado nacional)
-        new Date(2024, 11, 31) // Véspera do Ano Novo (ponto facultativo após as 14h)
-    ];
+     const holidays = [
+         new Date(2024, 0, 1), // Confraternização Universal (feriado nacional)
+         new Date(2024, 1, 12), // Carnaval (ponto facultativo)
+         new Date(2024, 1, 13), // Carnaval (ponto facultativo)
+         new Date(2024, 1, 14), // Carnaval (ponto facultativo até as 14h)
+         new Date(2024, 2, 29), // Paixão de Cristo (feriado nacional)
+         new Date(2024, 3, 21), // Tirandentes (feriado nacional)
+         new Date(2024, 4, 1), // Dia Mundial do Trabalho (feriado nacional)
+         new Date(2024, 4, 30), // Corpus Christi (ponto facultativo)
+         new Date(2024, 8, 7), // Independência do Brasil (feriado nacional)
+         new Date(2024, 9, 12), // Nossa Senhora Aparecida (feriado nacional)
+         new Date(2024, 9, 28), // Dia do Servidor Público federal (ponto facultativo)
+         new Date(2024, 10, 2), // Finados (feriado nacional)
+         new Date(2024, 10, 15), // Proclamação da República (feriado nacional)
+         new Date(2024, 10, 20), // Dia Nacional de Zumbi e da Consciência Negra (feriado nacional)
+         new Date(2024, 11, 24), // Véspera do Natal (ponto facultativo após as 14h)
+         new Date(2024, 11, 25), // Natal (feriado nacional)
+         new Date(2024, 11, 31) // Véspera do Ano Novo (ponto facultativo após as 14h)
+     ];
 
-    /**
-     * description - Checks if the selected fortnight has any holidays
-     * returns - Array of integers populated with the indexes of the dates (0-14) that are considered holidays.
-     */
-    async function hasHolidayInFortnight(date) {
-        return new Promise((res, rej) => {
-            let fortnightHolidays = [];
+     /**
+      * description - Checks if the selected fortnight has any holidays
+      * returns - Array of integers populated with the indexes of the dates (0-14) that are considered holidays.
+      */
+     async function hasHolidayInFortnight(date) {
+         return new Promise((res, rej) => {
+             let fortnightHolidays = [];
 
-            let fortnightDates = [];
+             let fortnightDates = [];
 
-            for (let i = 1; i < 16; i++) {
-                const tempDate = new Date(date);
-                tempDate.setDate(tempDate.getDate() + i);
-                fortnightDates.push(tempDate);
-            }
+             for (let i = 1; i < 16; i++) {
+                 const tempDate = new Date(date);
+                 tempDate.setDate(tempDate.getDate() + i);
+                 fortnightDates.push(tempDate);
+             }
 
-            fortnightDates.map((d, index) => {
-                holidays.map(h => {
-                    if (h.getDate() == d.getDate() && h.getMonth() == d.getMonth()) {
-                        fortnightHolidays.push(index);
-                        return;
-                    }
-                })
-            })
+             fortnightDates.map((d, index) => {
+                 holidays.map(h => {
+                     if (h.getDate() == d.getDate() && h.getMonth() == d.getMonth()) {
+                         fortnightHolidays.push(index);
+                         return;
+                     }
+                 })
+             })
 
-            res(fortnightHolidays);
-        })
-    }
+             res(fortnightHolidays);
+         })
+     }
 
-    /**
-     * description - Removes attributes (disabled and value) from holiday slots
-     */
-    function resetHolidaySlots() {
-        for (let i = 0; i < 60; i++) {
-            const slotEl = document.querySelector(`#fractionSlot_${i}>input`);
-            slotEl.removeAttribute("disabled");
-
-            slotEl.removeAttribute("value");
-        }
-    }
-
-    /**
-     * description - Identifies and marks the holiday slots as disabled and defines the default value for them
-     */
-    function markHolidaySlots(index) {
-
-        const slotsValues = [
-            index,
-            index + 15,
-            index + (15 * 2),
-            index + (15 * 3),
-        ];
+     /**
+      * description - Removes attributes (disabled and value) from holiday slots
+      */
+     function resetHolidaySlots() {
+         for (let i = 0; i < 60; i++) {
+             const slotEl = document.querySelector(`#fractionSlot_${i}>input`);
+             slotEl.removeAttribute("disabled");
+             slotEl.removeAttribute("value");
+             slotEl.classList.contains("holidaySlot") && slotEl.classList.remove("holidaySlot");
+         }
+     }
 
 
-        slotsValues.forEach((v, i) => {
-            const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
-            
-            // if (i !== v.length - 1) {
-            slotEl.setAttribute("disabled", true);
-            slotEl.setAttribute("value", 8);
-            // }
-        })
-    }
+     function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
+
+         const slotsValues = getSlotValues(index);
+
+         slotsValues.forEach((v, i) => {
+             const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
+
+             if (isHoliday && i === slotsValues.length - 1) {
+                 slotEl.setAttribute("value", 8);
+                 slotEl.setAttribute("readonly", true);
+                 slotEl.classList.add("holidaySlot");
+             } else if (isWeekend) {
+                 slotEl.classList.add("holidaySlot");
+             } else {
+                 slotEl.readonly = false;
+             }
+         });
+     }
+
+     // =========================================
+
+     function isWeekend(date) {
+         const day = date.getDay(); // 0 (domingo) a 6 (sábado)
+         return day === 0 || day === 6; // Retorna true se for fim de semana
+     }
+
+     function getSlotValues(index) {
+         return [
+             index,
+             index + 15,
+             index + (15 * 2),
+             index + (15 * 3),
+         ];
+     }
+
 </script>
