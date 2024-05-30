@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using MyTeaApp.Data;
 using MyTeaApp.Models;
 using MyTeaApp.Models.ViewModels;
@@ -244,10 +245,44 @@ namespace MyTeaApp.Controllers
             return RedirectToAction(nameof(Index));
 
         }
-      
+
         // EDIT END ---------------------------------------------------------------------------------------------------
 
+        // CHANGE PASSWORD --------------------------------------------------------------------------------------------
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        //  CHANGE PASSWORD END ----------------------------------------------------------------------------------------
 
         // UTILITIES ---------------------------------------------------------------------------------------------------
         private IActionResult _redirectAfterLogin()
