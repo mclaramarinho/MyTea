@@ -314,9 +314,12 @@
                     
                     dateColumns[i].textContent = `${month}\n${date.getDate().toString().padStart(2, '0')}`;
 
-                    if (fortnightHolidaysIndexes.includes(i)) {
-                        markHolidaySlots(i);
-                    }
+                    const isWeekendDay = isWeekend(date);
+                    const isHoliday = fortnightHolidaysIndexes.includes(i);
+
+
+                    markHolidaySlots(i, isWeekendDay, isHoliday);
+
                 }
             }
 
