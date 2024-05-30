@@ -53,16 +53,11 @@ public class DbInitializer
         }
     }
 
-    private static void CreateDefaultWBS(ApplicationDbContext context)
+    private static async Task CreateDefaultWBS(ApplicationDbContext context)
     {
-        if (context.WBS.Count() >= 6)
+        List<WBS> wbs = new List<WBS>()
         {
-            return;
-        }
-        else
-        {
-            context.WBS.AddRange(
-                new WBS
+            new WBS
                 {
                     WbsName = "Vacation",
                     WbsCod = "WBS0085749",
@@ -104,11 +99,14 @@ public class DbInitializer
                     Description = "Holiday",
                     IsChargeable = true,
                 }
-
-
-            );
-
-            context.SaveChanges();
+        };
+        foreach (var w in wbs)
+        {
+            if (context.WBS.Any(item => w.WbsCod == item.WbsCod) == false)
+            {
+                await context.WBS.AddAsync(w);
+                await context.SaveChangesAsync();
+            }
         }
     }
     /// <summary>
