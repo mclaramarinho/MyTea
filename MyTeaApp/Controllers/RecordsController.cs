@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -108,7 +105,8 @@ namespace MyTeaApp.Controllers
             //}
             // TODO - pegar id do user
 
-            Record ? existingRecord = null;
+
+            Record? existingRecord = null;
             // TODO - procurar no banco de dados os records cuja startDate e userid sejam os procurados
             if (_context.Records.Count() > 0)
             {
@@ -194,7 +192,8 @@ namespace MyTeaApp.Controllers
                 }
             }
 
-            return View(vm);
+            vm.WBS = _getWbsSelectList();
+                return View(vm);
         }
 
 
@@ -287,15 +286,19 @@ namespace MyTeaApp.Controllers
             return _context.Records.Any(e => e.RecordID == id);
         }
 
+        /// <summary>
+        /// Retrieves all the WBS from database and returns a List of SelectListItem
+        /// </summary>
+        /// <returns>List with the SelectListItems for each WBS</returns>
         private List<SelectListItem> _getWbsSelectList()
         {
             List<SelectListItem> selectListItems = new List<SelectListItem>();
             var itemsFromDatabase = _context.WBS.ToList();
-            //selectListItems.Add(new SelectListItem
-            //{
-            //    Text = "Select charge code",
-            //    Value = "-1"
-            //});
+            selectListItems.Add(new SelectListItem
+            {
+                Text = "Select charge code",
+                Value = "-1"
+            });
             itemsFromDatabase.ForEach(i =>
             {
                 selectListItems.Add(new SelectListItem
@@ -306,7 +309,6 @@ namespace MyTeaApp.Controllers
             });
             return selectListItems;
         }
-
     }
 
 }
