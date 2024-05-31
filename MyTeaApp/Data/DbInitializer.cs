@@ -91,6 +91,13 @@ public class DbInitializer
                     WbsCod = "WBS2574100",
                     Description = "Development - employee",
                     IsChargeable = true,
+                },
+                new WBS
+                {
+                    WbsName = "Holiday",
+                    WbsCod = "WBS2534102",
+                    Description = "Holiday",
+                    IsChargeable = true,
                 }
         };
         foreach (var w in wbs)
