@@ -1,0 +1,90 @@
+﻿@using MyTeaApp.Models.ViewModels;
+@using MyTeaApp.Data;
+@inject ApplicationDbContext _db;
+@model RecordVM;
+
+@{
+    List<DateTime> dates = new();
+    List<float> hours = new();
+    List<string> wbsCods = new();
+
+    void getDataFromDb()
+    {
+    @for (int i = 0; i < Model.ExistingRecord?.RecordFraction.Count; i++)
+        {
+            var date = Model.ExistingRecord.RecordFraction.ElementAt(i).RecordDate;
+            dates.Add(date);
+            var totalHours = Model.ExistingRecord.RecordFraction.ElementAt(i).TotalHoursFraction;
+            hours.Add(totalHours);
+
+            var wbs = Model.ExistingRecord.RecordFraction.ElementAt(i).WbsID;
+            var cod = _db.WBS.FirstOrDefault(w => w.WbsId == wbs)?.WbsCod;
+            wbsCods.Add(cod);
+        }
+    }
+
+}
+<script>
+    function verifyIfRecordExists() {
+        return @Json.Serialize(Model.ExistingRecord == null);
+    }
+
+    function getRecordFractionCount(){
+        return @Json.Serialize(Model.ExistingRecord?.RecordFraction.Count);
+    }
+    function disableSelectElement(index) {
+        const select = document.querySelectorAll(`.wbsSelector`).item(index);
+        select.setAttribute("disabled", true);
+    }
+    function setSelectElementValue(index, wbs) {
+        const select = document.querySelectorAll(`.wbsSelector`).item(index)
+        const options = select.children;
+
+        for (let c = 0; c < options.length; c++) {
+            if (options[c].getAttribute("value") === wbs) {
+                options[c].setAttribute("selected", true);
+            } else {
+                options[c].removeAttribute("selected");
+            }
+        }
+    }
+
+    function setSlotsValues(index, hours) {
+        for (let j = 0; j < 15; j++) {
+            const slotIndex = j + (15 * index);
+            const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+
+            slotEl.setAttribute("value", hours[slotIndex]);
+            slotEl.setAttribute("disabled", true);
+        }
+    }
+
+    function populateTableWithData() {
+        if (verifyIfRecordExists()) {
+            return;
+        }
+        if (getRecordFractionCount() > 0) {
+            @{
+                getDataFromDb();
+            }
+            const wbs = @Json.Serialize(Model.ExistingRecord?.SelectedWbs);
+            const dates = @Json.Serialize(dates);
+            const hours = @Json.Serialize(hours);
+            const wbsIds = @Json.Serialize(wbsCods);
+
+
+            for (let i = 0; i < wbs.length; i++) {
+                disableSelectElement(i);
+
+                if (wbs[i] == "-1") {
+                    continue;
+                }
+
+                setSelectElementValue(i, wbs[i]);
+
+                setSlotsValues(i, hours);
+            }
+        }
+
+    }
+</script>

@@ -1,0 +1,106 @@
+﻿<script>
+    var quinzenaSelector = document.getElementById('quinzenaSelector');
+    var recordsTable = document.getElementById('records-table');
+    var dateColumns = recordsTable.querySelectorAll('.date-column');
+
+
+    function isSlotEnabled(shouldCheck=true) {
+        for (let option = 0; option < 4; option++){
+            const optionEl = document.querySelectorAll(`.wbsSelector`)[option];
+            if (!shouldCheck) {
+                for (let slot = 0; slot < 15; slot++) {
+                    const slotIndex = (15 * option) + slot;
+                    const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+                    slotEl.setAttribute("disabled", true);
+                }
+                continue;
+            }
+
+            if (optionEl.value === "-1") {
+                for (let slot = 0; slot < 15; slot++) {
+                    const slotIndex = (15 * option) + slot;
+                    const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+                    if (!slotEl.classList.contains("holidaySlot")) {
+                        slotEl.setAttribute("readonly", true);
+                    }
+                }
+            } else {
+                for (let slot = 0; slot < 15; slot++) {
+                    const slotIndex = (15 * option) + slot;
+                    const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+                    if (!slotEl.classList.contains("holidaySlot")) {
+                        slotEl.removeAttribute("readonly");
+                    }
+                }
+            }
+        }
+    }
+
+    function generateTable(startDate, fortnightHolidaysIndexes = []) {
+        resetHolidaySlots();
+
+        for (var i = 0; i < 15; i++) {
+            let daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+            var date = new Date(startDate);
+            date.setDate(date.getDate() + i + 1);
+
+            // let month = months[date.getMonth()];
+            let m = (date.getMonth() + 1).toString().padStart(2, "0");
+            let d = (date.getDate()).toString().padStart(2, "0");
+            let dayOfWeek = daysOfWeek[date.getDay()];
+
+            const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+            setHiddenDateValues(i, stringDate);
+
+            dateColumns[i].textContent = `${dayOfWeek}\n${m}/${d}`;
+
+            const isWeekendDay = isWeekend(date);
+            const isHoliday = fortnightHolidaysIndexes.includes(i);
+
+
+            markHolidaySlots(i, isWeekendDay, isHoliday);
+
+        }
+    }
+
+    /**
+    * description sets the hidden date values properly
+    * returns void
+    */
+    function setHiddenDateValues(index, date) {
+        const slots = getSlotValues(index);
+        slots.forEach((v, i) => {
+            const slotEl = document.querySelector(`#fractionSlot_${v} input:nth-child(2)`);
+            slotEl.setAttribute("value", date);
+        });
+    }
+
+    async function identifyFortnightAndGenerateTable() {
+        const url = window.location.href;
+
+        let startDate = new Date();
+
+        if (url.includes("startDate=")) {
+            const urlStartDate = url.split("startDate=")[1];
+            const date = new Date(urlStartDate);
+            date.setDate(date.getDate())
+
+            startDate = date;
+        } else {
+            const todayDate = startDate.getDate();
+
+            let firstDayOfFortnight = 1;
+            if (todayDate > 15) {
+                firstDayOfFortnight = 15;
+            }
+
+            const date = new Date();
+            date.setDate(firstDayOfFortnight);
+            startDate = date;
+        }
+        const fortnightHolidays = await hasHolidayInFortnight(startDate);
+        generateTable(startDate.toISOString(), fortnightHolidays)
+    }
+
+</script>

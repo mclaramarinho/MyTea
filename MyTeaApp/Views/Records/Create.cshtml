@@ -1,5 +1,7 @@
 @using MyTeaApp.Models.ViewModels;
 @using Microsoft.AspNetCore.Http;
+@using MyTeaApp.Data;
+@inject ApplicationDbContext _db;
 @inject IHttpContextAccessor _httpContextAccessor;
 @model RecordVM;
 
@@ -16,7 +18,7 @@
         fortNight = DateTime.ParseExact(urlStartDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
     }
     int firstDayOfFortnight = 1;
-    if(fortNight.Day > 15)
+    if (fortNight.Day > 15)
     {
         firstDayOfFortnight = 16;
     }
@@ -26,9 +28,9 @@
 
     var currentYear = DateTime.Now.Year;
 
-    for(int i = 1; i <= 12; i++)
+    for (int i = 1; i <= 12; i++)
     {
-        int first = 1; 
+        int first = 1;
         int second = 16;
 
         // first fortnight
@@ -49,7 +51,7 @@
         do
         {
             tempDate = tempDate.AddDays(1);
-            if(tempDate.Month == i)
+            if (tempDate.Month == i)
             {
                 daysInSecondFortnight++;
             }
@@ -67,37 +69,11 @@
                 });
 
     }
-
-  
 }
-
-<div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none" id="mensagemErro">
-    Some weekday did not reach the 8 hour minimum. Please review it, before submitting!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-<style>
-    #mensagemErro {
-        position: fixed;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-    }
-</style>
-<style>
-    .holidaySlot{
-        background-color: rgba(239, 239, 239, 0.3) !important;
-        box-shadow: none;
-        border: 1px solid rgba(118, 118, 118, 0.3);
-
-        cursor: default;
-    }
-</style>
-
 
 @* - IF RECORD NOT NULL SHOW FIELDS FILLED WITH DB DATA *@
 
+<partial name="_AlertMessagePartial"></partial>
 
 
 @* - SHOW IF EXISTING RECORD IS NULL *@
@@ -182,101 +158,37 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_CalcInputScriptsPartial");
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_CalcInputScriptsPartial");
         await Html.RenderPartialAsync("_IdentifyHolidaysScriptPartial");
+        await Html.RenderPartialAsync("_FractionSlotScriptsPartial");
+        await Html.RenderPartialAsync("_PopulateWithDbScriptsPartial", Model);
+        await Html.RenderPartialAsync("_FormValidationPartial");
+        
     }
-
-
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         document.addEventListener('DOMContentLoaded', async function () {
-            function isSlotEnabled() {
-                for (let option = 0; option < 4; option++){
-                    const optionEl = document.querySelectorAll(`.wbsSelector`)[option];
+            let shouldSlotsBeEnabled = false;
 
-                    console.log(optionEl.value);
-                    
-                    if (optionEl.value === "-1") {
-                        for (let slot = 0; slot < 15; slot++) {
-                            const slotIndex = (15 * option) + slot;
-                            const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
-                            if (!slotEl.classList.contains("holidaySlot")) {
-                                slotEl.setAttribute("readonly", true);
-                            }
-                        }
-                    } else {
-                        for (let slot = 0; slot < 15; slot++) {
-                            const slotIndex = (15 * option) + slot;
-                            const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
-                            if (!slotEl.classList.contains("holidaySlot")) {
-                                slotEl.removeAttribute("readonly");
-                            }
-                        }
-                    }
-                }
+            if(@Json.Serialize(Model.ExistingRecord != null)){
+                populateTableWithData();
+                shouldSlotsBeEnabled = false;
+            }else{
+                shouldSlotsBeEnabled = true;
             }
+
+          
             document.querySelectorAll(".wbsSelector").forEach(i => { 
                 i.addEventListener("change", e => {
-                    isSlotEnabled();
+                    isSlotEnabled(shouldSlotsBeEnabled);
                 })
             })
 
-            function validateForm(formEvent) { 
+            
 
-                var divMensagemErro = document.getElementById('mensagemErro'); 
-                var inputs = document.querySelectorAll('.col-total'); 
-                var aprovado = true; 
-                inputs.forEach((input) => { 
-                    var value = parseInt(input.value); 
-                    if (value < 8) { 
-                        divMensagemErro.style.display = 'block'; 
-                        aprovado = false; 
-                    } 
-                }); 
-
-                var toasterType = aprovado ? "success" : "error";
-                !aprovado && formEvent.preventDefault();
-                return aprovado; 
-            }
-
-
-            // TODO - INICIAR NA QUINZENA ATUAL OU NO PARAM START DATE
-
-
-            async function getUrlParams() {
-                const url = window.location.href;
-
-                let startDate = new Date();
-
-                if (url.includes("startDate=")) {
-                    const urlStartDate = url.split("startDate=")[1];
-                    const date = new Date(urlStartDate);
-                    date.setDate(date.getDate())
-                    
-                    startDate = date;
-                } else {
-                    const todayDate = startDate.getDate();
-
-                    let firstDayOfFortnight = 1;
-                    if(todayDate > 15){
-                        firstDayOfFortnight = 15;
-                    }
-
-                    const date = new Date();
-                    date.setDate(firstDayOfFortnight);
-                    startDate = date;
-                }
-                const fortnightHolidays = await hasHolidayInFortnight(startDate);
-                generateTable(startDate.toISOString(), fortnightHolidays)
-            }
-
-            var quinzenaSelector = document.getElementById('quinzenaSelector');
-            var recordsTable = document.getElementById('records-table');
-            var dateColumns = recordsTable.querySelectorAll('.date-column');
-
-            await getUrlParams();
-            isSlotEnabled();
+            await identifyFortnightAndGenerateTable();
+            isSlotEnabled(shouldSlotsBeEnabled); 
 
             const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
 
@@ -299,57 +211,12 @@
                     }
                 });
             })
-
-
-            function generateTable(startDate, fortnightHolidaysIndexes = []) {
-                resetHolidaySlots();
-
-                for (var i = 0; i < 15; i++) {
-                    var date = new Date(startDate);
-                    date.setDate(date.getDate() + i + 1);
-                    let month = months[date.getMonth()];
-
-                    const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-                    setHiddenDateValues(i, stringDate);
-                    
-                    dateColumns[i].textContent = `${month}\n${date.getDate().toString().padStart(2, '0')}`;
-
-                    const isWeekendDay = isWeekend(date);
-                    const isHoliday = fortnightHolidaysIndexes.includes(i);
-
-
-                    markHolidaySlots(i, isWeekendDay, isHoliday);
-
-                }
-            }
-
-            /**
-             * description sets the hidden date values properly
-             * returns void
-             */
-            function setHiddenDateValues(index, date) { 
-                const slots = getSlotValues(index);
-                slots.forEach((v, i) => {
-                    const slotEl = document.querySelector(`#fractionSlot_${v} input:nth-child(2)`);
-                    slotEl.setAttribute("value", date);
-                });
-            }
-
+            
             quinzenaSelector.addEventListener('change', async function () {
                 var selectedDate = new Date(this.value);
 
-                // const fortnightHolidays = await hasHolidayInFortnight(selectedDate);
-
                 window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString();
-                
-                // generateTable(selectedDate, fortnightHolidays);
             });
-
-            // hasHolidayInFortnight(new Date(quinzenaSelector.value)).then(r => {
-            //     fortnightHolidays = r;
-            //     // generateTable(new Date(quinzenaSelector.value), fortnightHolidays);
-
-            // });
            
         });
     </script>

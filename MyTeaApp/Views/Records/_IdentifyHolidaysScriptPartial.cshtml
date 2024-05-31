@@ -60,9 +60,11 @@
      function resetHolidaySlots() {
          for (let i = 0; i < 60; i++) {
              const slotEl = document.querySelector(`#fractionSlot_${i}>input`);
-             slotEl.removeAttribute("disabled");
-             slotEl.removeAttribute("value");
-             slotEl.classList.contains("holidaySlot") && slotEl.classList.remove("holidaySlot");
+             if (slotEl.classList.contains("holidaySlot")) {
+                slotEl.classList.remove("holidaySlot");
+                slotEl.removeAttribute("disabled");
+                slotEl.removeAttribute("value");
+             }
          }
      }
 
