@@ -86,6 +86,12 @@ namespace MyTeaApp.Controllers
             if (existingRecord != null)
             {
                 vm.ExistingRecord=existingRecord;
+                
+                List<RecordFraction> rf = await _context.RecordFraction.ToListAsync();
+
+                vm.ExistingRecord.RecordFraction = rf.FindAll(f => f.RecordID == existingRecord.RecordID);
+
+                
             }
             // TODO - senao, mandar a view model apenas com o o select list de wbs e o restante nulo
 
@@ -106,7 +112,8 @@ namespace MyTeaApp.Controllers
             {
                 TotalHoursRecord = hours.Sum().Value,
                 User = user,
-                StartDate = dates.ElementAt(0)
+                StartDate = dates.ElementAt(0),
+                SelectedWbs = wbs.ToList()
             };
 
             _context.Records.Add(record);
