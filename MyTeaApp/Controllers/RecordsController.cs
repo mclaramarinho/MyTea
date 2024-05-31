@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -79,30 +80,20 @@ namespace MyTeaApp.Controllers
             date = new DateTime(date.Year, date.Month, firstDay);
 
             User userLog = await _um.FindByEmailAsync(User.Identity.Name);
-
-            //se adm principal muda para id info na url
-            if (userLog.UserID == 10001)
+            
+            if (uid != null)
             {
-                userLog = await _context.Users.FirstAsync(u => u.UserID == uid);
+                IList<string> userRoleFromParam = await _um.GetRolesAsync(userLog);
+
+                if (userRoleFromParam[0] == "Admin")
+                {
+                    userLog = await _context.Users.FirstAsync(u => u.UserID == uid);
+                }
+
             }
 
             vm.user = userLog;
-            
-            
 
-            //if (userID != null)
-            //{
-            //    IList<string> userRoleFromParam = await _um.GetRolesAsync(uid);
-
-            //    if (userRoleFromParam[0] != "Admin")
-            //    {
-            //        return RedirectToAction("Login", "Account");
-            //    }
-
-            //    uid = await _context.Users.FirstAsync(u => u.UserID == userID);
-
-
-            //}
             // TODO - pegar id do user
 
 
@@ -124,7 +115,7 @@ namespace MyTeaApp.Controllers
             // Recupere os dados do banco de dados para o dropdown
             vm.WBS = _getWbsSelectList();
 
-            
+
 
             TempData["ToasterType"] = null;
             return View(vm);
@@ -141,7 +132,20 @@ namespace MyTeaApp.Controllers
 
 
             //User user = await _um.FindByEmailAsync(User.Identity.Name); 
-            User user = await _context.Users.FirstAsync(u => u.Email == email);
+            //User user = await _context.Users.FirstAsync(u => u.Email == email);
+
+            User user = await _um.FindByEmailAsync(User.Identity.Name);
+
+            if (email != null)
+            {
+                IList<string> userRoleFromParam = await _um.GetRolesAsync(user);
+
+                if (userRoleFromParam[0] == "Admin")
+                {
+                    user = await _context.Users.FirstAsync(u => u.Email == email);
+                }
+
+            }
 
 
             Record record = new Record()
@@ -151,7 +155,7 @@ namespace MyTeaApp.Controllers
                 StartDate = dates.ElementAt(0)
             };
 
-             
+
 
             _context.Records.Add(record);
             await _context.SaveChangesAsync();
@@ -193,7 +197,7 @@ namespace MyTeaApp.Controllers
             }
 
             vm.WBS = _getWbsSelectList();
-                return View(vm);
+            return View(vm);
         }
 
 
@@ -299,6 +303,7 @@ namespace MyTeaApp.Controllers
                 Text = "Select charge code",
                 Value = "-1"
             });
+
             itemsFromDatabase.ForEach(i =>
             {
                 selectListItems.Add(new SelectListItem

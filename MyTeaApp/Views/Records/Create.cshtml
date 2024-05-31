@@ -200,7 +200,6 @@
         await Html.RenderPartialAsync("_IdentifyHolidaysScriptPartial");
     }
 
-
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         document.addEventListener('DOMContentLoaded', async function () {
@@ -235,25 +234,27 @@
                 })
             })
 
-            function validateForm(formEvent) { 
 
-                var divMensagemErro = document.getElementById('mensagemErro');
-                var inputs = document.querySelectorAll('.col-total');
-                var aprovado = false;
-                inputs.forEach((input) => {
-                    var value = parseInt(input.value);
-                    if (value < 8) {
-                        divMensagemErro.style.display = 'block';
-                        aprovado = false;
-                    }
+            // function validateForm(formEvent) {
 
-                    
-                });
+            //     var divMensagemErro = document.getElementById('mensagemErro');
+            //     var inputs = document.querySelectorAll('.col-total');
+            //     var aprovado = true;
+            //     inputs.forEach((input) => {
+            //         var value = parseInt(input.value);
+            //         if (value < 8) {
+            //             divMensagemErro.style.display = 'block';
+            //             aprovado = false;
+            //         }
+            //     });
 
-                var toasterType = aprovado ? "success" : "error";
-                !aprovado && formEvent.preventDefault();
-                return aprovado; 
-            }
+            //     var toasterType = aprovado ? "success" : "error";
+            //     !aprovado && formEvent.preventDefault();
+            //     return aprovado;
+            // }
+
+
+
 
 
             // TODO - INICIAR NA QUINZENA ATUAL OU NO PARAM START DATE
@@ -305,17 +306,17 @@
              * description - when no other input (except by holidays) is provided, submitting will update the total hours
              *
              */
-            $("#submitRecord_btn").on("mouseup", (e) => {
-                inputElements.forEach(input => {
-                    const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
-                    handleInput(event, rowIndex, colIndex)
-                    document.getElementById("registerRecordForm").onsubmit = (ev) => {
-                        validateForm(ev);    
-                    }
-                });
-                // e.stopImmediatePropagation()
-                validateForm(e);
-            })
+            // $("#submitRecord_btn").on("mouseup", (e) => {
+            //     inputElements.forEach(input => {
+            //         const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
+            //         handleInput(event, rowIndex, colIndex)
+            //         document.getElementById("registerRecordForm").onsubmit = (ev) => {
+            //             validateForm(ev);    
+            //         }
+            //     });
+            //     //e.stopImmediatePropagation();
+            //     validateForm(e);
+            // })
 
 
             function generateTable(startDate, fortnightHolidaysIndexes = []) {
@@ -375,5 +376,39 @@
             // });
 
         });
+
+
+        function validarEnvio() {
+            const submitButton = document.getElementById('submitRecord_btn');
+            var divMensagemErro = document.getElementById('mensagemErro');
+
+            submitButton.addEventListener('click', function (event) {
+                var inputs = document.querySelectorAll('.col-total');
+                var aprovado = true; 
+
+                inputs.forEach((input) => {
+                    var value = parseInt(input.value);
+
+                    if (value < 8 && ) {
+                        divMensagemErro.style.display = 'block';
+                        aprovado = false;
+                    }
+                });
+
+                var toasterType = aprovado ? "success" : "error";
+
+                
+                if (!aprovado) {
+                    var toasterType = aprovado ? "success" : "error";
+                    event.preventDefault(); // Impede o envio do formulário
+
+                }
+            });
+        }
+
+
+ 
+        validarEnvio();
+
     </script>
 }
