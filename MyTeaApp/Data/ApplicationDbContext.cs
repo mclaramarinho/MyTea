@@ -10,14 +10,12 @@ namespace MyTeaApp.Data
             : base(options)
         {
         }
-       
-        public DbSet<Department> Department { get; set; } 
+
+        public DbSet<Department> Department { get; set; }
         public DbSet<Record> Records { get; set; } = default!;
         public DbSet<WBS> WBS { get; set; } = default!;
         public DbSet<RecordFraction> RecordFraction { get; set; } = default!;
 
-        //public DbSet<User> Users {  get; set; } = default!;
-        private static int _uid = 10000;
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -25,11 +23,6 @@ namespace MyTeaApp.Data
             builder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
-
-            builder.Entity<User>()
-                .Property(u => u.UserID)
-                .HasComputedColumnSql((++_uid).ToString());
-            
         }
 
     }

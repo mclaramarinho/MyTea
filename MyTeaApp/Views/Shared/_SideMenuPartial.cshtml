@@ -1,0 +1,112 @@
+﻿@using Microsoft.Extensions.Primitives;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Http;
+@using MyTeaApp.Models.ViewModels;
+
+@inject SignInManager<User> _sm;
+@inject UserManager<User> _um;
+@inject IHttpContextAccessor _httpContext;
+
+@{
+    List<DashboardOptions> options = new();
+    options.Add(new DashboardOptions { Name = "Overview", Section = "", IconName = "binoculars", Action = "Dashboard", Controller = "Home" });
+    options.Add(new DashboardOptions { Name = "Register Fortnight", Section = "record", IconName = "journals", Action = "Create", Controller = "Records" });
+
+    if (User.IsInRole("Admin"))
+    {
+        options.Add(new DashboardOptions { Name = "Departments", Section = "departments", IconName = "buildings", Action = "Index", Controller = "Departments" });
+        options.Add(new DashboardOptions { Name = "WBS", Section = "wbs", IconName = "upc-scan", Action = "Index", Controller = "WBS" });
+        options.Add(new DashboardOptions { Name = "Users", Section = "account", IconName = "people", Action = "Index", Controller = "Account" });
+    }
+    else if (User.IsInRole("Employee"))
+    {
+
+    }
+    else if (User.IsInRole("Manager"))
+    {
+
+    }
+
+    string getIsSectionSelected(string sect)
+    {
+        var path = _httpContext.HttpContext.Request.Path;
+        string stylingClass = "selected-item";
+        if (path.Value.ToLower().Contains(sect.ToLower()))
+        {
+            return stylingClass;
+        }
+        return "";
+    }
+}
+
+
+        <aside class="col-auto">
+            <ul class="nav flex-column">
+                @foreach (var item in options)
+                {
+                    <li class="nav-item mb-4">
+                        <a class="text-decoration-none text-dark @getIsSectionSelected(item.Controller)"
+                        asp-action="@item.Action" asp-controller="@item.Controller">
+                            <i class="bi bi-@item.IconName"></i>
+                            @item.Name
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            <ul class="nav flex-column">
+                <li class="nav-item mb-4">
+                    <a class="text-decoration-none text-dark @getIsSectionSelected("settings")"
+                    asp-action="ChangePassword" asp-controller="Account" asp-route-section="settings">
+                        <i class="bi bi-gear"></i>
+                        Settings
+                    </a>
+                </li>
+                <form class="nav-item mb-4" asp-action="Logout" asp-controller="Account">
+                    <button type="submit" class="nav-link text-dark logout-btn">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </button>
+                </form>
+            </ul>
+        </aside>
+<style>
+    aside > ul {
+        font-size: 1.1rem;
+    }
+
+    aside {
+        height: 80vh;
+        display: grid;
+    }
+
+        aside > ul:last-child {
+            align-self: end;
+        }
+
+    .nav-item:hover {
+        > a
+
+    {
+        color: #0097B2 !important;
+    }
+
+    }
+
+    .logout-btn {
+        border: none;
+        box-shadow: none;
+        background-color: transparent;
+        padding: 0;
+        cursor: pointer;
+    }
+
+        .logout-btn:hover {
+            color: red !important;
+        }
+
+    .selected-item {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+</style>

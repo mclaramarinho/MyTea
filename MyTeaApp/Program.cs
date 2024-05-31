@@ -11,7 +11,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedEmail = false;
@@ -67,6 +67,10 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "account",
+    pattern: "{controller=Account}/{action=EditUser}/{uid?}");
 //app.MapRazorPages();
 
 using (var scope = app.Services.CreateScope())

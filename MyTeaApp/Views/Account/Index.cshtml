@@ -9,7 +9,7 @@
 }
 @model IEnumerable<UserInfoVM>;
 
-<div class="container">
+<div class="col">
     <h1 class="display-6 mb-4">User Management</h1>
     <partial name="_UserFilterPartial" model="Model" view-data="ViewData"></partial>
 
@@ -45,10 +45,10 @@
                         <td>@user.IsActive</td>
                         <td>
                             <span>
-                                <a href="">Del</a>
+                                <a asp-action="Delete" asp-route-userId="@user.DbUserId">Del</a>
                             </span>
                             <span>
-                                <a asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.UserId">Edit</a>
+                                <a asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.DbUserId">Edit</a>
                             </span>
                         </td>
                     </tr>

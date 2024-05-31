@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity;
-@inject SignInManager<User> _signInManager;
+
+@inject SignInManager<User> _sm;
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,9 +11,11 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MyTeaApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <header>
+<<<<<<< HEAD
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MyTeaApp</a>
@@ -36,11 +39,21 @@
                 </div>
             </div>
         </nav>
+=======
+        <partial name="_NavbarPartial" />
+>>>>>>> main
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        @if(_sm.IsSignedIn(User)){
+            <main class="row">
+                    <partial name="_SideMenuPartial"></partial>
+                @RenderBody()
+            </main>
+        }
+        else
+        {
             @RenderBody()
-        </main>
+        }
     </div>
 
     <footer class="border-top footer text-muted">
