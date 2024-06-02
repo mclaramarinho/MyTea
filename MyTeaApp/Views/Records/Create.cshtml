@@ -15,7 +15,6 @@
     {
         fortNight = DateTime.ParseExact(urlStartDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
     }
-    Console.WriteLine(fortNight.Day);
     int firstDayOfFortnight = 1;
     if (fortNight.Day > 15)
     {
@@ -23,10 +22,8 @@
     }
 
     DateTime fortnightStart = new DateTime(fortNight.Year, fortNight.Month, firstDayOfFortnight);
-    Console.WriteLine(fortnightStart);
     var fortnights = new List<SelectListItem>();
 
-    // Troquei o current year pra ser dinamico
     var currentYear = DateTime.Now.Year;
 
     for (int i = 1; i <= 12; i++)
@@ -75,7 +72,7 @@
 }
 
 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none" id="mensagemErro">
-    Some weekday did not reach the 8 hour minimum. Please review it, before submitting!
+   
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
@@ -89,11 +86,10 @@
     }
 </style>
 <style>
-    .holidaySlot{
+    .holidaySlot {
         background-color: rgba(239, 239, 239, 0.3) !important;
         box-shadow: none;
         border: 1px solid rgba(118, 118, 118, 0.3);
-
         cursor: default;
     }
 </style>
@@ -115,29 +111,29 @@
                 <label for="quinzenaSelector">Select Fortnight</label>
                 <select id="quinzenaSelector" class="form-control">
                     @foreach (var quinzena in fortnights)
-                        {
-                            <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
-                        }
-                    </select>
-                </div>
-                <form asp-action="Create" method="post" id="registerRecordForm">
-                    <div id="records-list" class="">
-                        <table id="records-table" class="table">
-                            <thead>
-                                <tr>
-                                    <th class="text-nowrap">Charge Codes</th>
-                                    @for (int i = 0; i < 15; i++)
-                                    {
-                                        <th class="date-column text-center"></th>
-                                    }
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @for (int i = 0; i < 4; i++)
+                    {
+                        <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
+                    }
+                </select>
+            </div>
+            <form asp-action="Create" method="post" id="registerRecordForm">
+                <div id="records-list" class="">
+                    <table id="records-table" class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-nowrap">Charge Codes</th>
+                                @for (int i = 0; i < 15; i++)
                                 {
-                                    <tr class="grid">
-                                        <td class="g-col-auto">
-                                            <div>
+                                    <th class="date-column text-center"></th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < 4; i++)
+                            {
+                                <tr class="grid">
+                                    <td class="g-col-auto">
+                                        <div>
                                             <select class="form-select wbsSelector" asp-items="Model.WBS" name="wbs" id="wbsSelector"></select>
 
                                         </div>
@@ -146,21 +142,18 @@
                                     {
                                         <td class="g-col-1" id="fractionSlot_@((i * 15) + j)">
 
-                                            <input name="hours" type="number" class="" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
+                                            <input name="hours" type="number" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
 
                                             <input name="dates" type="hidden" />
-                                            
 
                                         </td>
                                     }
-
                                     <td class="g-col-1">
                                         <input id="rowTotal_@i" type="number" class="row-total" disabled style="max-width: 40px;" />
                                     </td>
                                 </tr>
                             }
                             <input name="email" type="hidden" value="@Model.user" />
-                            
                         </tbody>
                         <tfoot>
                         <th>Total</th>
@@ -187,7 +180,7 @@
     </div>
 </div>
 
-@if (TempData["ToasterType"] == "success")
+@if (TempData["ToasterType"] != null)
 {
     Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
 }
@@ -200,15 +193,16 @@
         await Html.RenderPartialAsync("_IdentifyHolidaysScriptPartial");
     }
 
+        
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         document.addEventListener('DOMContentLoaded', async function () {
             function isSlotEnabled() {
-                for (let option = 0; option < 4; option++){
+                for (let option = 0; option < 4; option++) {
                     const optionEl = document.querySelectorAll(`.wbsSelector`)[option];
 
                     console.log(optionEl.value);
-                    
+
                     if (optionEl.value === "-1") {
                         for (let slot = 0; slot < 15; slot++) {
                             const slotIndex = (15 * option) + slot;
@@ -228,34 +222,11 @@
                     }
                 }
             }
-            document.querySelectorAll(".wbsSelector").forEach(i => { 
+            document.querySelectorAll(".wbsSelector").forEach(i => {
                 i.addEventListener("change", e => {
                     isSlotEnabled();
                 })
             })
-
-
-            // function validateForm(formEvent) {
-
-            //     var divMensagemErro = document.getElementById('mensagemErro');
-            //     var inputs = document.querySelectorAll('.col-total');
-            //     var aprovado = true;
-            //     inputs.forEach((input) => {
-            //         var value = parseInt(input.value);
-            //         if (value < 8) {
-            //             divMensagemErro.style.display = 'block';
-            //             aprovado = false;
-            //         }
-            //     });
-
-            //     var toasterType = aprovado ? "success" : "error";
-            //     !aprovado && formEvent.preventDefault();
-            //     return aprovado;
-            // }
-
-
-
-
 
             // TODO - INICIAR NA QUINZENA ATUAL OU NO PARAM START DATE
 
@@ -283,8 +254,8 @@
                     date.setDate(firstDayOfFortnight);
                     startDate = date;
                 }
-                //const fortnightHolidays = await hasHolidayInFortnight(startDate);
-                generateTable(startDate.toISOString())
+                const fortnightHolidays = await hasHolidayInFortnight(startDate);
+                generateTable(startDate.toISOString(), fortnightHolidays)
             }
 
             var quinzenaSelector = document.getElementById('quinzenaSelector');
@@ -306,23 +277,12 @@
              * description - when no other input (except by holidays) is provided, submitting will update the total hours
              *
              */
-            // $("#submitRecord_btn").on("mouseup", (e) => {
-            //     inputElements.forEach(input => {
-            //         const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
-            //         handleInput(event, rowIndex, colIndex)
-            //         document.getElementById("registerRecordForm").onsubmit = (ev) => {
-            //             validateForm(ev);    
-            //         }
-            //     });
-            //     //e.stopImmediatePropagation();
-            //     validateForm(e);
-            // })
-
 
             function generateTable(startDate, fortnightHolidaysIndexes = []) {
                 resetHolidaySlots();
-
+ 
                 for (var i = 0; i < 15; i++) {
+                    
                     var date = new Date(startDate);
                     date.setDate(date.getDate() + i + 1);
                     let month = months[date.getMonth()];
@@ -335,26 +295,45 @@
                     const isWeekendDay = isWeekend(date);
                     const isHoliday = fortnightHolidaysIndexes.includes(i);
 
-
                     markHolidaySlots(i, isWeekendDay, isHoliday);
 
+                    if (isWeekendDay) {
+                        continue; // Ignora os fins de semana
+                    }
+
+
+                    validarEnvio(i, date)
+
+             
                 }
             }
+
+            function validarEnvio(index, date) {
+                const submitButton = document.getElementById('submitRecord_btn');
+                var divMensagemErro = document.getElementById('mensagemErro');
+                var dayAndMonth = (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
+
+                 
+                submitButton.addEventListener('click', function (event) {
+                    var inputValue = document.getElementById('colTotal_' + index).value;
+
+                    if (inputValue < 8) {
+                        divMensagemErro.style.display = 'block';
+                        divMensagemErro.innerHTML = "Date: " + dayAndMonth + " did not reach the 8 hour minimum. Please review it, before submitting!";
+                        event.preventDefault(); // Impede o envio do formulário
+                    }
+                });
+            }
+
 
             /**
              * description sets the hidden date values properly
              * returns void
              */
             function setHiddenDateValues(index, date) {
-                const slots = [
-                    index,
-                    index + 15,
-                    index + (15 * 2),
-                    index + (15 * 3),
-                ];
+                const slots = getSlotValues(index);
                 slots.forEach((v, i) => {
                     const slotEl = document.querySelector(`#fractionSlot_${v} input:nth-child(2)`);
-                    console.log(date);
                     slotEl.setAttribute("value", date);
                 });
             }
@@ -364,7 +343,7 @@
 
                 // const fortnightHolidays = await hasHolidayInFortnight(selectedDate);
 
-                window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString() + + "&uID=" + uid;
+                window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString();
 
                 // generateTable(selectedDate, fortnightHolidays);
             });
@@ -377,38 +356,7 @@
 
         });
 
-
-        function validarEnvio() {
-            const submitButton = document.getElementById('submitRecord_btn');
-            var divMensagemErro = document.getElementById('mensagemErro');
-
-            submitButton.addEventListener('click', function (event) {
-                var inputs = document.querySelectorAll('.col-total');
-                var aprovado = true; 
-
-                inputs.forEach((input) => {
-                    var value = parseInt(input.value);
-
-                    if (value < 8 && ) {
-                        divMensagemErro.style.display = 'block';
-                        aprovado = false;
-                    }
-                });
-
-                var toasterType = aprovado ? "success" : "error";
-
-                
-                if (!aprovado) {
-                    var toasterType = aprovado ? "success" : "error";
-                    event.preventDefault(); // Impede o envio do formulário
-
-                }
-            });
-        }
-
-
  
-        validarEnvio();
 
     </script>
 }
