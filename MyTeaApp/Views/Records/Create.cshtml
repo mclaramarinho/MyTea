@@ -190,7 +190,7 @@
             const startDate = getFortnightStartDate();
             const daysInFortnight = getDaysInFortnight(startDate);
 
-
+            await identifyFortnightAndGenerateTable(startDate, daysInFortnight);
 
             if(@Json.Serialize(Model.ExistingRecord != null)){
                 populateTableWithData();
