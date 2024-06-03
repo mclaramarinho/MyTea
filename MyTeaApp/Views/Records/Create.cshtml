@@ -7,6 +7,9 @@
 
 @{
     ViewData["Title"] = "Create Record";
+
+    int daysInSelectedFortnight = 15;
+
     var _http = _httpContextAccessor.HttpContext;
 
     string? urlStartDate = _http.Request.Query["startDate"];
@@ -37,7 +40,7 @@
         DateTime startDate = new DateTime(currentYear, i, first);
         DateTime endDate = startDate.AddDays(14);
         bool isSelected = (startDate.Day == fortnightStart.Day && startDate.Month == fortnightStart.Month && startDate.Year == fortnightStart.Year);
-
+        daysInSelectedFortnight = daysInSelectedFortnight;
         fortnights.Add(new SelectListItem
                 {
                     Value = $"{startDate:yyyy-MM-dd}",
@@ -57,10 +60,17 @@
             }
         } while (tempDate.Month == i);
 
-        startDate = new DateTime(currentYear, i, second);
-        endDate = startDate.AddDays(daysInSecondFortnight);
+
+        int daysInMonth = DateTime.DaysInMonth(currentYear, i);
+
+        startDate = new DateTime(currentYear, i, 16);
+
+        endDate = new DateTime(currentYear, i, daysInMonth);
+
         isSelected = (startDate.Day == fortnightStart.Day && startDate.Month == fortnightStart.Month && startDate.Year == fortnightStart.Year);
 
+        daysInSelectedFortnight = isSelected == true ? daysInSecondFortnight : daysInSelectedFortnight;
+        
         fortnights.Add(new SelectListItem
                 {
                     Value = $"{startDate:yyyy-MM-dd}",
@@ -69,6 +79,7 @@
                 });
 
     }
+
 }
 
 @* - IF RECORD NOT NULL SHOW FIELDS FILLED WITH DB DATA *@
@@ -99,10 +110,11 @@
                             <thead>
                                 <tr>
                                     <th class="text-nowrap">Charge Codes</th>
-                                    @for (int i = 0; i < 15; i++)
+                                @for (int i = 0; i < daysInSelectedFortnight; i++)
                                     {
                                         <th class="date-column text-center"></th>
                                     }
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -115,9 +127,10 @@
 
                                             </div>
                                         </td>
-                                        @for (int j = 0; j < 15; j++)
+                                    @for (int j = 0; j < daysInSelectedFortnight; j++)
                                         {
-                                            <td class="g-col-1" id="fractionSlot_@((i * 15) + j)">
+
+                                            <td class="g-col-1" id="fractionSlot_@((i * daysInSelectedFortnight) + j)">
 
                                                 <input name="hours" type="number"  id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
 
@@ -126,23 +139,24 @@
                                             </td>
                                         }
                                         <td class="g-col-1">
-                                        <input id="rowTotal_@i" type="number" class="row-total" disabled style="max-width: 40px;" />
+
+                                        <input id="rowTotal_@i" type="number" class="row-total" disabled style="max-width: 48px;" />
                                         </td>
                                     </tr>
                                 }
+                            <input name="email" type="hidden" value="@Model.user" />
                             </tbody>
                             <tfoot>
                                 <th>Total</th>
-                                @for (int i = 0; i < 15; i++)
+                                @for (int i = 0; i < daysInSelectedFortnight; i++)
                                 {
                                     <td class="col-total">
                                         <input id="colTotal_@i" type="number" class="col-total" disabled style="max-width: 40px;" />
                                     </td>
                                 }
                                 <td class="col-total">
-                            <input type="number" id="result" disabled class="" style="max-width: 40px;" />
+                                    <input type="number" id="result" disabled class="" style="max-width: 48px;" />
                                 </td>
-
                             </tfoot>
                         </table>
                     </div>
@@ -171,6 +185,12 @@
         document.addEventListener('DOMContentLoaded', async function () {
             let shouldSlotsBeEnabled = false;
 
+            // MOD -- added these lines to keep track of the amount of days in fortnight
+            const startDate = getFortnightStartDate();
+            const daysInFortnight = getDaysInFortnight(startDate);
+
+
+
             if(@Json.Serialize(Model.ExistingRecord != null)){
                 populateTableWithData();
                 shouldSlotsBeEnabled = false;
@@ -178,17 +198,11 @@
                 shouldSlotsBeEnabled = true;
             }
 
-          
-            document.querySelectorAll(".wbsSelector").forEach(i => { 
-                i.addEventListener("change", e => {
-                    isSlotEnabled(shouldSlotsBeEnabled);
-                })
-            })
-
+            await identifyFortnightAndGenerateTable(startDate, daysInFortnight);
+            isSlotEnabled(shouldSlotsBeEnabled, daysInFortnight);
             
 
-            await identifyFortnightAndGenerateTable();
-            isSlotEnabled(shouldSlotsBeEnabled); 
+            /* EVENT LISTENERS */
 
             const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
 
@@ -198,26 +212,32 @@
                 input.addEventListener('input', event => handleInput(event, rowIndex, colIndex));
             });
 
+            quinzenaSelector.addEventListener('change', async function () {
+                var selectedDate = new Date(this.value);
+
+                window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString();
+            });
+
             /**
              * description - when no other input (except by holidays) is provided, submitting will update the total hours
-             *  
+             *
              */
             $("#submitRecord_btn").on("mouseup", (e) => {
                 inputElements.forEach(input => {
                     const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
                     handleInput(event, rowIndex, colIndex)
                     document.getElementById("registerRecordForm").onsubmit = (ev) => {
-                        validateForm(ev);    
+                        validateForm(ev);
                     }
                 });
             })
-            
-            quinzenaSelector.addEventListener('change', async function () {
-                var selectedDate = new Date(this.value);
 
-                window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString();
-            });
-           
+
+            document.querySelectorAll(".wbsSelector").forEach(i => {
+                i.addEventListener("change", e => {
+                    isSlotEnabled(shouldSlotsBeEnabled, daysInFortnight);
+                })
+            })
         });
     </script>
 }
