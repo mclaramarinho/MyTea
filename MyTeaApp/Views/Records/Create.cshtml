@@ -191,6 +191,43 @@
     }
 
 
+    @if (Model.ExistingRecord?.RecordFraction != null)
+    {
+        Console.WriteLine("tem dados");
+        Console.WriteLine(Model.ExistingRecord?.RecordFraction.Count);
+        List<float> inputHoursList = new List<float>();
+        @if (Model.ExistingRecord?.RecordFraction != null)
+        {
+            @foreach (var record in Model.ExistingRecord.RecordFraction)
+            {
+                inputHoursList.Add(record.TotalHoursFraction);
+                Console.WriteLine("funfou no grau");
+            }
+
+        }
+        else
+        {
+            Console.WriteLine("A existin Record Record Fraction é nula");
+        }
+        <script>
+            if (@inputHoursList.Count> 0) {
+                console.log("Valores de inputHoursList:");
+            @foreach (var value in inputHoursList)
+            {
+                Console.WriteLine("foreach do count funcionou");
+                Console.WriteLine(value);
+            }
+
+        </script>
+    }
+
+    else
+    {
+        Console.WriteLine("nao tem dados nessa pagina");
+    }
+
+   
+
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         document.addEventListener('DOMContentLoaded', async function () {
