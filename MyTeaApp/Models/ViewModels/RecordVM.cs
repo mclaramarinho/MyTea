@@ -7,6 +7,8 @@ namespace MyTeaApp.Models.ViewModels
     {
         public Record? ExistingRecord { get; set; }
         public List<SelectListItem> WBS;
+
+        public User user { get; set; }
     }
 
 }
