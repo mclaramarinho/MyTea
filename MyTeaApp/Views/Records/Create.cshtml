@@ -213,9 +213,15 @@
             });
 
             quinzenaSelector.addEventListener('change', async function () {
-                var selectedDate = new Date(this.value);
-
-                window.location.href = "/Records/Create?startDate=" + selectedDate.toISOString();
+                var selectedDate = new Date(this.value).toISOString();
+                let newLocation = `/Records/Create?`;
+                // let newLocation = `/Records/Create?startDate=${selectedDate}`;
+                if (userToView !== null) {
+                    newLocation += `uid=${userToView}&startDate=${selectedDate}`;
+                } else{
+                    newLocation += `startDate=${selectedDate}`;
+                }
+                window.location.href = newLocation;
             });
 
             /**
