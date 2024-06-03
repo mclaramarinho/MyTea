@@ -183,6 +183,7 @@
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         document.addEventListener('DOMContentLoaded', async function () {
+            let userToView = @(Json.Serialize(ViewData["userSelected"]));
             let shouldSlotsBeEnabled = false;
 
             // MOD -- added these lines to keep track of the amount of days in fortnight
