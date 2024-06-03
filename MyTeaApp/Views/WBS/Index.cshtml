@@ -7,15 +7,17 @@
 <div class="col">
 
     <p>
-        <a asp-action="Create">Create New</a>
+        <a class="btn btn-info" asp-action="Create">Create New</a>
     </p>
 
     <form asp-controller="WBS" asp-action="Index" method="get">
-        <p>
-            Title: <input type="text" name="filtroWbs" />
-            <input type="submit" value="Filter" /> |
-            <a asp-action="Index">Back to List</a>
-        </p>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search Title" name="searchString">
+            <div class="input-group-append">
+                <button class="btn btn-info" type="submit">Filter</button>
+            </div>
+        </div>
+        <a class="btn btn-info" asp-action="Index">Back to List</a>
     </form>
 
 
@@ -28,16 +30,16 @@
     <table class="table">
         <thead>
             <tr>
-                <th>
+                <th class="title">
                     @Html.DisplayNameFor(model => model.WbsName)
                 </th>
-                <th>
+                <th class="title">
                     @Html.DisplayNameFor(model => model.WbsCod)
                 </th>
-                <th>
+                <th class="title">
                     @Html.DisplayNameFor(model => model.Description)
                 </th>
-                <th>
+                <th class="title">
                     @Html.DisplayNameFor(model => model.IsChargeable)
                 </th>
                 <th></th>
@@ -59,9 +61,9 @@
                     @Html.DisplayFor(modelItem => item.IsChargeable)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.WbsId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.WbsId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.WbsId">Delete</a>
+                    <a class="btn btn-info" asp-action="Edit" asp-route-id="@item.WbsId">Edit</a> |
+                    <a class="btn btn-info" asp-action="Details" asp-route-id="@item.WbsId">Details</a> |
+                    <a class="btn btn-info" asp-action="Delete" asp-route-id="@item.WbsId">Delete</a>
                 </td>
             </tr>
     }
@@ -69,3 +71,14 @@
     </table>
 
 </div>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+</style>

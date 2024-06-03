@@ -14,35 +14,46 @@
 }
 
 <form class="row mb-5" asp-action="Index" asp-controller="Account" method="get">
-    <div class="col-2">
-        <label class="form-label">Search by name</label>
+    <div class="input-group-sm col-2">
+        <label class="title form-label">Search by name</label>
         <input class="form-control" type="text" name="userName"
                placeholder="Filter by name" value="@ViewData["filter.userName"]" />
     </div>
     <div class="col-2">
-        <label class="form-label">Admission Date</label>
+        <label class="title form-label">Admission Date</label>
         <input type="date" class="form-control" name="admissionDate"
                value="@ViewData["filter.admissionDate"]" />
     </div>
     <div class="col-2 align-content-center">
-        <label class="form-check-label">
+        <label class="title form-check-label">
             Currently employed
             <input type="checkbox" name="activeOnly" checked="@ViewData["filter.activeOnly"]" />
         </label>
 
     </div>
     <div class="col-2">
-        <label class="form-label">By department</label>
+        <label class="title form-label">By department</label>
         <select class="form-select" asp-items="deps" name="department">
         </select>
     </div>
     <div class="col-2">
-        <label class="form-label">By role</label>
+        <label class="title form-label">By role</label>
         <select class="form-select" asp-items="roles" name="role">
         </select>
     </div>
     <div class="col-2 align-content-end justify-content-center">
-        <a asp-action="Index" asp-controller="Account" class="btn btn-sm btn-link text-danger text-decoration-none">Clear</a>
-        <button type="submit" class="btn btn-sm btn-success">Filter</button>
+        <a asp-action="Index" asp-controller="Account" class="btn btn-sm btn-info text-decoration-none">Clear</a>
+        <button type="submit" class="btn btn-sm btn-info">Filter</button>
     </div>
 </form>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+</style>

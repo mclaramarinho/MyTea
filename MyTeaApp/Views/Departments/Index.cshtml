@@ -4,29 +4,31 @@
     ViewData["Title"] = "Department";
 }
 <div class="col">
-    <h1>Department</h1>
+    <h1 class="title">Departments</h1>
     <p>
-        <a asp-action="Create">Create New</a>
+        <a class="btn btn-info mt-3 mb-3" asp-action="Create">Create New</a>
     </p>
 
     <form asp-controller="Departments" asp-action="Index" method="get">
-        <p>
-            Title: <input type="text" name="searchString" />
-            <input type="submit" value="Filter" />
-        </p>
+        <div class="input-group mb-5">
+            <input type="text" class="form-control" placeholder="Search Title" name="searchString">
+            <div class="input-group-append">
+                <button class="btn btn-info" type="submit">Filter</button>
+            </div>
+        </div>
     </form>
 
 
     <table class="table">
         <thead>
             <tr>
-                <th>
+                <th class="title">
                     @Html.DisplayNameFor(model => model.DepartmentID)
                 </th>
-                <th>
+                <th class="title">
                     @Html.DisplayNameFor(model => model.DepartmentName)
                 </th>
-                <th></th>
+                <th class="title"></th>
             </tr>
         </thead>
         <tbody>
@@ -40,9 +42,9 @@
                         @Html.DisplayFor(modelItem => item.DepartmentName)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.DepartmentID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.DepartmentID">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.DepartmentID">Delete</a>
+                        <a class="btn btn-info" asp-action="Edit" asp-route-id="@item.DepartmentID">Edit</a> |
+                        <a class="btn btn-info" asp-action="Details" asp-route-id="@item.DepartmentID">Details</a> |
+                        <a class="btn btn-info" asp-action="Delete" asp-route-id="@item.DepartmentID">Delete</a>
                     </td>
                 </tr>
             }
@@ -50,3 +52,14 @@
     </table>
 
 </div>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+</style>
