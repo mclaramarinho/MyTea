@@ -20,7 +20,7 @@
             var wbs = Model.ExistingRecord.RecordFraction.ElementAt(i).WbsID;
             var cod = _db.WBS.FirstOrDefault(w => w.WbsId == wbs)?.WbsCod;
             wbsCods.Add(cod);
-        }
+        }   
     }
 
 }
@@ -49,13 +49,38 @@
         }
     }
 
-    function setSlotsValues(index, hours) {
-        for (let j = 0; j < 15; j++) {
-            const slotIndex = j + (15 * index);
+    function setSlotsValues(index, hours, dates, wbs, wbsList) {
+        const startDate = getFortnightStartDate();
+        const daysInFortnight = getDaysInFortnight(startDate);
+        
+        const maxSlotIndex = daysInFortnight + (daysInFortnight * index);
+        const minSlotIndex = 0 + (daysInFortnight * index);
+
+        for (let j = 0; j < daysInFortnight; j++) {
+
+            const slotIndex = j + (daysInFortnight * index);
             const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
 
-            slotEl.setAttribute("value", hours[slotIndex]);
-            slotEl.setAttribute("disabled", true);
+
+            // TODO - verificar a data hidden do input acima
+            let dateElValue = document.querySelector(`#fractionSlot_${slotIndex} input:nth-child(2)`).value;
+
+            // TODO - identificar a date igual a date do slot atual
+            let dataPosition = -9;
+
+            for (let i = 0; i < dates.length; i++) {
+                const currDate = dates[i].split("T")[0];
+                
+                if (currDate === dateElValue && wbsList[i] === wbs) {
+                    dataPosition = i;
+                    break;
+                }
+            }
+            if (dataPosition !== -9) {
+                slotEl.setAttribute("value", hours[dataPosition]);
+                slotEl.setAttribute("disabled", true);
+            }
+
         }
     }
 
@@ -68,21 +93,22 @@
                 getDataFromDb();
             }
             const wbs = @Json.Serialize(Model.ExistingRecord?.SelectedWbs);
+
             const dates = @Json.Serialize(dates);
             const hours = @Json.Serialize(hours);
             const wbsIds = @Json.Serialize(wbsCods);
 
-
+            
             for (let i = 0; i < wbs.length; i++) {
                 disableSelectElement(i);
 
                 if (wbs[i] == "-1") {
                     continue;
                 }
-
                 setSelectElementValue(i, wbs[i]);
+                setSlotsValues(i, hours, dates, wbs[i], wbsIds);
+                updateTotals(i, 0, 0); 
 
-                setSlotsValues(i, hours);
             }
         }
 
