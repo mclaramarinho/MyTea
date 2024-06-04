@@ -11,6 +11,11 @@
 
 <div class="col">
     <h1 class="title display-6 mb-4">User Management</h1>
+
+    <p>
+        <a class="btn btn-outline-info mt-2" asp-action="Create">Create New</a>
+    </p>
+
     <partial name="_UserFilterPartial" model="Model" view-data="ViewData"></partial>
 
     <div class="table-responsive">
@@ -45,10 +50,10 @@
                         <td>@user.IsActive</td>
                         <td>
                             <span>
-                                <a class="btn btn-info mb-2" asp-action="Delete" asp-route-userId="@user.DbUserId">Del</a>
+                                <a class="btn btn-outline-danger mb-2" asp-action="Delete" asp-route-userId="@user.DbUserId"><i class="bi bi-trash"></i></a>
                             </span>
                             <span>
-                                <a class="btn btn-info" asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.DbUserId">Edit</a>
+                                <a class="btn btn-outline-info" asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.DbUserId"><i class="bi bi-pencil-square"></i></a>
                             </span>
                         </td>
                     </tr>
