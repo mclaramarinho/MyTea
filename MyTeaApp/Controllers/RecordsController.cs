@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions;
 using MyTeaApp.Data;
 using MyTeaApp.Models;
 using MyTeaApp.Models.ViewModels;
-using NuGet.Protocol;
 
 namespace MyTeaApp.Controllers
 {
@@ -78,11 +71,9 @@ namespace MyTeaApp.Controllers
             // TODO - guardar o primeiro dia da quinzena 
             date = new DateTime(date.Year, date.Month, firstDay);
 
-
             // TODO - pegar id do user
             User uid = await _um.FindByEmailAsync(User.Identity.Name);
-            // TODO - user null?
-
+            
 
             Record? existingRecord = null;
             // TODO - procurar no banco de dados os records cuja startDate e userid sejam os procurados
@@ -102,11 +93,9 @@ namespace MyTeaApp.Controllers
             // Recupere os dados do banco de dados para o dropdown
             vm.WBS = _getWbsSelectList();
 
-
+            
             return View(vm);
         }
-
-        
 
         [HttpPost]
         public async Task<IActionResult> Create(ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, RecordVM vm)
@@ -160,7 +149,7 @@ namespace MyTeaApp.Controllers
             }
 
             vm.WBS = _getWbsSelectList();
-                return View(vm);
+            return View(vm);
         }
 
 

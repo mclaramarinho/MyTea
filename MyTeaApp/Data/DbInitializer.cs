@@ -57,7 +57,7 @@ public class DbInitializer
     {
         List<WBS> wbs = new List<WBS>()
         {
-            new WBS
+                new WBS
                 {
                     WbsName = "Vacation",
                     WbsCod = "WBS0085749",
@@ -76,7 +76,7 @@ public class DbInitializer
                     WbsName = "No task",
                     WbsCod = "WBS4700086",
                     Description = "No task - employee",
-                    IsChargeable = true,
+                    IsChargeable = false,
                 },
                 new WBS
                 {
@@ -102,7 +102,7 @@ public class DbInitializer
         };
         foreach (var w in wbs)
         {
-            if (context.WBS.Any(item => w.WbsCod == item.WbsCod) == false)
+            if (!context.WBS.Any(item => w.WbsCod == item.WbsCod))
             {
                 await context.WBS.AddAsync(w);
                 await context.SaveChangesAsync();
@@ -124,7 +124,7 @@ public class DbInitializer
 
         await CreateDefaultDepartment();
 
-        CreateDefaultWBS(context);
+        await CreateDefaultWBS(context);
 
     }
 }
