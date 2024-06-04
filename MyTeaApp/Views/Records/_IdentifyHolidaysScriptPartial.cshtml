@@ -116,25 +116,45 @@
 =======
 
      function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
-
          const slotsValues = getSlotValues(index);
 >>>>>>> main
 
-         slotsValues.forEach((v, i) => {
-             const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
+         const selectElements = document.querySelectorAll('.wbsSelector');
 
-             if (isHoliday && i === slotsValues.length - 1) {
-                 slotEl.setAttribute("value", 8);
-                 slotEl.setAttribute("readonly", true);
-                 slotEl.classList.add("holidaySlot");
-             } else if (isWeekend) {
-                 slotEl.classList.add("holidaySlot");
-             } else {
-                 slotEl.readonly = false;
-             }
-         });
+        slotsValues.forEach((v, i) => {
+             const slotEl = document.querySelector(`#fractionSlot_${ v } > input`);
+
+            if (isHoliday) {
+                if (i === slotsValues.length - 1) {
+                    slotEl.setAttribute("value", 8);
+                    slotEl.setAttribute("readonly", true);
+
+                    if (selectElements.length > 0) {
+                        const lastSelectElement = selectElements[selectElements.length - 1];
+                        const optionElement = lastSelectElement.querySelector('option[value="WBS2534102"]');
+                        if (optionElement) {
+                            optionElement.selected = true;
+                        }
+                        lastSelectElement.disabled = true; 
+                        lastSelectElement.readonly = true;
+                    }
+                }
+                slotEl.classList.add("holidaySlot");
+            } else if (isWeekend) {
+                slotEl.classList.add("holidaySlot");
+            } else {
+                slotEl.removeAttribute("readonly");
+                slotEl.classList.remove("holidaySlot");
+            }
+        });
+
+        // Depois de marcar os slots de feriado, atualiza os totais
+        updateTotals();
      }
 
+     // Chama a função
+     // markHolidaySlots(index, isWeekend, isHoliday);
+     
      // =========================================
 
      function isWeekend(date) {

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-﻿@using MyTeaApp.Models.ViewModels;
-=======
 @using MyTeaApp.Models.ViewModels;
->>>>>>> main
 @using Microsoft.AspNetCore.Http;
 @inject IHttpContextAccessor _httpContextAccessor;
 @model RecordVM;
@@ -103,7 +99,7 @@
 }
 
 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none" id="mensagemErro">
-    Some weekday did not reach the 8 hour minimum. Please review it, before submitting!
+
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
@@ -116,13 +112,8 @@
         z-index: 1000;
     }
 </style>
+
 <style>
-<<<<<<< HEAD
-    .holidaySlot {
-        background-color: rgba(239, 239, 239, 0.3) !important;
-        box-shadow: none;
-        border: 1px solid rgba(118, 118, 118, 0.3);
-=======
     .holidaySlot{
         background-color: rgba(239, 239, 239, 0.3) !important;
         box-shadow: none;
@@ -308,6 +299,43 @@
     }
 
 
+    @if (Model.ExistingRecord?.RecordFraction != null)
+    {
+        Console.WriteLine("tem dados");
+        Console.WriteLine(Model.ExistingRecord?.RecordFraction.Count);
+        List<float> inputHoursList = new List<float>();
+        @if (Model.ExistingRecord?.RecordFraction != null)
+        {
+            @foreach (var record in Model.ExistingRecord.RecordFraction)
+            {
+                inputHoursList.Add(record.TotalHoursFraction);
+                Console.WriteLine("funfou no grau");
+            }
+
+        }
+        else
+        {
+            Console.WriteLine("A existin Record Record Fraction é nula");
+        }
+        <script>
+            if (@inputHoursList.Count> 0) {
+                console.log("Valores de inputHoursList:");
+            @foreach (var value in inputHoursList)
+            {
+                Console.WriteLine("foreach do count funcionou");
+                Console.WriteLine(value);
+            }
+
+        </script>
+    }
+
+    else
+    {
+        Console.WriteLine("nao tem dados nessa pagina");
+    }
+
+   
+
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         document.addEventListener('DOMContentLoaded', async function () {
@@ -469,7 +497,6 @@
             });
 =======
                     markHolidaySlots(i, isWeekendDay, isHoliday);
-
                 }
             }
 
@@ -502,7 +529,6 @@
 
             // });
            
->>>>>>> main
         });
 
     </script>
