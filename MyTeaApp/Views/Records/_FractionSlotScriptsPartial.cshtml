@@ -30,7 +30,11 @@
                 for (let slot = 0; slot < daysInFortnight; slot++) {
                     const slotIndex = (daysInFortnight * option) + slot;
                     const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
-                    if (!slotEl.classList.contains("holidaySlot")) {
+
+                    const isSlotWeekend = slotEl.classList.contains("weekend");
+                    const isWorkDay = !slotEl.classList.contains("holidaySlot") && !slotEl.classList.contains("weekend")
+
+                    if (isSlotWeekend || isWorkDay) {
                         slotEl.removeAttribute("readonly");
                     }
                 }

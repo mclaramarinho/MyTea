@@ -64,6 +64,7 @@
      function resetHolidaySlots(daysInFortnight) {
          for (let i = 0; i < (4 * (daysInFortnight-1)); i++) {
              const slotEl = document.querySelector(`#fractionSlot_${i}>input`);
+             slotEl.classList.remove("weekend")
              if (slotEl.classList.contains("holidaySlot")) {
                 slotEl.classList.remove("holidaySlot");
                 slotEl.removeAttribute("disabled");
@@ -86,7 +87,7 @@
                  slotEl.setAttribute("readonly", true);
                  slotEl.classList.add("holidaySlot");
              } else if (isWeekend) {
-                 slotEl.classList.add("holidaySlot");
+                 slotEl.classList.add("holidaySlot", "weekend");
              } else {
                  slotEl.readonly = false;
              }
