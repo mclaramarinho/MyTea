@@ -15,7 +15,6 @@
 </head>
 <body>
     <header>
-<<<<<<< HEAD
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MyTeaApp</a>
@@ -25,7 +24,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
-                        @if (_signInManager.IsSignedIn(User))
+                        @if (_sm.IsSignedIn(User))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Dashboard">Dashboard</a>
@@ -39,9 +38,7 @@
                 </div>
             </div>
         </nav>
-=======
         <partial name="_NavbarPartial" />
->>>>>>> main
     </header>
     <div class="container">
         @if(_sm.IsSignedIn(User)){
