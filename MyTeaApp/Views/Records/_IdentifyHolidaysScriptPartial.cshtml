@@ -62,7 +62,7 @@
      // MOD -- dinamically gets the days of the fortnight
 
      function resetHolidaySlots(daysInFortnight) {
-         for (let i = 0; i < (4 * daysInFortnight); i++) {
+         for (let i = 0; i < (4 * (daysInFortnight-1)); i++) {
              const slotEl = document.querySelector(`#fractionSlot_${i}>input`);
              if (slotEl.classList.contains("holidaySlot")) {
                 slotEl.classList.remove("holidaySlot");
