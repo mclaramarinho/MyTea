@@ -1,6 +1,7 @@
 @using MyTeaApp.Models.ViewModels;
 @using Microsoft.AspNetCore.Http;
 @using MyTeaApp.Data;
+@using MyTeaApp.Views.Records
 @inject ApplicationDbContext _db;
 @inject IHttpContextAccessor _httpContextAccessor;
 @model RecordVM;
@@ -8,78 +9,13 @@
 @{
     ViewData["Title"] = "Create Record";
 
-    int daysInSelectedFortnight = 15;
+    // int daysInSelectedFortnight = 15;
 
     var _http = _httpContextAccessor.HttpContext;
 
     string? urlStartDate = _http.Request.Query["startDate"];
 
-    DateTime fortNight = DateTime.Now;
-
-    if (urlStartDate != null)
-    {
-        fortNight = DateTime.ParseExact(urlStartDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
-    }
-    int firstDayOfFortnight = 1;
-    if (fortNight.Day > 15)
-    {
-        firstDayOfFortnight = 16;
-    }
-
-    DateTime fortnightStart = new DateTime(fortNight.Year, fortNight.Month, firstDayOfFortnight);
-    var fortnights = new List<SelectListItem>();
-
-    var currentYear = DateTime.Now.Year;
-
-    for (int i = 1; i <= 12; i++)
-    {
-        int first = 1;
-        int second = 16;
-
-        // first fortnight
-        DateTime startDate = new DateTime(currentYear, i, first);
-        DateTime endDate = startDate.AddDays(14);
-        bool isSelected = (startDate.Day == fortnightStart.Day && startDate.Month == fortnightStart.Month && startDate.Year == fortnightStart.Year);
-        daysInSelectedFortnight = daysInSelectedFortnight;
-        fortnights.Add(new SelectListItem
-                {
-                    Value = $"{startDate:yyyy-MM-dd}",
-                    Text = $"{startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy}",
-                    Selected = isSelected
-                });
-
-        // second fortnight
-        int daysInSecondFortnight = 1;
-        DateTime tempDate = new DateTime(currentYear, i, second);
-        do
-        {
-            tempDate = tempDate.AddDays(1);
-            if (tempDate.Month == i)
-            {
-                daysInSecondFortnight++;
-            }
-        } while (tempDate.Month == i);
-
-
-        int daysInMonth = DateTime.DaysInMonth(currentYear, i);
-
-        startDate = new DateTime(currentYear, i, 16);
-
-        endDate = new DateTime(currentYear, i, daysInMonth);
-
-        isSelected = (startDate.Day == fortnightStart.Day && startDate.Month == fortnightStart.Month && startDate.Year == fortnightStart.Year);
-
-        daysInSelectedFortnight = isSelected == true ? daysInSecondFortnight : daysInSelectedFortnight;
-        
-        fortnights.Add(new SelectListItem
-                {
-                    Value = $"{startDate:yyyy-MM-dd}",
-                    Text = $"{startDate:dd/MM/yyyy} - {endDate:dd/MM/yyyy}",
-                    Selected = isSelected
-                });
-
-    }
-
+    FortnightData data = new(urlStartDate);
 }
 
 @* - IF RECORD NOT NULL SHOW FIELDS FILLED WITH DB DATA *@
@@ -98,7 +34,7 @@
                 <div class="form-group">
                     <label for="quinzenaSelector">Select Fortnight</label>
                     <select id="quinzenaSelector" class="form-control">
-                    @foreach (var quinzena in fortnights)
+                    @foreach (var quinzena in data.Fortnights)
                         {
                             <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
                         }
@@ -110,7 +46,7 @@
                             <thead>
                                 <tr>
                                     <th class="text-nowrap">Charge Codes</th>
-                                @for (int i = 0; i < daysInSelectedFortnight; i++)
+                                @for (int i = 0; i < data.DaysInSelectedFortnight; i++)
                                     {
                                         <th class="date-column text-center"></th>
                                     }
@@ -127,10 +63,10 @@
 
                                             </div>
                                         </td>
-                                    @for (int j = 0; j < daysInSelectedFortnight; j++)
+                                    @for (int j = 0; j < data.DaysInSelectedFortnight; j++)
                                         {
 
-                                            <td class="g-col-1" id="fractionSlot_@((i * daysInSelectedFortnight) + j)">
+                                        <td class="g-col-1" id="fractionSlot_@((i * data.DaysInSelectedFortnight) + j)">
 
                                                 <input name="hours" type="number"  id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
 
@@ -148,7 +84,7 @@
                             </tbody>
                             <tfoot>
                                 <th>Total</th>
-                                @for (int i = 0; i < daysInSelectedFortnight; i++)
+                            @for (int i = 0; i < data.DaysInSelectedFortnight; i++)
                                 {
                                     <td class="col-total">
                                         <input id="colTotal_@i" type="number" class="col-total" disabled style="max-width: 40px;" />
@@ -191,7 +127,6 @@
             const daysInFortnight = getDaysInFortnight(startDate);
 
             await identifyFortnightAndGenerateTable(startDate, daysInFortnight);
-
             if(@Json.Serialize(Model.ExistingRecord != null)){
                 populateTableWithData();
                 shouldSlotsBeEnabled = false;
@@ -199,7 +134,6 @@
                 shouldSlotsBeEnabled = true;
             }
 
-            await identifyFortnightAndGenerateTable(startDate, daysInFortnight);
             isSlotEnabled(shouldSlotsBeEnabled, daysInFortnight);
             
 
