@@ -71,7 +71,6 @@
      function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
          const slotsValues = getSlotValues(index);
 
-         // Selecionar todos os elementos com a classe 'wbsSelector'
          const selectElements = document.querySelectorAll('.wbsSelector');
 
         slotsValues.forEach((v, i) => {
@@ -88,7 +87,7 @@
                         if (optionElement) {
                             optionElement.selected = true;
                         }
-                        lastSelectElement.disabled = true; // Desabilitar o select
+                        lastSelectElement.disabled = true; 
                         lastSelectElement.readonly = true;
                     }
                 }
@@ -100,7 +99,13 @@
                 slotEl.classList.remove("holidaySlot");
             }
         });
+
+        // Depois de marcar os slots de feriado, atualiza os totais
+        updateTotals();
      }
+
+     // Chama a função
+     // markHolidaySlots(index, isWeekend, isHoliday);
      
      // =========================================
 
