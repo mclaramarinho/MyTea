@@ -72,7 +72,7 @@
 }
 
 <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none" id="mensagemErro">
-    Some weekday did not reach the 8 hour minimum. Please review it, before submitting!
+
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
@@ -142,7 +142,7 @@
                                     {
                                         <td class="g-col-1" id="fractionSlot_@((i * 15) + j)">
 
-                                                <input name="hours" type="number"  id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
+                                            <input name="hours" type="number" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
 
                                             <input name="dates" type="hidden" />
 
@@ -177,6 +177,11 @@
         <a asp-action="Index">Back to List</a>
     </div>
 </div>
+
+@if (TempData["ToasterType"] != null)
+{
+    Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
+}
 
 @section Scripts {
     @{
@@ -288,15 +293,16 @@
              * description - when no other input (except by holidays) is provided, submitting will update the total hours
              *
              */
-            $("#submitRecord_btn").on("mouseup", (e) => {
-                inputElements.forEach(input => {
-                    const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
-                    handleInput(event, rowIndex, colIndex)
-                    document.getElementById("registerRecordForm").onsubmit = (ev) => {
-                        validateForm(ev);
-                    }
-                });
-            })
+
+            // $("#submitRecord_btn").on("mouseup", (e) => {
+            //     inputElements.forEach(input => {
+            //         const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
+            //         handleInput(event, rowIndex, colIndex)
+            //         document.getElementById("registerRecordForm").onsubmit = (ev) => {
+            //             validateForm(ev);
+            //         }
+            //     });
+            // })
 
 
             function generateTable(startDate, fortnightHolidaysIndexes = []) {
@@ -318,13 +324,39 @@
 
                     markHolidaySlots(i, isWeekendDay, isHoliday);
 
+                    if (isWeekendDay) {
+                        continue; // Ignora os fins de semana
+                    }
+
+                    validarEnvio(i, date)
                 }
+            }
+
+            function validarEnvio(index, date) {
+                const submitButton = document.getElementById('submitRecord_btn');
+                var divMensagemErro = document.getElementById('mensagemErro');
+                var dayAndMonth = (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
+
+                submitButton.addEventListener('click', function (event) {
+                    var inputValue = document.getElementById('colTotal_' + index).value;
+
+                    if (inputValue < 8) {
+                        divMensagemErro.style.display = 'block';
+                        divMensagemErro.innerHTML = "Date: " + dayAndMonth + " did not reach the 8 hour minimum. Please review it, before submitting!";
+                        event.preventDefault(); // Impede o envio do formulário
+                    } if (inputValue >= 24) {
+                        divMensagemErro.style.display = 'block';
+                        divMensagemErro.innerHTML = "Date: " + dayAndMonth + " with more than 24 hours. Please review it, before submitting!";
+                        event.preventDefault();
+                    }
+                });
             }
 
             /**
              * description sets the hidden date values properly
              * returns void
              */
+
             function setHiddenDateValues(index, date) {
                 const slots = getSlotValues(index);
                 slots.forEach((v, i) => {

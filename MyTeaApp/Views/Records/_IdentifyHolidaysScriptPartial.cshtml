@@ -98,70 +98,61 @@
      //             slotEl.readonly = false;
      //         }
      //     });
-     // } 
-     
-     function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
+     // }
 
-         const slotsValues = [
-             index,
-             index + 15,
-             index + (15 * 2),
-             index + (15 * 3),
-         ];
+         function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
+             const slotsValues = getSlotValues(index);
 
-     function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
-         const slotsValues = getSlotValues(index);
+             const selectElements = document.querySelectorAll('.wbsSelector');
 
-         const selectElements = document.querySelectorAll('.wbsSelector');
+             slotsValues.forEach((v, i) => {
+                 const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
 
-        slotsValues.forEach((v, i) => {
-             const slotEl = document.querySelector(`#fractionSlot_${ v } > input`);
+                 if (isHoliday) {
+                     if (i === slotsValues.length - 1) {
+                         slotEl.setAttribute("value", 8);
+                         slotEl.setAttribute("readonly", true);
 
-            if (isHoliday) {
-                if (i === slotsValues.length - 1) {
-                    slotEl.setAttribute("value", 8);
-                    slotEl.setAttribute("readonly", true);
+                         if (selectElements.length > 0) {
+                             const lastSelectElement = selectElements[selectElements.length - 1];
+                             const optionElement = lastSelectElement.querySelector('option[value="WBS2534102"]');
+                             if (optionElement) {
+                                 optionElement.selected = true;
+                             }
+                             lastSelectElement.disabled = true;
+                             lastSelectElement.readonly = true;
+                         }
+                     }
+                     slotEl.classList.add("holidaySlot");
+                 } else if (isWeekend) {
+                     slotEl.classList.add("holidaySlot");
+                 } else {
+                     slotEl.removeAttribute("readonly");
+                     slotEl.classList.remove("holidaySlot");
+                 }
+             });
 
-                    if (selectElements.length > 0) {
-                        const lastSelectElement = selectElements[selectElements.length - 1];
-                        const optionElement = lastSelectElement.querySelector('option[value="WBS2534102"]');
-                        if (optionElement) {
-                            optionElement.selected = true;
-                        }
-                        lastSelectElement.disabled = true; 
-                        lastSelectElement.readonly = true;
-                    }
-                }
-                slotEl.classList.add("holidaySlot");
-            } else if (isWeekend) {
-                slotEl.classList.add("holidaySlot");
-            } else {
-                slotEl.removeAttribute("readonly");
-                slotEl.classList.remove("holidaySlot");
-            }
-        });
+             // Depois de marcar os slots de feriado, atualiza os totais
+             updateTotals();
+         }
 
-        // Depois de marcar os slots de feriado, atualiza os totais
-        updateTotals();
-     }
+         // Chama a função
+         // markHolidaySlots(index, isWeekend, isHoliday);
 
-     // Chama a função
-     // markHolidaySlots(index, isWeekend, isHoliday);
-     
-     // =========================================
+         // =========================================
 
-     function isWeekend(date) {
-         const day = date.getDay(); // 0 (domingo) a 6 (sábado)
-         return day === 0 || day === 6; // Retorna true se for fim de semana
-     }
+         function isWeekend(date) {
+             const day = date.getDay(); // 0 (domingo) a 6 (sábado)
+             return day === 0 || day === 6; // Retorna true se for fim de semana
+         }
 
-     function getSlotValues(index) {
-         return [
-             index,
-             index + 15,
-             index + (15 * 2),
-             index + (15 * 3),
-         ];
-     }
+         function getSlotValues(index) {
+             return [
+                 index,
+                 index + 15,
+                 index + (15 * 2),
+                 index + (15 * 3),
+             ];
+         }
 
 </script>
