@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions;
 using MyTeaApp.Data;
 using MyTeaApp.Models;
 using MyTeaApp.Models.ViewModels;
-using NuGet.Protocol;
 
 namespace MyTeaApp.Controllers
 {
@@ -54,18 +47,16 @@ namespace MyTeaApp.Controllers
             return View(@record);
         }
 
-        [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Create(string? startDate)
+        public async Task<IActionResult> Create(string? startDate, int? uid)
         {
             RecordVM vm = new RecordVM();
-           
 
             DateTime date = DateTime.Now;
 
             if (startDate != null)
             {
-                date = DateTime.ParseExact(startDate.Substring(0,19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                date = DateTime.ParseExact(startDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
             }
 
             // TODO - encontrar a quinzena da data de hj
@@ -78,80 +69,100 @@ namespace MyTeaApp.Controllers
             // TODO - guardar o primeiro dia da quinzena 
             date = new DateTime(date.Year, date.Month, firstDay);
 
+            User userLog = await _um.FindByEmailAsync(User.Identity.Name);
+            ViewData["userSelected"] = null;
+            if (uid != null)
+            {
+                IList<string> userRoleFromParam = await _um.GetRolesAsync(userLog);
+
+                if (userRoleFromParam[0] == "Admin")
+                {
+                    userLog = await _context.Users.FirstAsync(u => u.UserID == uid);
+                }
+
+                ViewData["userSelected"] = uid;
+
+            }
+
+            vm.user = userLog;
 
             // TODO - pegar id do user
-            User uid = await _um.FindByEmailAsync(User.Identity.Name);
-            // TODO - user null?
+
 
             Record? existingRecord = null;
+
             // TODO - procurar no banco de dados os records cuja startDate e userid sejam os procurados
             if (_context.Records.Count() > 0)
             {
-                existingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == uid.Id);
+                existingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == vm.user.Id);
             }
+
 
             // TODO - se achar algo no banco, preencher a view model com todas as informações necessárias para preencher o forms 
             if (existingRecord != null)
             {
-                vm.ExistingRecord=existingRecord;
+                vm.ExistingRecord = existingRecord;
+
+                List<RecordFraction> rf = await _context.RecordFraction.ToListAsync();
+
+                vm.ExistingRecord.RecordFraction = rf.FindAll(f => f.RecordID == existingRecord.RecordID);
+
+
             }
             // TODO - senao, mandar a view model apenas com o o select list de wbs e o restante nulo
 
 
             // Recupere os dados do banco de dados para o dropdown
-            var itemsFromDatabase = _context.WBS.ToList();
-            //vm.WBS =
-            //[
-            //    new SelectListItem
-            //    {
-            //        Text = "Select charge code",
-            //        Value = "-1"
-            //    },
-            //];
-            // Mapeie os dados do banco de dados para SelectListItem
-            vm.WBS = itemsFromDatabase.Select(item => new SelectListItem
-            {
-                Text = item.WbsName + " - " + item.WbsCod,
-                Value = item.WbsCod,
-            }).ToList();
+            vm.WBS = _getWbsSelectList();
 
             return View(vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, RecordVM vm)
+        public async Task<IActionResult> Create(ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, string email, RecordVM vm)
         {
             User user = await _um.FindByEmailAsync(User.Identity.Name);
+
+            if (email != null)
+            {
+                IList<string> userRoleFromParam = await _um.GetRolesAsync(user);
+
+                if (userRoleFromParam[0] == "Admin")
+                {
+                    user = await _context.Users.FirstAsync(u => u.Email == email);
+                }
+
+            }
 
             Record record = new Record()
             {
                 TotalHoursRecord = hours.Sum().Value,
                 User = user,
-                StartDate = dates.ElementAt(0)
+                StartDate = dates.ElementAt(0),
+                SelectedWbs = wbs.ToList()
             };
+
+            int daysInFortnight = dates.Count/4;
+
 
             _context.Records.Add(record);
             await _context.SaveChangesAsync();
 
             int recordId = record.RecordID;
-            
-            for(int linha = 0; linha < 4; linha++)
+
+            for (int linha = 0; linha < 4; linha++)
             {
-                //if (wbs.ElementAt(linha) == "-1")
-                //{
-                //    continue;
-                //}
                 WBS w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
 
-                for(int col = 0; col < 15; col++)
+                for (int col = 0; col < daysInFortnight; col++)
                 {
-                    if (hours.ElementAt((15 * linha) + col) != null)
+                    if (hours.ElementAt((daysInFortnight * linha) + col) != null)
                     {
                         RecordFraction rf = new RecordFraction()
                         {
                             Record = record,
-                            RecordDate = dates.ElementAt((15 * linha) + col),
-                            TotalHoursFraction = hours.ElementAt((15 * linha) + col).Value,
+                            RecordDate = dates.ElementAt((daysInFortnight * linha) + col),
+                            TotalHoursFraction = hours.ElementAt((daysInFortnight * linha) + col).Value,
                             Wbs = w
                         };
 
@@ -169,24 +180,8 @@ namespace MyTeaApp.Controllers
                 }
             }
 
-                return View(vm);
-        }
-
-
-        // GET: Records/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @record = await _context.Records.FindAsync(id);
-            if (@record == null)
-            {
-                return NotFound();
-            }
-            return View(@record);
+            vm.WBS = _getWbsSelectList();
+            return View(vm);
         }
 
         // POST: Records/Edit/5
@@ -260,6 +255,30 @@ namespace MyTeaApp.Controllers
         private bool RecordExists(int id)
         {
             return _context.Records.Any(e => e.RecordID == id);
+        }
+
+        /// <summary>
+        /// Retrieves all the WBS from database and returns a List of SelectListItem
+        /// </summary>
+        /// <returns>List with the SelectListItems for each WBS</returns>
+        private List<SelectListItem> _getWbsSelectList()
+        {
+            List<SelectListItem> selectListItems = new List<SelectListItem>();
+            var itemsFromDatabase = _context.WBS.ToList();
+            selectListItems.Add(new SelectListItem
+            {
+                Text = "Select charge code",
+                Value = "-1"
+            });
+            itemsFromDatabase.ForEach(i =>
+            {
+                selectListItems.Add(new SelectListItem
+                {
+                    Text = i.WbsName + " - " + i.WbsCod,
+                    Value = i.WbsCod,
+                });
+            });
+            return selectListItems;
         }
     }
 }

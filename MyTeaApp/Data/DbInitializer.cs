@@ -53,34 +53,10 @@ public class DbInitializer
         }
     }
 
-    
-    /// <summary>
-    /// Initializes database.
-    /// </summary>
-    /// 
-    /// <param name="serviceProvider">IServiceProvider</param>
-    /// <returns>Void</returns>
-    public static async Task Initialize(IServiceProvider serviceProvider)
+    private static async Task CreateDefaultWBS(ApplicationDbContext context)
     {
-        _sp = serviceProvider;
-
-        var context = _sp
-            .GetRequiredService<ApplicationDbContext>();
-
-        
-        context.Database.EnsureCreated();
-
-        await CreateRoles();
-
-        await CreateDefaultDepartment();
-
-        if (context.WBS.Any())
+        List<WBS> wbs = new List<WBS>()
         {
-            return;
-        }
-        else
-        {
-            context.WBS.AddRange(
                 new WBS
                 {
                     WbsName = "Vacation",
@@ -100,7 +76,7 @@ public class DbInitializer
                     WbsName = "No task",
                     WbsCod = "WBS4700086",
                     Description = "No task - employee",
-                    IsChargeable = true,
+                    IsChargeable = false,
                 },
                 new WBS
                 {
@@ -115,12 +91,40 @@ public class DbInitializer
                     WbsCod = "WBS2574100",
                     Description = "Development - employee",
                     IsChargeable = true,
+                },
+                new WBS
+                {
+                    WbsName = "Holiday",
+                    WbsCod = "WBS2534102",
+                    Description = "Holiday",
+                    IsChargeable = true,
                 }
-
-
-            );
-
-            context.SaveChanges();
+        };
+        foreach (var w in wbs)
+        {
+            if (!context.WBS.Any(item => w.WbsCod == item.WbsCod))
+            {
+                await context.WBS.AddAsync(w);
+                await context.SaveChangesAsync();
+            }
         }
+    }
+
+    public static async Task Initialize(IServiceProvider serviceProvider)
+    {
+        _sp = serviceProvider;
+
+        var context = _sp
+            .GetRequiredService<ApplicationDbContext>();
+
+
+        context.Database.EnsureCreated();
+
+        await CreateRoles();
+
+        await CreateDefaultDepartment();
+
+        await CreateDefaultWBS(context);
+
     }
 }

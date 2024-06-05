@@ -11,6 +11,9 @@ namespace MyTeaApp.Models.ViewModels
         public int UserID { get; set; }
 
         [Required]
+        public string UserDbId { get; set; }
+
+        [Required]
         [DisplayName("Full Name")]
         public string? FullName { get; set; }
 
@@ -29,8 +32,8 @@ namespace MyTeaApp.Models.ViewModels
 
         public void Populate(User user, string role, List<Department> deps, List<IdentityRole> roles)
         {
-            Console.WriteLine("User UID: " + user.UserID);
             this.UserID = user.UserID;
+            this.UserDbId = user.Id;
             this.FullName = user.FullName;
             this.Email = user.Email;
             this.RoleName = role;

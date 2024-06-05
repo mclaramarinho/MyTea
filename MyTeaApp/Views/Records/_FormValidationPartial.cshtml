@@ -1,0 +1,19 @@
+﻿<script>
+    function validateForm(formEvent) {
+
+        var divMensagemErro = document.getElementById('mensagemErro');
+        var inputs = document.querySelectorAll('.col-total');
+        var aprovado = true;
+        inputs.forEach((input) => {
+            var value = parseInt(input.value);
+            if (value < 8) {
+                divMensagemErro.style.display = 'block';
+                aprovado = false;
+            }
+        });
+
+        var toasterType = aprovado ? "success" : "error";
+        !aprovado && formEvent.preventDefault();
+        return aprovado;
+    }
+</script>
