@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Runtime.Intrinsics.Arm;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -203,9 +204,42 @@ namespace MyTeaApp.Controllers
         }
         // LOGOUT END ---------------------------------------------------------------------------------------------------
 
+        // DETAILS ---------------------------------------------------------------------------------------------------
+        public async Task<IActionResult> Details()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            string dpt = _db.Department.FirstOrDefault(d => d.DepartmentID == user.DepartmentId).DepartmentName;
+            string userRole = await _userManager.IsInRoleAsync(user, "Admin") ? "Admin"
+                : await _userManager.IsInRoleAsync(user, "Employee") ? "Employee"
+                : "Manager";
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            UserInfoVM temp = new UserInfoVM()
+            {
+                DbUserId = user.Id,
+                UserId = user.UserID,
+                FullName = user.FullName,
+                Email = user.Email,
+                AdmissionDate = user.AdmissionDate,
+                RoleName = userRole,
+                DepartmentName = dpt,
+                IsActive = user.UserActive ? "Yes" : "No"
+            };
+
+
+            return View(temp);
+        }
+
+
+        // DETAILS END ---------------------------------------------------------------------------------------------------
+
 
         // EDIT ---------------------------------------------------------------------------------------------------
-        
+
         [HttpGet]
         [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> EditUser(int uid) {

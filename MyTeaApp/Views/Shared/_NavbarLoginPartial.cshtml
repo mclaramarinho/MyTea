@@ -42,7 +42,9 @@
                         : (hour > 18 && hour <= 23) ? "🌝"
                         : "🧟‍♀️";
         <li class="nav-item">
-            Hello @userName <span style="font-size: 1.5rem;">@emoji</span>
+            <a class="nav-link text-dark" asp-action="Details" asp-controller="Account">
+                Hello @userName <span style="font-size: 1.5rem;">@emoji</span>
+            </a>
         </li>
 }
 else

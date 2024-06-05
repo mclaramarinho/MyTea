@@ -1,0 +1,58 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> _signInManager;
+@inject UserManager<User> _userManager;
+
+@using MyTeaApp.Models.ViewModels;
+
+@model UserInfoVM;
+
+<h1>Details</h1>
+
+<div>
+    <h4>Usuário</h4>
+   
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FullName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AdmissionDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DepartmentName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RoleName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(userModel => userModel.IsActive)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>
+                    @Model.FullName
+                </th>
+                <th>
+                    @Model.AdmissionDate.ToString("dd/MM/yyyy")
+                </th>
+                <th>
+                    @Model.DepartmentName
+                </th>
+                <th>
+                    @Model.RoleName
+                </th>
+                <th>
+                    @Model.IsActive
+                </th>
+                <th></th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
