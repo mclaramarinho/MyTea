@@ -32,7 +32,26 @@
     </div>
 
     <form method="post" asp-action="DeleteConfirmed" asp-route-userId="@Model.Id">
-        <input type="submit" value="Delete" class="btn btn-danger" />
-        <a asp-action="Index">Cancel</a>
+        <input type="submit" value="Delete" class="btn btn-outline-danger" />
+        <a class="clear text-decoration-none" asp-action="Index">Cancel</a>
     </form>
 </div>
+
+<style>
+    #myTea {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+
+    .clear {
+        color: #0097B2;
+    }
+
+        .clear:hover {
+            color: darkblue;
+        }
+</style>    

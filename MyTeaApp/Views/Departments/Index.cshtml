@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Department";
 }
-<div class="col">
+<div id="myTea" class="col">
     <h1 class="title">Departments</h1>
     <p>
         <a class="btn btn-outline-info mt-3 mb-3" asp-action="Create">Create New</a>
@@ -21,13 +21,13 @@
     <table class="table">
         <thead>
             <tr>
-                <th class="title">
+                <th>
                     @Html.DisplayNameFor(model => model.DepartmentID)
                 </th>
-                <th class="title">
+                <th>
                     @Html.DisplayNameFor(model => model.DepartmentName)
                 </th>
-                <th class="title"></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -41,9 +41,9 @@
                         @Html.DisplayFor(modelItem => item.DepartmentName)
                     </td>
                     <td>
-                        <a class="btn btn-outline-info" asp-action="Edit" asp-route-id="@item.DepartmentID"><i class="bi bi-pencil-square"></i></a>
-                        <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.DepartmentID"><i class="bi bi-info-circle"></i></a>
-                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.DepartmentID"><i class="bi bi-trash"></i></a>
+                        <a class="icon" asp-action="Edit" asp-route-id="@item.DepartmentID"><i class="bi bi-pencil-square"></i></a>
+                        <a class="icon" asp-action="Details" asp-route-id="@item.DepartmentID"><i class="bi bi-info-circle"></i></a>
+                        <a class="delete" asp-action="Delete" asp-route-id="@item.DepartmentID"><i class="bi bi-trash"></i></a>
                     </td>
                 </tr>
             }
@@ -53,12 +53,39 @@
 </div>
 
 <style>
-    body {
+    #myTea {
         font-family: 'Arial', sans-serif !important;
     }
 
     .title {
         font-weight: bold;
         color: #0097B2 !important;
+    }
+
+    .icon {
+        color: #0097B2 !important;
+    }
+
+    .icon:hover {
+        color: darkblue;
+    }
+
+    .delete {
+        color: red;
+    }
+
+    .delete:hover {
+        color: darkblue;
+    }
+
+    .btn-outline-info{
+        color: #0097B2 !important;
+        border-color: #0097B2 !important;
+    }
+
+    .btn-outline-info:hover{
+        color: white !important;
+        border-color: #0097B2 !important;
+        background-color: #0097B2 !important;
     }
 </style>

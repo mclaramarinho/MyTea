@@ -9,11 +9,11 @@
 }
 @model IEnumerable<UserInfoVM>;
 
-<div class="col">
+<div id="myTea" class="col">
     <h1 class="title display-6 mb-4">User Management</h1>
 
     <p>
-        <a class="btn btn-outline-info mt-2" asp-action="Create">Create New</a>
+        <a class="btn btn-outline-info mt-2" asp-action="Register">Create New</a>
     </p>
 
     <partial name="_UserFilterPartial" model="Model" view-data="ViewData"></partial>
@@ -22,12 +22,12 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th class="title">@Html.DisplayNameFor(userModel => userModel.FullName)</th>
-                    <th class="title">@Html.DisplayNameFor(userModel => userModel.AdmissionDate)</th>
-                    <th class="title">@Html.DisplayNameFor(userModel => userModel.DepartmentName)</th>
-                    <th class="title">@Html.DisplayNameFor(userModel => userModel.RoleName)</th>
-                    <th class="title">@Html.DisplayNameFor(userModel => userModel.IsActive)</th>
-                    <th class="title"></th>
+                    <th>@Html.DisplayNameFor(userModel => userModel.FullName)</th>
+                    <th>@Html.DisplayNameFor(userModel => userModel.AdmissionDate)</th>
+                    <th>@Html.DisplayNameFor(userModel => userModel.DepartmentName)</th>
+                    <th>@Html.DisplayNameFor(userModel => userModel.RoleName)</th>
+                    <th>@Html.DisplayNameFor(userModel => userModel.IsActive)</th>
+                    <th></th>
                 </tr>
             </thead>
 
@@ -50,10 +50,10 @@
                         <td>@user.IsActive</td>
                         <td>
                             <span>
-                                <a class="btn btn-outline-danger mb-2" asp-action="Delete" asp-route-userId="@user.DbUserId"><i class="bi bi-trash"></i></a>
+                                <a class="icon mb-2" asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.DbUserId"><i class="bi bi-pencil-square"></i></a>
                             </span>
                             <span>
-                                <a class="btn btn-outline-info" asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.DbUserId"><i class="bi bi-pencil-square"></i></a>
+                                <a class="delete mb-2" asp-action="Delete" asp-route-userId="@user.DbUserId"><i class="bi bi-trash"></i></a>
                             </span>
                         </td>
                     </tr>
@@ -64,12 +64,39 @@
 </div>
 
 <style>
-    body {
+    #myTea {
         font-family: 'Arial', sans-serif !important;
     }
 
     .title {
         font-weight: bold;
         color: #0097B2 !important;
+    }
+
+    .icon {
+        color: #0097B2 !important;
+    }
+
+     .icon:hover {
+         color: darkblue;
+     }
+
+    .delete {
+        color: red;
+    }
+
+    .delete:hover {
+        color: darkblue;
+    }
+
+    .btn-outline-info {
+        color: #0097B2 !important;
+        border-color: #0097B2 !important;
+    }
+
+    .btn-outline-info:hover {
+            color: white !important;
+            border-color: #0097B2 !important;
+            background-color: #0097B2 !important;
     }
 </style>

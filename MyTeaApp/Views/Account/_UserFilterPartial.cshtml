@@ -13,47 +13,66 @@
     rolesNames.ForEach(r => roles.Add(new SelectListItem { Text = r, Value = r, Selected = ViewData["filter.role"]?.ToString() == r }));
 }
 
-<form class="row mb-5" asp-action="Index" asp-controller="Account" method="get">
+<form id="myTea" class="row mb-5" asp-action="Index" asp-controller="Account" method="get">
     <div class="input-group-sm col-2">
-        <label class="title form-label">Search by name</label>
+        <label class="form-label">Search by name</label>
         <input class="form-control" type="text" name="userName"
                placeholder="Filter by name" value="@ViewData["filter.userName"]" />
     </div>
     <div class="col-2">
-        <label class="title form-label">Admission Date</label>
+        <label class="form-label">Admission Date</label>
         <input type="date" class="form-control" name="admissionDate"
                value="@ViewData["filter.admissionDate"]" />
     </div>
     <div class="col-2 align-content-center">
-        <label class="title form-check-label">
+        <label class="form-check-label">
             Currently employed
             <input type="checkbox" name="activeOnly" checked="@ViewData["filter.activeOnly"]" />
         </label>
 
     </div>
     <div class="col-2">
-        <label class="title form-label">By department</label>
+        <label class="form-label">By department</label>
         <select class="form-select" asp-items="deps" name="department">
         </select>
     </div>
     <div class="col-2">
-        <label class="title form-label">By role</label>
+        <label class="form-label">By role</label>
         <select class="form-select" asp-items="roles" name="role">
         </select>
     </div>
     <div class="col-2 align-content-end justify-content-center">
-        <a asp-action="Index" asp-controller="Account" class="btn btn-sm btn-outline-info text-decoration-none">Clear</a>
-        <button type="submit" class="btn btn-sm btn-outline-info">Filter</button>
+        <button type="submit" class="btn btn-outline-info">Filter</button>
+        <a asp-action="Index" asp-controller="Account" class="clear text-decoration-none">Clear</a>
     </div>
 </form>
 
 <style>
-    body {
+    #myTea {
         font-family: 'Arial', sans-serif !important;
     }
 
-    .title {
-        font-weight: bold;
+    .filter {
         color: #0097B2 !important;
+    }
+
+    .clear {
+        color:red;
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .clear:hover {
+        color: #0097B2;
+    }
+
+    .btn-outline-info {
+        color: #0097B2 !important;
+        border-color: #0097B2 !important;
+    }
+
+    .btn-outline-info:hover {
+            color: white !important;
+            border-color: #0097B2 !important;
+            background-color: #0097B2 !important;
     }
 </style>
