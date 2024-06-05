@@ -328,7 +328,9 @@
                         continue; // Ignora os fins de semana
                     }
 
-                    validarEnvio(i, date)
+                    validarEnvio(i, date);
+
+                    limparMensagemErro();
                 }
             }
 
@@ -350,6 +352,10 @@
                         event.preventDefault();
                     }
                 });
+            }
+
+            function limparMensagemErro() {
+                document.getElementById('mensagemErro').innerHTML = '';
             }
 
             /**
