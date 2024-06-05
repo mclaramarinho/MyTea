@@ -295,18 +295,33 @@ namespace MyTeaApp.Controllers
         //  CHANGE PASSWORD END ----------------------------------------------------------------------------------------
 
         // UTILITIES ---------------------------------------------------------------------------------------------------
+        //private IActionResult _redirectAfterLogin()
+        //{
+        //    if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        //    {
+        //        return RedirectToAction("Dashboard", "Home");
+        //    }else if(User.IsInRole("Employee"))
+        //    {
+        //        return RedirectToAction("Create", "Records");
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //}
+        
         private IActionResult _redirectAfterLogin()
         {
-            if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            if (User.IsInRole("Admin"))
             {
-                return RedirectToAction("Dashboard", "Home");
+                return RedirectToAction("AdminOverview", "Home");
             }else if(User.IsInRole("Employee"))
             {
-                return RedirectToAction("Create", "Records");
+                return RedirectToAction("EmployeeOverview", "Home");
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("ManagerOverview", "Home");
             }
         }
 
