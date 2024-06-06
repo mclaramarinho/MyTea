@@ -38,7 +38,7 @@ namespace MyTeaApp.Views.Records
             
             if (url != null)
             {
-                this._selectedFortnight = DateTime.ParseExact(url.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                this._selectedFortnight = DateTime.ParseExact(url, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
         }
         
@@ -101,8 +101,6 @@ namespace MyTeaApp.Views.Records
                     daysInSecondFortnight++;
                 }
             } while (tempDate.Month == index);
-
-            Console.WriteLine("aaaaaa" + daysInSecondFortnight);
 
             int daysInMonth = DateTime.DaysInMonth(currentYear, index);
 
