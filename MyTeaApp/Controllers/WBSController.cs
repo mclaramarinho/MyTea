@@ -73,8 +73,6 @@ namespace MyTeaApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("WbsId,WbsName,WbsCod,Description,IsChargeable")] WBS wBS)
         {
-            //bool created = _contextModificado;
-
             if (ModelState.IsValid)
             {
                 var existingWBS = false;
@@ -103,8 +101,8 @@ namespace MyTeaApp.Controllers
                 TempData["ToasterType"] = "error";
 
 
-            return View(wBS);
-        }
+                return View(wBS);
+            }
         }
 
         // GET: WBS/Edit/5
@@ -216,7 +214,7 @@ namespace MyTeaApp.Controllers
                 TempData["ToasterType"] = "error";
                 return View(id);
             }
-
+            
         }
 
         private bool WBSExists(int id)
