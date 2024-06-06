@@ -55,7 +55,7 @@ namespace MyTeaApp.Controllers
                         UserInfoVM temp = new UserInfoVM()
                         {
                             DbUserId = user.Id,
-                            UserId = user.UserID,
+                            UserId = user.UserSerial,
                             FullName = user.FullName,
                             Email = user.Email,
                             AdmissionDate = user.AdmissionDate,
