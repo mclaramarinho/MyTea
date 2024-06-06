@@ -133,11 +133,25 @@ namespace MyTeaApp.Controllers
 
         public async Task<bool> EditRecord(int rid, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, RecordVM vm)
             {
-                WBS w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
+            vm.WBS = _getWbsSelectList();
 
-                for (int col = 0; col < daysInFortnight; col++)
+            Record? existingRecord = await _context.Records.FirstOrDefaultAsync(rec => rec.RecordID == rid);
+
+
+            if (existingRecord == null)
                 {
-                    if (hours.ElementAt((daysInFortnight * linha) + col) != null)
+                return false;
+            }
+            var fractions = await _GetNewRecordData(rid, existingRecord, hours, dates, wbs, true);
+            existingRecord.SelectedWbs = wbs.ToList();
+
+            //existingRecord.RecordFraction = fractions;
+
+            _context.Records.Update(existingRecord);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
                     {
                         RecordFraction rf = new RecordFraction()
                         {
