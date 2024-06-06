@@ -62,6 +62,10 @@
      // MOD -- dinamically gets the days of the fortnight
 
      function resetHolidaySlots(daysInFortnight) {
+         const selectToEnable = document.querySelector(`#wbsSelector_3`);
+         selectToEnable.classList.remove("disableSelect");
+
+
          for (let i = 0; i < (4 * (daysInFortnight-1)); i++) {
              const slotEl = document.querySelector(`#fractionSlot_${i}>input`);
              slotEl.classList.remove("weekend")
@@ -86,6 +90,17 @@
                  slotEl.setAttribute("value", 8);
                  slotEl.setAttribute("readonly", true);
                  slotEl.classList.add("holidaySlot");
+
+                 const allOptions = document.querySelectorAll(`#wbsSelector_3 option`);
+
+                 allOptions.forEach(el => { el.removeAttribute("selected"); el.removeAttribute("readonly") });
+
+                 const optionToSelect = document.querySelector(`#wbsSelector_3 option[value="WBS2534102"]`);
+                 optionToSelect.setAttribute("selected", true);
+
+                 const selectToDisable = document.querySelector(`#wbsSelector_3`);
+                 selectToDisable.classList.add("disableSelect");
+
              } else if (isWeekend) {
                  slotEl.classList.add("holidaySlot", "weekend");
              } else {
