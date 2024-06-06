@@ -86,6 +86,13 @@ namespace MyTeaApp.Controllers
             if(canContinueCreate == "view") {
                 TempData["ToasterType"] = "error";
             return View(vm);
+            }else if (canContinueCreate == "logout") {
+                TempData["ToasterType"] = "error";
+                return RedirectToAction("Logout", "Account");
+            }else if(canContinueCreate == "continue")
+            {
+                user = await _um.FindByEmailAsync(email);
+                userToPersist = user.UserSerial;
         }
 
             if (isInEditMode == true)
