@@ -152,17 +152,45 @@ namespace MyTeaApp.Controllers
 
             return true;
         }
-                    {
-                        RecordFraction rf = new RecordFraction()
-                        {
-                            Record = record,
-                            RecordDate = dates.ElementAt((daysInFortnight * linha) + col),
-                            TotalHoursFraction = hours.ElementAt((daysInFortnight * linha) + col).Value,
-                            Wbs = w
-                        };
 
-                        _context.RecordFraction.Add(rf);
+        public async Task<IActionResult> Delete(int? id, string? startDate, int? userId, string email, int daysInFortnight)
+                    {
+
+            if (id == null || !_context.Records.Any(r => r.RecordID == id))
+                        {
+                TempData["ToasterType"] = "error";
+                return RedirectToAction("Create", new { uid = userId, startDate = startDate });
+            }
+
+            DateTime startDateAsDatetime = _GetDateToShowRecords(startDate);
+            DateTime endDateAsDateTime = startDateAsDatetime;
+            endDateAsDateTime.AddDays(daysInFortnight);
+            ICollection<DateTime> dates = [startDateAsDatetime, endDateAsDateTime];
+            bool isLoggedUserAdmin = await _IsAdmin();
+            User user = await _um.FindByEmailAsync(User.Identity.Name);
+
+            string canContinueCreateAction = _CanContinueCreateAction(email, isLoggedUserAdmin, user.Email, dates);
+
+            if(canContinueCreateAction == "view") {
+                TempData["ToasterType"] = "error";
+                return RedirectToAction("Create", new { uid = userId, startDate = startDate });
+            }
+            else if(canContinueCreateAction == "logout")
+            {
+                TempData["ToasterType"] = "error";
+                return RedirectToAction("Logout", "Account");
+            }else if(canContinueCreateAction == "continue")
+            {
+                Record record = await _context.Records.FirstAsync(r => r.RecordID == id);
+                _context.Records.Remove(record);
                         await _context.SaveChangesAsync();
+                TempData["ToasterType"] = "success";
+            }
+           
+            return RedirectToAction("Create", new { uid = userId, startDate = startDate });
+        }
+
+        
 
         // ------- UTILITIES ------------
 
