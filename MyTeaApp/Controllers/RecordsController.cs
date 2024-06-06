@@ -162,12 +162,12 @@ namespace MyTeaApp.Controllers
             return date;
             }
 
-            if (ModelState.IsValid)
-            {
-                try
+        private async Task<List<RecordFraction>> _GetFractionsFromRecord(int RecordID)
                 {
-                    _context.Update(@record);
-                    await _context.SaveChangesAsync();
+            List<RecordFraction> rf = await _context.RecordFraction.ToListAsync();
+            List<RecordFraction> response = rf.FindAll(f => f.RecordID == RecordID);
+
+            return response;
                 }
         private string _CanContinueCreateAction(string email, bool isLoggedUserAdmin, string loggedUserEmail, ICollection<DateTime> dates)
         {
