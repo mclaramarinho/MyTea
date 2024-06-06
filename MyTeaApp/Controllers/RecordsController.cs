@@ -138,6 +138,12 @@ namespace MyTeaApp.Controllers
                         _recordCriada = true;
                         TempData["ToasterType"] = !_recordCriada ? "error" : "success";
                     }
+
+        private async Task<bool> _IsAdmin()
+        {
+            User userLog = await _um.FindByEmailAsync(User.Identity.Name);
+            IList<string> userRoles = await _um.GetRolesAsync(userLog);
+            return userRoles[0] == "Admin";
                 }
 
         private int _GetFirstDayOfFortnight(DateTime date)
