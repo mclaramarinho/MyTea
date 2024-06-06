@@ -186,10 +186,8 @@ namespace MyTeaApp.Controllers
                     }
                     else
                     {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                    // if is admin  
+                    response = "continue";
             }
         }
             else
