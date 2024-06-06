@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using MyTeaApp.Data;
 using MyTeaApp.Models;
 using MyTeaApp.Models.ViewModels;
@@ -24,6 +23,7 @@ namespace MyTeaApp.Controllers
 
 
 
+        [Authorize(policy:"RequireAdmin")]
         [HttpGet]
         public async Task<IActionResult> Index(string? userName, DateTime? admissionDate, string? activeOnly, string? department, string? role)
         {
@@ -203,7 +203,6 @@ namespace MyTeaApp.Controllers
 
 
         // LOGOUT ---------------------------------------------------------------------------------------------------
-        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -224,7 +223,7 @@ namespace MyTeaApp.Controllers
             }
             List<Department> departments = await _db.Department.ToListAsync();
             List<IdentityRole> rolesDb = await _db.Roles.ToListAsync();
-
+            
             var role = await _userManager.GetRolesAsync(user);
 
             EditUserVM vm = new EditUserVM();
@@ -235,7 +234,7 @@ namespace MyTeaApp.Controllers
 
         [HttpPost]
         [Authorize(Policy = "RequireAdmin")]
-        public async Task<IActionResult> EditUser(string uid, [Bind("UserID, FullName, Email, DepartmentId, RoleName")]EditUserVM data)
+        public async Task<IActionResult> EditUser(string uid, [Bind("UserID, FullName, Email, DepartmentId, RoleName, IsActive")]EditUserVM data)
         {
             User user = await _db.Users.FirstAsync(u => u.Id == uid);
 
@@ -248,6 +247,7 @@ namespace MyTeaApp.Controllers
             user.FullName = data.FullName;
             user.Email = data.Email;
             user.UserName = data.Email;
+            user.UserActive = data.IsActive == "yes" ? true : false;
 
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
@@ -256,7 +256,7 @@ namespace MyTeaApp.Controllers
                 return View(data);
             }
             var updateRoleResult = await _userManager.AddToRoleAsync(user, data.RoleName);
-            if(!updateRoleResult.Succeeded) { 
+            if(!updateRoleResult.Succeeded) {
                 TempData["ToasterType"] = "error";
                 return View(data);
             }
@@ -267,7 +267,8 @@ namespace MyTeaApp.Controllers
 
         // EDIT END ---------------------------------------------------------------------------------------------------
 
-        // CHANGE PASSWORD --------------------------------------------------------------------------------------------
+
+        //CHANGE PASSWORD --------------------------------------------------------------------------------------------
 
         [HttpGet]
         [Authorize]
@@ -300,7 +301,7 @@ namespace MyTeaApp.Controllers
                 TempData["ToasterType"] = "success";
             }
 
-            return RedirectToAction("Index", "Home");
+            return View();
         }
 
         //  CHANGE PASSWORD END ----------------------------------------------------------------------------------------
@@ -403,54 +404,6 @@ namespace MyTeaApp.Controllers
 
             return true;
         }
-
-        public async Task<IActionResult> Delete(string? userId)
-        {
-            if (userId == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return View(user);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> DeleteConfirmed(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest("User ID is required.");
-            }
-
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser != null && currentUser.Id == userId)
-            {
-                await _userManager.DeleteAsync(user);
-                return await Logout();
-            }
-
-            var result = await _userManager.DeleteAsync(user);
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                return BadRequest("Failed to delete user.");
-            }
-        }
-
 
     }
 }
