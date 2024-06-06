@@ -12,48 +12,116 @@
 <div class="col">
     <h1 class="display-6 mb-4">User Management</h1>
     <partial name="_UserFilterPartial" model="Model" view-data="ViewData"></partial>
-
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>@Html.DisplayNameFor(userModel => userModel.FullName)</th>
-                    <th>@Html.DisplayNameFor(userModel => userModel.AdmissionDate)</th>
-                    <th>@Html.DisplayNameFor(userModel => userModel.DepartmentName)</th>
-                    <th>@Html.DisplayNameFor(userModel => userModel.RoleName)</th>
-                    <th>@Html.DisplayNameFor(userModel => userModel.IsActive)</th>
-                    <th></th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @if(Model.Count() == 0)
-                {
+    
+    @* <button type="button" id="generateBtn" class="btn btn-sm btn-success">Generate Report</button> *@
+    
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td colspan="6" class="text-center">
-                            <h4 class="opacity-50">No users to display</h4>
-                        </td>
+                        @* <th></th> *@
+                        <th>@Html.DisplayNameFor(userModel => userModel.FullName)</th>
+                        <th>@Html.DisplayNameFor(userModel => userModel.AdmissionDate)</th>
+                        <th>@Html.DisplayNameFor(userModel => userModel.DepartmentName)</th>
+                        <th>@Html.DisplayNameFor(userModel => userModel.RoleName)</th>
+                        <th>@Html.DisplayNameFor(userModel => userModel.IsActive)</th>
+                        <th></th>
                     </tr>
-                }
-                @foreach(UserInfoVM user in Model)
-                {
-                    <tr>
-                        <td>@user.FullName</td>
-                        <td>@user.AdmissionDate.ToString("dd/MM/yyyy")</td>
-                        <td>@user.DepartmentName</td>
-                        <td>@user.RoleName</td>
-                        <td>@user.IsActive</td>
-                        <td>
-                            <span>
-                                <a asp-action="Delete" asp-route-userId="@user.DbUserId">Del</a>
-                            </span>
-                            <span>
-                                <a asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.DbUserId">Edit</a>
-                            </span>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                    @if(Model.Count() == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <h4 class="opacity-50">No users to display</h4>
+                            </td>
+                        </tr>
+                    }
+                    @foreach(UserInfoVM user in Model)
+                    {
+                        
+                        <tr>
+                            @* <td>
+                                <input class="userSelect" type="checkbox" name="users" value="@user.UserId" />
+                            </td> *@
+                            <td>@user.FullName</td>
+                            <td>@user.AdmissionDate.ToString("dd/MM/yyyy")</td>
+                            <td>@user.DepartmentName</td>
+                            <td>@user.RoleName</td>
+                            <td>@user.IsActive</td>
+                            <td>
+                                <span>
+                                    <a asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.DbUserId">Edit</a>
+                                </span>
+                                <span>
+                                    <a asp-action="Create" asp-controller="Records" asp-route-uid="@user.UserId">Records</a>
+                                </span>
+                            
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
     </div>
 </div>
+
+
+
+<script>
+    
+
+    // const selectedUsers = [];
+
+    // const checkboxes = document.querySelectorAll(".userSelect");
+
+    // const generateReportBtn = document.getElementById("generateBtn");
+
+    // checkboxes.forEach(el => {
+    //     el.addEventListener("change", ev => {
+    //         addRemoveUserFromList(ev.target);
+    //     })
+    // })
+
+    // generateReportBtn.addEventListener("mouseup", async (ev) => {
+    //     ev.preventDefault();
+    //     requestReport()
+    // })
+
+
+
+    async function requestReport() {
+        const baseUrl = window.location.origin;
+        const reqUrl = `${baseUrl}/Reports/GenerateReport`;
+        console.log(selectedUsers)
+        const body = {
+            users: selectedUsers
+        };
+        console.log(body)
+
+        const requestOptions = {
+            method: "POST",
+            body: JSON.stringify(body)
+        }
+
+        const req = await fetch(reqUrl, requestOptions);
+
+        const res = await req.json();
+
+        console.log(res)
+    }
+
+    function addRemoveUserFromList(target) { 
+        const isChecked = target.checked;
+        const parsedValue = parseInt(target.value);
+
+        const isInArray = selectedUsers.filter(id => id === parsedValue);
+
+        if (isChecked && isInArray.length === 0) {
+            selectedUsers.push(parsedValue);
+        } else if (isInArray) {
+            const index = selectedUsers.indexOf(parsedValue);
+            selectedUsers.splice(index, 1);
+        }
+    }
+</script>
