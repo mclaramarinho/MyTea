@@ -4,8 +4,8 @@
     ViewData["Title"] = "Edit";
 }
 
-<div class="col">
-    <h1>Edit</h1>
+<div id="myTea" class="col">
+    <h1 class="title">Edit</h1>
 
     <h4>WBS</h4>
     <hr />
@@ -30,7 +30,7 @@
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 <!--Radio IsChargeable-->
-                <div class="form-group">
+                <div class="form-group mt-2">
                     <label asp-for="IsChargeable" class="control-label"></label>
                     <div class="form-check">
                         <input type="radio" asp-for="IsChargeable" class="form-check-input" value="true" checked>
@@ -44,16 +44,46 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <input type="submit" value="Save" class="btn btn-outline-info mb-2 mt-2" />
                 </div>
             </form>
         </div>
     </div>
 
     <div>
-        <a asp-action="Index">Back to List</a>
+        <a class="clear text-decoration-none" asp-action="Index">Back to List</a>
     </div>
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<style>
+    #myTea {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+
+    .clear {
+        color: #0097B2;
+    }
+
+        .clear:hover {
+            color: darkblue;
+        }
+
+    .btn-outline-info {
+        color: #0097B2 !important;
+        border-color: #0097B2 !important;
+    }
+
+        .btn-outline-info:hover {
+            color: white !important;
+            border-color: #0097B2 !important;
+            background-color: #0097B2 !important;
+        }
+</style>

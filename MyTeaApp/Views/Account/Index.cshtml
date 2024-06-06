@@ -9,8 +9,13 @@
 }
 @model IEnumerable<UserInfoVM>;
 
-<div class="col">
-    <h1 class="display-6 mb-4">User Management</h1>
+<div id="myTea" class="col">
+    <h1 class="title display-6 mb-4">User Management</h1>
+
+    <p>
+        <a class="btn btn-outline-info mt-2" asp-action="Register">Create New</a>
+    </p>
+
     <partial name="_UserFilterPartial" model="Model" view-data="ViewData"></partial>
 
     <div class="table-responsive">
@@ -45,10 +50,10 @@
                         <td>@user.IsActive</td>
                         <td>
                             <span>
-                                <a asp-action="Delete" asp-route-userId="@user.DbUserId">Del</a>
+                                <a class="icon mb-2" asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.DbUserId"><i class="bi bi-pencil-square"></i></a>
                             </span>
                             <span>
-                                <a asp-action="EditUser" asp-controller="Account" asp-route-uid="@user.DbUserId">Edit</a>
+                                <a class="delete mb-2" asp-action="Delete" asp-route-userId="@user.DbUserId"><i class="bi bi-trash"></i></a>
                             </span>
                         </td>
                     </tr>
@@ -57,3 +62,37 @@
         </table>
     </div>
 </div>
+
+<style>
+    #myTea {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+
+    .icon {
+        color: #0097B2 !important;
+    }
+
+    .delete {
+        color: red;
+    }
+
+    .delete:hover {
+        color: red;
+    }
+
+    .btn-outline-info {
+        color: #0097B2 !important;
+        border-color: #0097B2 !important;
+    }
+
+    .btn-outline-info:hover {
+            color: white !important;
+            border-color: #0097B2 !important;
+            background-color: #0097B2 !important;
+    }
+</style>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Runtime.Intrinsics.Arm;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -31,7 +32,7 @@ namespace MyTeaApp.Controllers
 
             List<UserInfoVM> viewModel = new List<UserInfoVM>();
 
-            users = userName != null ? 
+            users = userName != null ?
                 users.FindAll(u => u.FullName.Contains(userName)) : users;
 
             users = (activeOnly != null && activeOnly.Equals("on")) ?
@@ -48,7 +49,7 @@ namespace MyTeaApp.Controllers
                     : await _userManager.IsInRoleAsync(user, "Employee") ? "Employee"
                     : "Manager";
 
-                if (role==null || role == "all" || role == userRole)
+                if (role == null || role == "all" || role == userRole)
                 {
                     if (department == null || department == "all" || department == dpt)
                     {
@@ -85,7 +86,7 @@ namespace MyTeaApp.Controllers
         public async Task<IActionResult> Register()
         {
             // Not allowed to register
-            if (!await _isAllowedToRegister()) 
+            if (!await _isAllowedToRegister())
             {
                 return RedirectToAction(nameof(Login));
             }
@@ -95,7 +96,7 @@ namespace MyTeaApp.Controllers
 
             vm.Departments = await _populateDepartmentSelectList();
 
-            vm.Roles = await _populateRoleSelectList();           
+            vm.Roles = await _populateRoleSelectList();
 
 
             return View(vm);
@@ -118,7 +119,7 @@ namespace MyTeaApp.Controllers
             ModelState.AddModelError("DepartmentId", validateDepId.ErrorMessage ?? "");
 
             Department dpt = _db.Department.FirstOrDefault(d => d.DepartmentID == vm.DepartmentID);
-            
+
             ValidationResponse validateRoleName = vm.ValidateRole();
             ModelState.AddModelError("RoleName", validateDepId.ErrorMessage ?? "");
 
@@ -153,10 +154,10 @@ namespace MyTeaApp.Controllers
         }
         // REGISTER END ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        
-        
-        
-        
+
+
+
+
         // LOGIN ---------------------------------------------------------------------------------------------------------------------------------------------------------
         [HttpGet]
         public IActionResult Login()
@@ -204,12 +205,46 @@ namespace MyTeaApp.Controllers
         }
         // LOGOUT END ---------------------------------------------------------------------------------------------------
 
+        // DETAILS ---------------------------------------------------------------------------------------------------
+        public async Task<IActionResult> Details()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            string dpt = _db.Department.FirstOrDefault(d => d.DepartmentID == user.DepartmentId).DepartmentName;
+            string userRole = await _userManager.IsInRoleAsync(user, "Admin") ? "Admin"
+                : await _userManager.IsInRoleAsync(user, "Employee") ? "Employee"
+                : "Manager";
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            UserInfoVM temp = new UserInfoVM()
+            {
+                DbUserId = user.Id,
+                UserId = user.UserID,
+                FullName = user.FullName,
+                Email = user.Email,
+                AdmissionDate = user.AdmissionDate,
+                RoleName = userRole,
+                DepartmentName = dpt,
+                IsActive = user.UserActive ? "Yes" : "No"
+            };
+
+
+            return View(temp);
+        }
+
+
+        // DETAILS END ---------------------------------------------------------------------------------------------------
+
 
         // EDIT ---------------------------------------------------------------------------------------------------
-        
+
         [HttpGet]
         [Authorize(Policy = "RequireAdmin")]
-        public async Task<IActionResult> EditUser(string uid) {
+        public async Task<IActionResult> EditUser(string uid)
+        {
             User user = await _db.Users.FirstAsync(u => u.Id == uid);
             if (user == null)
             {
@@ -228,7 +263,7 @@ namespace MyTeaApp.Controllers
 
         [HttpPost]
         [Authorize(Policy = "RequireAdmin")]
-        public async Task<IActionResult> EditUser(string uid, [Bind("UserID, FullName, Email, DepartmentId, RoleName")]EditUserVM data)
+        public async Task<IActionResult> EditUser(string uid, [Bind("UserID, FullName, Email, DepartmentId, RoleName")] EditUserVM data)
         {
             User user = await _db.Users.FirstAsync(u => u.Id == uid);
 
@@ -248,7 +283,8 @@ namespace MyTeaApp.Controllers
                 return View(data);
             }
             var updateRoleResult = await _userManager.AddToRoleAsync(user, data.RoleName);
-            if(!updateRoleResult.Succeeded) { 
+            if (!updateRoleResult.Succeeded)
+            {
                 return View(data);
             }
 
@@ -295,18 +331,35 @@ namespace MyTeaApp.Controllers
         //  CHANGE PASSWORD END ----------------------------------------------------------------------------------------
 
         // UTILITIES ---------------------------------------------------------------------------------------------------
+
+        //private IActionResult _redirectAfterLogin()
+        //{
+        //    if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        //    {
+        //        return RedirectToAction("Dashboard", "Home");
+        //    }else if(User.IsInRole("Employee"))
+        //    {
+        //        return RedirectToAction("Create", "Records");
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //}
+
         private IActionResult _redirectAfterLogin()
         {
-            if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            if (User.IsInRole("Admin"))
             {
-                return RedirectToAction("Dashboard", "Home");
-            }else if(User.IsInRole("Employee"))
+                return RedirectToAction("AdminOverview", "Home");
+            }
+            else if (User.IsInRole("Employee"))
             {
-                return RedirectToAction("Create", "Records");
+                return RedirectToAction("EmployeeOverview", "Home");
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("ManagerOverview", "Home");
             }
         }
 
@@ -371,13 +424,14 @@ namespace MyTeaApp.Controllers
             // If someone is logged ins
             else
             {
-                if(User.Identity == null)
+                if (User.Identity == null)
                 {
                     return false;
                 }
 
                 User user = await _userManager.FindByEmailAsync(User.Identity.Name);
-                if(user == null) {
+                if (user == null)
+                {
                     return false;
                 }
                 // Check if the logged user is Admin

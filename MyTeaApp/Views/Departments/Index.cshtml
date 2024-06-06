@@ -3,16 +3,17 @@
 @{
     ViewData["Title"] = "Department";
 }
-<div class="col">
-    <h1>Department</h1>
+<div id="myTea" class="col">
+    <h1 class="title">Departments</h1>
     <p>
-        <a asp-action="Create">Create New</a>
+        <a class="btn btn-outline-info mt-3 mb-3" asp-action="Create">Create New</a>
     </p>
 
     <form asp-controller="Departments" asp-action="Index" method="get">
-        <p>
-            Title: <input type="text" name="searchString" />
-            <input type="submit" value="Filter" />
+
+        <p class="mb-5">
+            <input type="text" placeholder="Search Title" name="searchString" />
+            <input class="btn btn-sm btn-outline-info" type="submit" value="Filter" />
         </p>
     </form>
 
@@ -40,9 +41,9 @@
                         @Html.DisplayFor(modelItem => item.DepartmentName)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.DepartmentID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.DepartmentID">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.DepartmentID">Delete</a>
+                        <a class="icon" asp-action="Edit" asp-route-id="@item.DepartmentID"><i class="bi bi-pencil-square"></i></a>
+                        <a class="icon" asp-action="Details" asp-route-id="@item.DepartmentID"><i class="bi bi-info-circle"></i></a>
+                        <a class="delete" asp-action="Delete" asp-route-id="@item.DepartmentID"><i class="bi bi-trash"></i></a>
                     </td>
                 </tr>
             }
@@ -50,3 +51,41 @@
     </table>
 
 </div>
+
+<style>
+    #myTea {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+
+    a:hover {
+        color: darkblue;
+    }
+
+     .icon {
+        color: #0097B2 !important;
+    } 
+
+    .delete {
+        color: red;
+    }
+
+        .delete:hover {
+            color: red;
+        }
+
+    .btn-outline-info{
+        color: #0097B2 !important;
+        border-color: #0097B2 !important;
+    }
+
+    .btn-outline-info:hover{
+        color: white !important;
+        border-color: #0097B2 !important;
+        background-color: #0097B2 !important;
+    }
+</style>

@@ -3,8 +3,8 @@
 @{
     ViewData["Title"] = "Delete";
 }
-<div class="col">
-    <h1>Delete</h1>
+<div id="myTea" class="col">
+    <h1 class="title">Delete</h1>
 
     <h3>Are you sure you want to delete this?</h3>
     <div>
@@ -21,8 +21,27 @@
     
         <form asp-action="Delete">
             <input type="hidden" asp-for="DepartmentID" />
-            <input type="submit" value="Delete" class="btn btn-danger" /> |
-            <a asp-action="Index">Back to List</a>
+            <input type="submit" value="Delete" class="btn btn-outline-danger" />
+            <a class="clear text-decoration-none" asp-action="Index">Back to List</a>
         </form>
     </div>
 </div>
+
+<style>
+    #myTea {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+
+    .clear {
+        color: #0097B2;
+    }
+
+        .clear:hover {
+            color: darkblue;
+        }
+</style>

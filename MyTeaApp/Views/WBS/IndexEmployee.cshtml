@@ -6,18 +6,11 @@
 
 <div id="myTea" class="col">
 
-    <h1 class="title">WBS</h1>
-
-    <p>
-        <a class="btn btn-outline-info mt-3" asp-action="Create">Create New</a>
-    </p>
-
-    <form asp-controller="WBS" asp-action="Index" method="get">
-
+    <form asp-controller="WBS" asp-action="IndexEmployee" method="get">
         <p>
-            <input type="text" name="filtroWbs" placeholder="Search Title"/>
+            <input type="text" name="filtroWbs" placeholder="Search Title" />
             <input class="btn btn-sm btn-outline-info mr-3 ml-3" type="submit" value="Filter" />
-            <a class="clear text-decoration-none" asp-action="Index">Clear</a>
+            <a class="clear text-decoration-none" asp-action="IndexEmployee">Clear</a>
         </p>
     </form>
 
@@ -47,27 +40,26 @@
             </tr>
         </thead>
         <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.WbsName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.WbsCod)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsChargeable)
-                </td>
-                <td>
-                        <a class="icon" asp-action="Edit" asp-route-id="@item.WbsId"><i class="bi bi-pencil-square"></i></a>
-                        <a class="icon" asp-action="Details" asp-route-id="@item.WbsId"><i class="bi bi-info-circle"></i></a>
-                        <a class="delete" asp-action="Delete" asp-route-id="@item.WbsId"><i class="bi bi-trash"></i></a>
-                </td>
-            </tr>
-    }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.WbsName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.WbsCod)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsChargeable)
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.WbsId">Details</a>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 
@@ -89,30 +81,18 @@
         font-size: 0.9rem;
     }
 
-    .clear:hover {
-        color: #0097B2;
-    }
-
-    .icon {
-        color: #0097B2 !important;
-    }
-
-    .delete {
-        color: red;
-    }
-
-    .delete:hover {
-        color: red;
-    }
+        .clear:hover {
+            color: #0097B2;
+        }
 
     .btn-outline-info {
         color: #0097B2 !important;
         border-color: #0097B2 !important;
     }
 
-    .btn-outline-info:hover {
+        .btn-outline-info:hover {
             color: white !important;
             border-color: #0097B2 !important;
             background-color: #0097B2 !important;
-    }
+        }
 </style>

@@ -1,0 +1,74 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> _signInManager;
+@inject UserManager<User> _userManager;
+
+@using MyTeaApp.Models.ViewModels;
+
+@model UserInfoVM;
+
+
+<div id="myTea" class="col">
+
+    <h1 class="title">Details</h1>
+
+    <div class="col flex-wrap">
+        <div>
+            <h4>User</h4>
+
+            <hr />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FullName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.AdmissionDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.DepartmentName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RoleName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(userModel => userModel.IsActive)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>
+                            @Model.FullName
+                        </th>
+                        <th>
+                            @Model.AdmissionDate.ToString("dd/MM/yyyy")
+                        </th>
+                        <th>
+                            @Model.DepartmentName
+                        </th>
+                        <th>
+                            @Model.RoleName
+                        </th>
+                        <th>
+                            @Model.IsActive
+                        </th>
+                        <th></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    #myTea {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+</style>

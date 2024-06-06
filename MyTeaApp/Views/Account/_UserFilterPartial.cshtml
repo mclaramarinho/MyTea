@@ -13,7 +13,7 @@
     rolesNames.ForEach(r => roles.Add(new SelectListItem { Text = r, Value = r, Selected = ViewData["filter.role"]?.ToString() == r }));
 }
 
-<form class="row mb-5" asp-action="Index" asp-controller="Account" method="get">
+<form id="myTea" class="row mb-5" asp-action="Index" asp-controller="Account" method="get">
     <div class="col-2">
         <label class="form-label">Search by name</label>
         <input class="form-control" type="text" name="userName"
@@ -42,7 +42,37 @@
         </select>
     </div>
     <div class="col-2 align-content-end justify-content-center">
-        <a asp-action="Index" asp-controller="Account" class="btn btn-sm btn-link text-danger text-decoration-none">Clear</a>
-        <button type="submit" class="btn btn-sm btn-success">Filter</button>
+        <button type="submit" class="btn btn-outline-info">Filter</button>
+        <a asp-action="Index" asp-controller="Account" class="clear text-decoration-none">Clear</a>
     </div>
 </form>
+
+<style>
+    #myTea {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .filter {
+        color: #0097B2 !important;
+    }
+
+    .clear {
+        color:red;
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .clear:hover {
+        color: #0097B2;
+    }
+
+    .btn-outline-info {
+        color: #0097B2 !important;
+        border-color: #0097B2 !important;
+    }
+
+    .btn-outline-info:hover {
+            color: white !important;
+            border-color: #0097B2 !important;
+            background-color: #0097B2 !important;
+    }
+</style>

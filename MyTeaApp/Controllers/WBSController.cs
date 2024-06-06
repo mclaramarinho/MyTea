@@ -40,6 +40,20 @@ namespace MyTeaApp.Controllers
             return View(await wbs.ToListAsync());
         }
 
+        public async Task<IActionResult> IndexEmployee(string? filtroWbs)
+        {
+            var wbs = from w in _context.WBS
+                      select w;
+
+            if (!String.IsNullOrEmpty(filtroWbs))
+            {
+                wbs = wbs.Where(w => w.WbsCod.Contains(filtroWbs) || w.WbsName.Contains(filtroWbs));
+            }
+
+
+            return View(await wbs.ToListAsync());
+        }
+
         // GET: WBS/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -79,19 +93,19 @@ namespace MyTeaApp.Controllers
             {
                 if (wBS.WbsCod.IsNullOrEmpty())
                 {
-                    wBS.WbsCod = "WBS"+ _random.Next(9999999).ToString();
+                    wBS.WbsCod = "WBS" + _random.Next(9999999).ToString();
                 }
 
 
                 var existingWBS = _context.WBS.Any(w => w.WbsCod == wBS.WbsCod);
 
-                if(existingWBS)
+                if (existingWBS)
                 {
                     ModelState.AddModelError("WBS", "Já existe uma WBS com esse código");
                     _contextModificado = false;
                     TempData["ToasterType"] = !_contextModificado ? "error" : "success";
                     return RedirectToAction(nameof(Index));
-                   
+
                 }
 
                 _contextModificado = true;
@@ -134,7 +148,7 @@ namespace MyTeaApp.Controllers
                 _contextModificado = false;
                 TempData["ToasterType"] = !_contextModificado ? "error" : "success";
                 return NotFound();
-                
+
             }
 
             if (ModelState.IsValid)

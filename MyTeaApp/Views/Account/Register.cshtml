@@ -18,9 +18,24 @@
 
 }
 
-<div class="mb-3 row text-center justify-content-center align-content-center">
-    <h1>MyTea</h1>
-    <h4>@text</h4>
+<div class="col">
+    <div class="col flex-wrap">
+        <div class="mb-3 row text-center justify-content-center align-content-center">
+            <h1 class="title">MyTea</h1>
+            <h4>@text</h4>
+        </div>
+
+        <partial name="_RegisterFormPartial" model="Model"></partial>
+    </div>
 </div>
 
-<partial name="_RegisterFormPartial" model="Model"></partial>
+<style>
+    #myTea {
+        font-family: 'Arial', sans-serif !important;
+    }
+
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+</style>
