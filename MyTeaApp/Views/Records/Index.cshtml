@@ -4,36 +4,38 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="col">
+    <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-@if (TempData["ToasterType"] != null)
-{
-    Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
-}
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalHoursRecord)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalHoursRecord)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.RecordID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.RecordID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.RecordID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    @if (TempData["ToasterType"] != null)
+    {
+        Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalHoursRecord)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalHoursRecord)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.RecordID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.RecordID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.RecordID">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>

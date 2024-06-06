@@ -76,11 +76,6 @@ public class DbInitializer
 
         if (context.WBS.Any())
         {
-            return;
-        }
-        else
-        {
-            context.WBS.AddRange(
                 new WBS
                 {
                     WbsName = "Vacation",
@@ -100,7 +95,7 @@ public class DbInitializer
                     WbsName = "No task",
                     WbsCod = "WBS4700086",
                     Description = "No task - employee",
-                    IsChargeable = true,
+                    IsChargeable = false,
                 },
                 new WBS
                 {
@@ -115,10 +110,27 @@ public class DbInitializer
                     WbsCod = "WBS2574100",
                     Description = "Development - employee",
                     IsChargeable = true,
+                },
+                new WBS
+                {
+                    WbsName = "Holiday",
+                    WbsCod = "WBS2534102",
+                    Description = "Holiday",
+                    IsChargeable = true,
                 }
+        };
+        foreach (var w in wbs)
+        {
+            if (!context.WBS.Any(item => w.WbsCod == item.WbsCod))
+            {
+                await context.WBS.AddAsync(w);
+                await context.SaveChangesAsync();
+            }
+        }
+    }
 
 
-            );
+        await CreateDefaultWBS(context);
 
             context.SaveChanges();
         }
