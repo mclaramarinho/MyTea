@@ -199,46 +199,48 @@ namespace MyTeaApp.Controllers
 
         // POST: Records/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        private async Task<List<RecordFraction>> _GetNewRecordData(int rid, Record record, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, bool isInEditMode = false)
         {
-            var @record = await _context.Records.FindAsync(id);
-            if (@record != null)
+            if (isInEditMode)
+        {
+                List<RecordFraction> existingFractions = _context.RecordFraction.Where(f => f.RecordID == rid).ToList();
+                foreach (RecordFraction fraction in existingFractions)
             {
-                _context.Records.Remove(@record);
+                    _context.RecordFraction.Remove(fraction);
+                    await _context.SaveChangesAsync();
+                }
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            List<RecordFraction> fractions = new List<RecordFraction>();
 
-        private bool RecordExists(int id)
-        {
-            return _context.Records.Any(e => e.RecordID == id);
-        }
+            int daysInFortnight = dates.Count / 4;
 
-        /// <summary>
-        /// Retrieves all the WBS from database and returns a List of SelectListItem
-        /// </summary>
-        /// <returns>List with the SelectListItems for each WBS</returns>
-        private List<SelectListItem> _getWbsSelectList()
+            for (int linha = 0; linha < 4; linha++)
         {
-            List<SelectListItem> selectListItems = new List<SelectListItem>();
-            var itemsFromDatabase = _context.WBS.ToList();
-            selectListItems.Add(new SelectListItem
+                WBS? w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
+
+                for (int col = 0; col < daysInFortnight; col++)
             {
-                Text = "Select charge code",
-                Value = "-1"
-            });
-            itemsFromDatabase.ForEach(i =>
+                    if (hours.ElementAt((daysInFortnight * linha) + col) != null)
             {
-                selectListItems.Add(new SelectListItem
+                        RecordFraction rf = new RecordFraction()
                 {
-                    Text = i.WbsName + " - " + i.WbsCod,
-                    Value = i.WbsCod,
-                });
-            });
-            return selectListItems;
+                            Record = record,
+                            RecordDate = dates.ElementAt((daysInFortnight * linha) + col),
+                            TotalHoursFraction = hours.ElementAt((daysInFortnight * linha) + col).Value,
+                            Wbs = w
+                        };
+
+                        _context.RecordFraction.Add(rf);
+                        await _context.SaveChangesAsync();
+
+
+                        fractions.Add(rf);
+                    }
+                }
+            }
+            return fractions;
         }
+
     }
 }
