@@ -130,13 +130,31 @@ namespace MyTeaApp.Controllers
                         _context.RecordFraction.Add(rf);
                         await _context.SaveChangesAsync();
 
-                        Record relatedRecord = await _context.Records.FirstAsync(r => r.RecordID == recordId);
-                        relatedRecord.RecordFraction.Add(rf);
-                        _context.Records.Update(relatedRecord);
-                        await _context.SaveChangesAsync();
+        // ------- UTILITIES ------------
 
-                        _recordCriada = true;
-                        TempData["ToasterType"] = !_recordCriada ? "error" : "success";
+        /// <summary>
+        /// Retrieves all the WBS from database and returns a List of SelectListItem
+        /// </summary>
+        /// <returns>List with the SelectListItems for each WBS</returns>
+        private List<SelectListItem> _getWbsSelectList()
+        {
+            List<SelectListItem> selectListItems = new List<SelectListItem>();
+            var itemsFromDatabase = _context.WBS.ToList();
+            selectListItems.Add(new SelectListItem
+            {
+                Text = "Select charge code",
+                Value = "-1",
+                Selected = true
+            });
+            itemsFromDatabase.ForEach(i =>
+            {
+                selectListItems.Add(new SelectListItem
+                {
+                    Text = i.WbsName + " - " + i.WbsCod,
+                    Value = i.WbsCod,
+                });
+            });
+            return selectListItems;
                     }
 
         private async Task<bool> _IsAdmin()
