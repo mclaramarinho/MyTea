@@ -31,6 +31,8 @@
                 <select class="form-select" asp-for="RoleName" asp-items="@Model.Roles"></select>
             </div>
             <button type="submit" class="btn btn-outline-info">Submit</button>
+            <a asp-action="Index" asp-controller="Departaments" class="clear text-decoration-none">Back to List</a>
+
         </div>
     
     </form>
@@ -45,6 +47,15 @@
         font-weight: bold;
         color: #0097B2 !important;
     }
+
+    .clear {
+        color: #0097B2;
+        font-family: 'Arial', sans-serif !important;
+    }
+
+        .clear:hover {
+            color: darkblue;
+        }
 
     .btn-outline-info {
         color: #0097B2 !important;

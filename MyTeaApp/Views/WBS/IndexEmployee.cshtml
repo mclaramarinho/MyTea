@@ -36,7 +36,6 @@
                 <th>
                     @Html.DisplayNameFor(model => model.IsChargeable)
                 </th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -54,9 +53,6 @@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.IsChargeable)
-                    </td>
-                    <td>
-                        <a class="btn btn-outline-info" asp-action="Details" asp-route-id="@item.WbsId">Details</a>
                     </td>
                 </tr>
             }
