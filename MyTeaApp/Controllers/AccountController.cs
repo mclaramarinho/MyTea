@@ -110,6 +110,7 @@ namespace MyTeaApp.Controllers
                 {
                     ModelState.AddModelError("", "An administrator is already registered. Registrations can only be made by them.");
                 }
+                TempData["ToasterType"] = "error";
                 return View(vm);
             }
             bool shouldLoginAfter = _isFirstRegister();
@@ -256,6 +257,7 @@ namespace MyTeaApp.Controllers
             }
             var updateRoleResult = await _userManager.AddToRoleAsync(user, data.RoleName);
             if(!updateRoleResult.Succeeded) { 
+                TempData["ToasterType"] = "error";
                 return View(data);
             }
             TempData["ToasterType"] = "success";
