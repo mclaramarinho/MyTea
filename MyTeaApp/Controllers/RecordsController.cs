@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyTeaApp.Models;
 using MyTeaApp.Models.ViewModels;
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyTeaApp.Data;
@@ -64,12 +63,7 @@ namespace MyTeaApp.Controllers
             {
                 vm.ExistingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == vm.user.Id);
             }
-            vm.WBS = _getWbsSelectList();
 
-            // TODO - pegar id do user
-
-
-            Record? existingRecord = null;
 
             if (vm.ExistingRecord != null)
             {
