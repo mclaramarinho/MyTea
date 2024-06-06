@@ -151,16 +151,15 @@ namespace MyTeaApp.Controllers
             return firstDay;
         }
 
-        // POST: Records/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RecordID,TotalHoursRecord")] Record @record)
+        private DateTime _GetDateToShowRecords(string? startDate)
         {
-            if (id != @record.RecordID)
+            DateTime date = DateTime.Now;
+
+            if (startDate != null)
             {
-                return NotFound();
+                date = DateTime.ParseExact(startDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            return date;
             }
 
             if (ModelState.IsValid)
