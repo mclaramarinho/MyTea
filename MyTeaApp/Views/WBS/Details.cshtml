@@ -7,12 +7,14 @@
     <h1 class="title">Details</h1>
 
     <div>
-        <h4>WBS</h4>
         <hr />
         <dl class="row">
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.WbsName)
             </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.WbsName)
+            </dd>
             <dt class = "col-sm-2">
                 @Html.DisplayNameFor(model => model.WbsCod)
             </dt>
@@ -34,7 +36,7 @@
         </dl>
     </div>
     <div>
-        <a class="btn btn-outline-info" asp-action="Edit" asp-route-id="@Model?.WbsId">Edit</a>
+        <a class="btn btn-outline-info me-3" asp-action="Edit" asp-route-id="@Model?.WbsId">Edit</a>
         <a class="clear text-decoration-none" asp-action="Index">Back to List</a>
     </div>
 </div>

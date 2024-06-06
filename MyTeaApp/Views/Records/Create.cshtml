@@ -141,12 +141,9 @@
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         // YAS
         const editButton = document.querySelector('.edit-button');
-        const submitButton = document.querySelector('.submit-button');
         // YAS
-        const submitBtn = document.querySelector("#submitRecord_btn");
-
-
-
+        const submitBtn = document.querySelector(".submit-button");
+        const submitButton = document.querySelector('.submit-button');
         let editModeInput = document.getElementById('isInEditModeInput');
         document.addEventListener('DOMContentLoaded', async function () {
             let userToView = @(Json.Serialize(ViewData["userSelected"]));
@@ -194,7 +191,7 @@
         }
 
 
-                                                                                                            const selectedStartDate = new Date(selectedFortnight.value);
+                    const selectedStartDate = new Date(selectedFortnight.value);
             let endDate;
 
 
@@ -236,19 +233,32 @@
                 return response;
             }
 
+            console.log(isTodayInSelectedFortnight())
 
 
             if (isTodayInSelectedFortnight() || @adminRole === "true") {
-                editButton.removeAttribute('disabled');
+                editButton && editButton.removeAttribute('disabled');
+                submitButton.setAttribute('remove', true);
 
             } else {
-                editButton.setAttribute('disabled', true);
+                editButton && editButton.setAttribute('disabled', true);
                 submitButton.setAttribute('disabled', true);
             }
-
-
-
+            // testtemp
             let wbsList = document.querySelectorAll(".wbsSelector");
+            function enableSelect(event) {
+                wbsList.forEach(wbs => {
+                    wbs.removeAttribute('disabled');
+                });
+            }
+
+            function enableInputs() {
+                inputElements.forEach(input => {
+                    input.removeAttribute('readonly');
+                    input.removeAttribute('disabled');
+                });
+            }
+
             function toggleSelects() {
                 wbsList.forEach(wbs => {
                     if (wbs.hasAttribute('disabled')) {
@@ -264,21 +274,21 @@
                     if (input.hasAttribute('disabled')) {
                         input.removeAttribute('disabled');
                     } else {
+                        console.log("has not readonly")
                         input.setAttribute('disabled', true);
                     }
                 });
             }
 
-            editButton.addEventListener('mouseup', function (event) {
+
+            editButton && editButton.addEventListener('mouseup', function (event) {
                 event.preventDefault();
 
                 submitBtn.removeAttribute("disabled");
-                console.log("Value: " + editModeInput.value)
                 if (editModeInput.value === true) {
                     editModeInput.value = false;
                 } else {
                     editModeInput.value = true;
-
                 }
 
                 toggleInputs();
@@ -301,10 +311,6 @@
 
                 input.addEventListener('input', event => handleInput(event, rowIndex, colIndex));
             });
-
-
-
-
 
             quinzenaSelector.addEventListener('change', async function () {
                 var selectedDate = new Date(this.value).toISOString().split("T")[0];
@@ -332,14 +338,27 @@
                 });
             })
 
+            const lastSelectWbs = document.querySelector("#wbsSelector_3");
+
+            lastSelectWbs.addEventListener("mousedown", e => {
+                if (lastSelectWbs.classList.contains("disableSelect")) {
+                    e.preventDefault();
+                }
+            })
 
             document.querySelectorAll(".wbsSelector").forEach(i => {
                 i.addEventListener("change", e => {
+                    submitButton.removeAttribute('disabled');
+
+                    if (i.classList.contains("disable")) {
+                        e.preventDefault();
+                    }
                     isSlotEnabled(shouldSlotsBeEnabled, daysInFortnight);
                 })
             })
         });
     </script>
+
 
 }
 <style>
