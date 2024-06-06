@@ -77,7 +77,8 @@ namespace MyTeaApp.Controllers
 
             if (ModelState.IsValid)
             {
-                if (wBS.WbsCod.IsNullOrEmpty())
+                var existingWBS = false;
+                if (!wBS.WbsCod.IsNullOrEmpty())
                 {
                     existingWBS = _context.WBS.Any(w => w.WbsCod == wBS.WbsCod);
                 }
@@ -91,7 +92,6 @@ namespace MyTeaApp.Controllers
                 }
 
                 TempData["ToasterType"] = "success";
-                TempData["ToasterType"] = !_contextModificado ? "error" : "success";
 
 
                 _context.Add(wBS);
@@ -217,8 +217,6 @@ namespace MyTeaApp.Controllers
                 return View(id);
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool WBSExists(int id)
