@@ -69,37 +69,37 @@ namespace MyTeaApp.Controllers
             }
 
 
-            // TODO - se achar algo no banco, preencher a view model com todas as informações necessárias para preencher o forms 
-            if (existingRecord != null)
+
+        [HttpPost]
+        public async Task<IActionResult> Create(int? rid, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, string email, RecordVM vm, bool isInEditMode = false)
             {
-                vm.ExistingRecord = existingRecord;
+            User loggedUser = await _um.FindByEmailAsync(User.Identity.Name);
+            bool isLoggedUserAdmin = await _IsAdmin();
 
-                List<RecordFraction> rf = await _context.RecordFraction.ToListAsync();
+            User user = loggedUser;
 
-                vm.ExistingRecord.RecordFraction = rf.FindAll(f => f.RecordID == existingRecord.RecordID);
+            int? userToPersist = null;
 
 
-            }
-            vm.WBS = _getWbsSelectList();
+            string canContinueCreate = _CanContinueCreateAction(email, isLoggedUserAdmin, loggedUser.Email, dates);
 
+            if(canContinueCreate == "view") {
+                TempData["ToasterType"] = "error";
             return View(vm);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, string email, RecordVM vm)
+            if (isInEditMode == true)
         {
-            User user = await _um.FindByEmailAsync(User.Identity.Name);
-
-            if (email != null)
+                if(rid != null)
             {
-                IList<string> userRoleFromParam = await _um.GetRolesAsync(user);
-
-                if (userRoleFromParam[0] == "Admin")
-                {
-                    user = await _context.Users.FirstAsync(u => u.Email == email);
+                    var wasEdited = await EditRecord((int)rid, hours, dates, wbs, vm);
+                    TempData["ToasterType"] = !wasEdited ? "error" : "success";
+                    return wasEdited ? RedirectToAction("Create", new { uid = userToPersist, startDate = dates.ElementAt(0).ToString("yyyy-MM-dd") }) : View(vm);
+                }
+                TempData["ToasterType"] = "error";
+                return View(vm);
                 }
 
-            }
 
             Record record = new Record()
             {
@@ -114,7 +114,17 @@ namespace MyTeaApp.Controllers
 
             int recordId = record.RecordID;
 
-            for (int linha = 0; linha < 4; linha++)
+            record.RecordFraction = await _GetNewRecordData(recordId, record, hours, dates, wbs, false);
+
+            TempData["ToasterType"] = record.RecordFraction.Count > 0 ? "success" : "error";
+            
+            vm.WBS = _getWbsSelectList();
+            return RedirectToAction("Create", new { uid = userToPersist, startDate = dates.ElementAt(0).ToString("yyyy-MM-dd") });
+        }
+
+        
+
+        public async Task<bool> EditRecord(int rid, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, RecordVM vm)
             {
                 WBS w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
 
