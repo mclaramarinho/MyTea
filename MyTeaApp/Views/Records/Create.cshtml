@@ -307,7 +307,7 @@
             });
 
             quinzenaSelector.addEventListener('change', async function () {
-                var selectedDate = new Date(this.value).toISOString();
+                var selectedDate = new Date(this.value).toISOString().split("T")[0];
                 let newLocation = `/Records/Create?`;
                 // let newLocation = `/Records/Create?startDate=${selectedDate}`;
                 if (userToView !== null) {
