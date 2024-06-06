@@ -207,6 +207,14 @@ namespace MyTeaApp.Controllers
             if (wBS != null)
             {
                 _context.WBS.Remove(wBS);
+                await _context.SaveChangesAsync();
+                TempData["ToasterType"] = "success";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                TempData["ToasterType"] = "error";
+                return View(id);
             }
 
             await _context.SaveChangesAsync();
