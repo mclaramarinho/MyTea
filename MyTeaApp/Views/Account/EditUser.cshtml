@@ -30,6 +30,10 @@
                 <label asp-for="RoleName" class="form-label"></label>
                 <select class="form-select" asp-for="RoleName" asp-items="@Model.Roles"></select>
             </div>
+            <div class="mb-3">
+                <label asp-for="IsActive" class="form-label"></label>
+                <select class="form-select" asp-for="IsActive" asp-items="@Model.ActiveStates"></select>
+            </div>
             <button type="submit" class="btn btn-success">Submit</button>
         </div>
     
