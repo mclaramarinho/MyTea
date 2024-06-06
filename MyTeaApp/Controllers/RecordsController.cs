@@ -16,7 +16,7 @@ namespace MyTeaApp.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _um;
         private readonly SignInManager<User> _sm;
-        private bool _recordCriada = false;
+        private bool _recordCriada = false; 
 
         public RecordsController(ApplicationDbContext context, UserManager<User> um, SignInManager<User> sm)
         {
@@ -73,11 +73,11 @@ namespace MyTeaApp.Controllers
 
             return View(vm);
         }
-
+        
 
         [HttpPost]
         public async Task<IActionResult> Create(int? rid, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, string email, RecordVM vm, bool isInEditMode = false)
-            {
+        {
             User loggedUser = await _um.FindByEmailAsync(User.Identity.Name);
             bool isLoggedUserAdmin = await _IsAdmin();
 
@@ -90,7 +90,7 @@ namespace MyTeaApp.Controllers
 
             if(canContinueCreate == "view") {
                 TempData["ToasterType"] = "error";
-            return View(vm);
+                return View(vm);
             }else if (canContinueCreate == "logout") {
                 TempData["ToasterType"] = "error";
                 return RedirectToAction("Logout", "Account");
@@ -98,19 +98,19 @@ namespace MyTeaApp.Controllers
             {
                 user = await _um.FindByEmailAsync(email);
                 userToPersist = user.UserSerial;
-        }
+            }
 
             if (isInEditMode == true)
-        {
-                if(rid != null)
             {
+                if(rid != null)
+                {
                     var wasEdited = await EditRecord((int)rid, hours, dates, wbs, vm);
                     TempData["ToasterType"] = !wasEdited ? "error" : "success";
                     return wasEdited ? RedirectToAction("Create", new { uid = userToPersist, startDate = dates.ElementAt(0).ToString("yyyy-MM-dd") }) : View(vm);
                 }
                 TempData["ToasterType"] = "error";
                 return View(vm);
-                }
+            }
 
 
             Record record = new Record()
@@ -137,14 +137,14 @@ namespace MyTeaApp.Controllers
         
 
         public async Task<bool> EditRecord(int rid, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, RecordVM vm)
-            {
+        {
             vm.WBS = _getWbsSelectList();
 
             Record? existingRecord = await _context.Records.FirstOrDefaultAsync(rec => rec.RecordID == rid);
 
 
             if (existingRecord == null)
-                {
+            {
                 return false;
             }
             var fractions = await _GetNewRecordData(rid, existingRecord, hours, dates, wbs, true);
@@ -159,10 +159,10 @@ namespace MyTeaApp.Controllers
         }
 
         public async Task<IActionResult> Delete(int? id, string? startDate, int? userId, string email, int daysInFortnight)
-                    {
+        {
 
             if (id == null || !_context.Records.Any(r => r.RecordID == id))
-                        {
+            {
                 TempData["ToasterType"] = "error";
                 return RedirectToAction("Create", new { uid = userId, startDate = startDate });
             }
@@ -188,7 +188,7 @@ namespace MyTeaApp.Controllers
             {
                 Record record = await _context.Records.FirstAsync(r => r.RecordID == id);
                 _context.Records.Remove(record);
-                        await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 TempData["ToasterType"] = "success";
             }
            
@@ -222,14 +222,14 @@ namespace MyTeaApp.Controllers
                 });
             });
             return selectListItems;
-                    }
+        }
 
         private async Task<bool> _IsAdmin()
         {
             User userLog = await _um.FindByEmailAsync(User.Identity.Name);
             IList<string> userRoles = await _um.GetRolesAsync(userLog);
             return userRoles[0] == "Admin";
-                }
+        }
 
         private int _GetFirstDayOfFortnight(DateTime date)
         {
@@ -251,15 +251,15 @@ namespace MyTeaApp.Controllers
                 date = DateTime.ParseExact(startDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             return date;
-            }
+        }
 
         private async Task<List<RecordFraction>> _GetFractionsFromRecord(int RecordID)
-                {
+        {
             List<RecordFraction> rf = await _context.RecordFraction.ToListAsync();
             List<RecordFraction> response = rf.FindAll(f => f.RecordID == RecordID);
 
             return response;
-                }
+        }
         private string _CanContinueCreateAction(string email, bool isLoggedUserAdmin, string loggedUserEmail, ICollection<DateTime> dates)
         {
             // Returns: "view" (can't continue and should return the view) || "logout" (can't continue and should return to logout action) || "continue" (can proceed)  
@@ -268,28 +268,28 @@ namespace MyTeaApp.Controllers
 
             // 1 - find out if the email belongs to an user other than the person that is creating
             if (loggedUserEmail != email)
-                {
+            {
                 // if true, find out if the current logged user is admin
                 if (!isLoggedUserAdmin)
-                    {
+                {
                     // if is not admin 
                     response = "logout";
-                    }
-                    else
-                    {
+                }
+                else
+                {
                     // if is admin  
                     response = "continue";
+                }
             }
-        }
             else
             {
                 // if email from param is equal to the logged user
 
                 if (isLoggedUserAdmin)
-            {
+                {
                     // if user is admin
                     response = "continue";
-            }
+                }
                 else
                 {
                     // if user is not admin, verify if today is in selected fortnight
@@ -298,23 +298,23 @@ namespace MyTeaApp.Controllers
                     DateTime selectedFortnightEndDate = dates.Last().Date;
 
                     if (today >= selectedFortnightStartDate && today <= selectedFortnightEndDate)
-            {
+                    {
                         response = "continue";
                     }
+                }
+
+
             }
-
-
-        }
 
             return response;
         }
         private async Task<List<RecordFraction>> _GetNewRecordData(int rid, Record record, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, bool isInEditMode = false)
         {
             if (isInEditMode)
-        {
+            {
                 List<RecordFraction> existingFractions = _context.RecordFraction.Where(f => f.RecordID == rid).ToList();
                 foreach (RecordFraction fraction in existingFractions)
-            {
+                {
                     _context.RecordFraction.Remove(fraction);
                     await _context.SaveChangesAsync();
                 }
@@ -325,15 +325,15 @@ namespace MyTeaApp.Controllers
             int daysInFortnight = dates.Count / 4;
 
             for (int linha = 0; linha < 4; linha++)
-        {
+            {
                 WBS? w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
 
                 for (int col = 0; col < daysInFortnight; col++)
-            {
-                    if (hours.ElementAt((daysInFortnight * linha) + col) != null)
-            {
-                        RecordFraction rf = new RecordFraction()
                 {
+                    if (hours.ElementAt((daysInFortnight * linha) + col) != null)
+                    {
+                        RecordFraction rf = new RecordFraction()
+                        {
                             Record = record,
                             RecordDate = dates.ElementAt((daysInFortnight * linha) + col),
                             TotalHoursFraction = hours.ElementAt((daysInFortnight * linha) + col).Value,
