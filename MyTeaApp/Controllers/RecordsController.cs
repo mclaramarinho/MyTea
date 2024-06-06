@@ -139,10 +139,16 @@ namespace MyTeaApp.Controllers
                         TempData["ToasterType"] = !_recordCriada ? "error" : "success";
                     }
                 }
+
+        private int _GetFirstDayOfFortnight(DateTime date)
+        {
+            int firstDay = 1;
+            if (date.Day > 15)
+            {
+                firstDay = 16;
             }
 
-            vm.WBS = _getWbsSelectList();
-            return View(vm);
+            return firstDay;
         }
 
         // POST: Records/Edit/5
@@ -164,11 +170,20 @@ namespace MyTeaApp.Controllers
                     _context.Update(@record);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+        private string _CanContinueCreateAction(string email, bool isLoggedUserAdmin, string loggedUserEmail, ICollection<DateTime> dates)
+        {
+            // Returns: "view" (can't continue and should return the view) || "logout" (can't continue and should return to logout action) || "continue" (can proceed)  
+
+            string response = "view"; // can't continue and should return 
+
+            // 1 - find out if the email belongs to an user other than the person that is creating
+            if (loggedUserEmail != email)
                 {
-                    if (!RecordExists(@record.RecordID))
+                // if true, find out if the current logged user is admin
+                if (!isLoggedUserAdmin)
                     {
-                        return NotFound();
+                    // if is not admin 
+                    response = "logout";
                     }
                     else
                     {
@@ -178,27 +193,33 @@ namespace MyTeaApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
-
-        // GET: Records/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
+            else
             {
-                return NotFound();
+                // if email from param is equal to the logged user
+
+                if (isLoggedUserAdmin)
+            {
+                    // if user is admin
+                    response = "continue";
+            }
+                else
+                {
+                    // if user is not admin, verify if today is in selected fortnight
+                    DateTime today = DateTime.Today;
+                    DateTime selectedFortnightStartDate = dates.First().Date;
+                    DateTime selectedFortnightEndDate = dates.Last().Date;
+
+                    if (today >= selectedFortnightStartDate && today <= selectedFortnightEndDate)
+            {
+                        response = "continue";
+                    }
             }
 
-            var @record = await _context.Records
-                .FirstOrDefaultAsync(m => m.RecordID == id);
-            if (@record == null)
-            {
-                return NotFound();
-            }
 
-            return View(@record);
         }
 
-        // POST: Records/Delete/5
-        [HttpPost, ActionName("Delete")]
+            return response;
+        }
         private async Task<List<RecordFraction>> _GetNewRecordData(int rid, Record record, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, bool isInEditMode = false)
         {
             if (isInEditMode)
