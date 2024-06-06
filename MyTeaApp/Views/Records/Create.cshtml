@@ -6,10 +6,10 @@
 @inject IHttpContextAccessor _httpContextAccessor;
 @model RecordVM;
 
+@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> _sm;
 @{
     ViewData["Title"] = "Create Record";
-
-    // int daysInSelectedFortnight = 15;
 
     var _http = _httpContextAccessor.HttpContext;
 
@@ -41,6 +41,8 @@
                     </select>
                 </div>
                 <form asp-action="Create" method="post" id="registerRecordForm">
+                    <input type="hidden" name="isInEditMode" id="isInEditModeInput" value="false" />
+                    <input type="hidden" name="rid" value="@(Model.ExistingRecord != null ? Model.ExistingRecord.RecordID : null)" />
                     <div id="records-list" class="">
                         <table id="records-table" class="table">
                             <thead>
@@ -98,12 +100,14 @@
                         </table>
                     </div>
                     <input type="submit" value="Create" class="btn btn-primary" id="submitRecord_btn" />
+                <input type="submit" value="Save" class="btn btn-primary submit-button" id="submitRecord_btn" />
                 </form>
             </div>
         </div>
 
         <div>
             <a asp-action="Index">Back to List</a>
+            <button class="btn edit-button" disabled>Edit</button>
         </div>
     </div>
 
@@ -119,9 +123,33 @@
     }
     <script>
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        // YAS
+        const editButton = document.querySelector('.edit-button');
+        // YAS
+        const submitBtn = document.querySelector("#submitRecord_btn");
+        const submitButton = document.querySelector('.submit-button');
+        let editModeInput = document.getElementById('isInEditModeInput');
         document.addEventListener('DOMContentLoaded', async function () {
             let userToView = @(Json.Serialize(ViewData["userSelected"]));
             let shouldSlotsBeEnabled = false;
+
+
+
+            // YAS
+            const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
+
+            let accessDate = new Date();
+            let fortnights = @Json.Serialize(data.Fortnights);
+            let selectedFortnight = null;
+
+            fortnights.forEach((item) => {
+                if (item.selected) {
+                    selectedFortnight = item;
+                }
+            });
+
+            // YAS
+
 
             // MOD -- added these lines to keep track of the amount of days in fortnight
             const startDate = getFortnightStartDate();
@@ -129,14 +157,134 @@
 
             await identifyFortnightAndGenerateTable(startDate, daysInFortnight);
             if(@Json.Serialize(Model.ExistingRecord != null)){
+                submitBtn.setAttribute("disabled", true);
                 populateTableWithData();
                 shouldSlotsBeEnabled = false;
             }else{
+                submitBtn.removeAttribute("disabled");
                 shouldSlotsBeEnabled = true;
             }
 
             isSlotEnabled(shouldSlotsBeEnabled, daysInFortnight);
             
+
+
+            // YAS
+            @{
+                var adminRole = User.IsInRole("Admin") ? "true" : "false";
+            }
+
+                
+            const selectedStartDate = new Date(selectedFortnight.value);
+            let endDate;
+
+
+            const isTodayInSelectedFortnight = () => {
+
+                const selectedFortnightFirstDay = new Date(@Json.Serialize(data.FortnightStart));
+                console.log(selectedFortnightFirstDay)
+                const [fy, fm, fd] = selectedFortnightFirstDay.toISOString().split("T")[0].split("-");
+
+
+                const daysInSelectedFortnight = @Json.Serialize(data.DaysInSelectedFortnight);
+                console.log(daysInSelectedFortnight)
+
+                const selectedFortnightLastDay = selectedFortnightFirstDay;
+                selectedFortnightLastDay.setDate(selectedFortnightLastDay.getDate() + daysInSelectedFortnight);
+                console.log(selectedFortnightLastDay)
+                const [ly, lm, ld] = selectedFortnightFirstDay.toISOString().split("T")[0].split("-");
+
+                const today = new Date();
+                const [ty, tm, td] = today.toISOString().split("T")[0].split("-");
+
+                let response = false;
+
+                console.log(`dates (f - l - t): ${fd} - ${ld} - ${td}`)
+                console.log(`months (f - l - t): ${fm} - ${lm} - ${tm}`)
+                console.log(`years (f - l - t): ${fy} - ${ly} - ${ty}`)
+
+                if (ty === ly && ty === fy) {
+                    console.log(1)
+                    if (tm === lm && tm === fm) {
+                    console.log(2)
+                        if(td <= ld && td >= fd){
+                    console.log(3)
+                            response = true;
+                        }
+                    }
+                }
+
+                return response;                
+            }
+
+            console.log(isTodayInSelectedFortnight())
+
+
+            if (isTodayInSelectedFortnight() || @adminRole === "true") {
+                editButton.removeAttribute('disabled');
+                submitButton.setAttribute('remove', true);
+
+            } else {
+                editButton.setAttribute('disabled', true);
+                submitButton.setAttribute('disabled', true);
+            }
+            // testtemp
+            let wbsList = document.querySelectorAll(".wbsSelector");
+            function enableSelect(event) {
+                wbsList.forEach(wbs => {
+                    wbs.removeAttribute('disabled');
+                });
+            }
+
+            function enableInputs() {
+                inputElements.forEach(input => {
+                    input.removeAttribute('readonly');
+                    input.removeAttribute('disabled');
+                });
+            }
+
+            function toggleSelects() {
+                wbsList.forEach(wbs => {
+                    if (wbs.hasAttribute('disabled')) {
+                        wbs.removeAttribute('disabled');
+                    } else {
+                        wbs.setAttribute('disabled', true);
+                    }
+                });
+            }
+
+            function toggleInputs() {
+                inputElements.forEach(input => {
+                    if (input.hasAttribute('disabled')) {
+                        input.removeAttribute('disabled');
+                    } else {
+                        console.log("has not readonly")
+                        input.setAttribute('disabled', true);
+                    }
+                });
+            }
+
+
+            editButton.addEventListener('mouseup', function (event) {
+                event.preventDefault();
+                    
+                submitBtn.removeAttribute("disabled");
+                if (editModeInput.value === true) {
+                    editModeInput.value = false;
+                } else {
+                    editModeInput.value = true;
+                }
+
+                toggleInputs();
+                toggleSelects();
+                shouldSlotsBeEnabled = editModeInput.value;
+            });
+
+            // YAS
+
+
+
+
 
             /* EVENT LISTENERS */
 
