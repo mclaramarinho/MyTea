@@ -32,42 +32,53 @@ namespace MyTeaApp.Controllers
         {
             RecordVM vm = new RecordVM();
 
-            DateTime date = DateTime.Now;
+            DateTime date = _GetDateToShowRecords(startDate);
 
-            if (startDate != null)
-            {
-                date = DateTime.ParseExact(startDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
-            }
+            int firstDay = _GetFirstDayOfFortnight(date);
 
             date = new DateTime(date.Year, date.Month, firstDay);
 
-            User userLog = await _um.FindByEmailAsync(User.Identity.Name);
+            User userToShow = await _um.FindByEmailAsync(User.Identity.Name);
             ViewData["userSelected"] = null;
             if (uid != null)
             {
-                IList<string> userRoleFromParam = await _um.GetRolesAsync(userLog);
-
-                if (userRoleFromParam[0] == "Admin")
+                if (await _IsAdmin() || uid == userToShow.UserSerial)
                 {
-                    userLog = await _context.Users.FirstAsync(u => u.UserID == uid);
+                    userToShow = await _context.Users.FirstAsync(u => u.UserSerial == uid);
+                }
+                else
+                {
+                    return RedirectToAction("Logout", "Account");
                 }
 
                 ViewData["userSelected"] = uid;
 
             }
+            vm.user = userToShow;
 
+
+            vm.ExistingRecord = null;
+
+            //if (_context.Records.Count() > 0)
+            if (_context.Records.Any())
+            {
+                vm.ExistingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == vm.user.Id);
+            }
+            vm.WBS = _getWbsSelectList();
 
             // TODO - pegar id do user
 
 
             Record? existingRecord = null;
 
-            // TODO - procurar no banco de dados os records cuja startDate e userid sejam os procurados
-            if (_context.Records.Count() > 0)
+            if (vm.ExistingRecord != null)
             {
-                existingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == vm.user.Id);
+                vm.ExistingRecord.RecordFraction = await _GetFractionsFromRecord(vm.ExistingRecord.RecordID);
             }
+            vm.WBS = _getWbsSelectList();
 
+            return View(vm);
+        }
 
 
         [HttpPost]
