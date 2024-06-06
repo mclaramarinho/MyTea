@@ -29,24 +29,39 @@
 
 @* - SHOW IF EXISTING RECORD IS NULL *@
 <div class="col flex-wrap text-wrap table-responsive">
-    <h1>Create Record</h1>
+    <h1 class="title">Record</h1>
+    <div class="d-flex justify-content-end w-100">
+        <div class="form-group ms-1 col-3">
+            <label for="quinzenaSelector">Select Fortnight</label>
+            <select id="quinzenaSelector" class="form-control">
+                @foreach (var quinzena in data.Fortnights)
+                {
+                    <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
+                }
+            </select>
 
-    <h4>Record</h4>
-    <div class="row">
+        </div>
+        <div class="mt-4 container-fluid d-flex justify-content-end">
+
+            @if (Model.ExistingRecord != null)
+            {
+                <button class="btn btn-primary edit-button" disabled><i class="bi bi-pencil-square"></i></button>
+                <form asp-action="Delete" asp-controller="Records" class="ms-3" asp-route-id="@Model.ExistingRecord.RecordID"
+                      asp-route-startDate="@data.SelectedFortnight.ToString("yyyy-MM-dd")" asp-route-userId="@ViewData["userSelected"]"
+                      asp-route-daysInFortnight="@data.DaysInSelectedFortnight" asp-route-email="@Model.user" asp-route-vm="@Model">
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                </form>
+            }
+
+        </div>
+    </div>
+
+    <div class="row  table-responsive">
         <div class="col">
-            <div class="form-group">
-                <label for="quinzenaSelector">Select Fortnight</label>
-                <select id="quinzenaSelector" class="form-control">
-                    @foreach (var quinzena in data.Fortnights)
-                    {
-                        <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
-                    }
-                </select>
-            </div>
+
             <form asp-action="Create" method="post" id="registerRecordForm">
                 <input type="hidden" name="isInEditMode" id="isInEditModeInput" value="false" />
                 <input type="hidden" name="rid" value="@(Model.ExistingRecord != null ? Model.ExistingRecord.RecordID : null)" />
-
                 <div id="records-list" class="">
                     <table id="records-table" class="table">
                         <thead>
@@ -65,7 +80,7 @@
                                 <tr class="grid">
                                     <td class="g-col-auto">
                                         <div>
-                                            <select class="form-select wbsSelector" asp-items="Model.WBS" name="wbs" id="wbsSelector"></select>
+                                            <select class="form-select wbsSelector" asp-items="Model.WBS" name="wbs" id="wbsSelector_@i"></select>
 
                                         </div>
                                     </td>
@@ -103,22 +118,14 @@
                         </tfoot>
                     </table>
                 </div>
+
+                @* esse botão submit precisa estar dentro desse form *@
                 <input type="submit" value="Save" class="btn btn-primary submit-button" id="submitRecord_btn" />
             </form>
         </div>
     </div>
-
-    <div>
-        @if (Model.ExistingRecord != null)
-        {
-            <form asp-action="Delete" asp-controller="Records" asp-route-id="@Model.ExistingRecord.RecordID"
-                  asp-route-startDate="@data.SelectedFortnight.ToString("yyyy-MM-dd")" asp-route-userId="@ViewData["userSelected"]">
-                <button class="btn delete-button" type="submit">Delete</button>
-            </form>
-        }
-        <button class="btn edit-button" disabled>Edit</button>
-    </div>
 </div>
+
 
 @section Scripts {
     @{
@@ -187,7 +194,7 @@
         }
 
 
-                                    const selectedStartDate = new Date(selectedFortnight.value);
+                                                                                                            const selectedStartDate = new Date(selectedFortnight.value);
             let endDate;
 
 
@@ -228,7 +235,7 @@
 
                 return response;
             }
-        
+
 
 
             if (isTodayInSelectedFortnight() || @adminRole === "true") {
@@ -239,9 +246,9 @@
                 submitButton.setAttribute('disabled', true);
             }
 
-        
-            
-            let wbsList = document.querySelectorAll(".wbsSelector"); 
+
+
+            let wbsList = document.querySelectorAll(".wbsSelector");
             function toggleSelects() {
                 wbsList.forEach(wbs => {
                     if (wbs.hasAttribute('disabled')) {
@@ -271,7 +278,7 @@
                     editModeInput.value = false;
                 } else {
                     editModeInput.value = true;
-                
+
                 }
 
                 toggleInputs();
@@ -279,59 +286,76 @@
                 shouldSlotsBeEnabled = editModeInput.value;
             });
 
-                // YAS
+            // YAS
 
 
 
 
 
-                /* EVENT LISTENERS */
+            /* EVENT LISTENERS */
 
-                // const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
+            // const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
 
+            inputElements.forEach(input => {
+                const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
+
+                input.addEventListener('input', event => handleInput(event, rowIndex, colIndex));
+            });
+
+
+
+
+
+            quinzenaSelector.addEventListener('change', async function () {
+                var selectedDate = new Date(this.value).toISOString().split("T")[0];
+                let newLocation = `/Records/Create?`;
+                // let newLocation = `/Records/Create?startDate=${selectedDate}`;
+                if (userToView !== null) {
+                    newLocation += `uid=${userToView}&startDate=${selectedDate}`;
+                } else {
+                    newLocation += `startDate=${selectedDate}`;
+                }
+                window.location.href = newLocation;
+            });
+
+            /**
+             * description - when no other input (except by holidays) is provided, submitting will update the total hours
+             *
+             */
+            $("#submitRecord_btn").on("mouseup", (e) => {
                 inputElements.forEach(input => {
                     const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
-
-                    input.addEventListener('input', event => handleInput(event, rowIndex, colIndex));
-                });
-
-
-
-
-
-                quinzenaSelector.addEventListener('change', async function () {
-                    var selectedDate = new Date(this.value).toISOString().split("T")[0];
-                    let newLocation = `/Records/Create?`;
-                    // let newLocation = `/Records/Create?startDate=${selectedDate}`;
-                    if (userToView !== null) {
-                        newLocation += `uid=${userToView}&startDate=${selectedDate}`;
-                    } else {
-                        newLocation += `startDate=${selectedDate}`;
+                    handleInput(event, rowIndex, colIndex)
+                    document.getElementById("registerRecordForm").onsubmit = (ev) => {
+                        validateForm(ev);
                     }
-                    window.location.href = newLocation;
                 });
+            })
 
-                /**
-                 * description - when no other input (except by holidays) is provided, submitting will update the total hours
-                 *
-                 */
-                $("#submitRecord_btn").on("mouseup", (e) => {
-                    inputElements.forEach(input => {
-                        const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
-                        handleInput(event, rowIndex, colIndex)
-                        document.getElementById("registerRecordForm").onsubmit = (ev) => {
-                            validateForm(ev);
-                        }
-                    });
+
+            document.querySelectorAll(".wbsSelector").forEach(i => {
+                i.addEventListener("change", e => {
+                    isSlotEnabled(shouldSlotsBeEnabled, daysInFortnight);
                 })
-
-
-                document.querySelectorAll(".wbsSelector").forEach(i => {
-                    i.addEventListener("change", e => {
-                        isSlotEnabled(shouldSlotsBeEnabled, daysInFortnight);
-                    })
-                })
-            });
+            })
+        });
     </script>
 
 }
+<style>
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+
+    .edit-button, .submit-button {
+        background-color: #0097B2 !important;
+        border-color: #0097B2 !important;
+        transition: 0.6s;
+    }
+
+        .edit-button:hover, .submit-button:hover {
+            background-color: #05b0cf !important;
+            border-color: #05b0cf !important;
+        }
+</style>
