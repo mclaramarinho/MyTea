@@ -88,6 +88,7 @@
                                 {
                                     <td class="col-total">
                                         <input id="colTotal_@i" type="number" class="col-total" disabled style="max-width: 40px;" />
+                                        <input id="colTotal_date__@i" type="hidden" />
                                     </td>
                                 }
                                 <td class="col-total">
@@ -173,9 +174,21 @@
                 });
             })
 
+            const lastSelectWbs = document.querySelector("#wbsSelector_3");
+
+            lastSelectWbs.addEventListener("mousedown", e => {
+                if (lastSelectWbs.classList.contains("disableSelect")) {
+                    e.preventDefault();
+                }
+            })
 
             document.querySelectorAll(".wbsSelector").forEach(i => {
                 i.addEventListener("change", e => {
+                    submitButton.removeAttribute('disabled');
+
+                    if (i.classList.contains("disable")) {
+                        e.preventDefault();
+                    }
                     isSlotEnabled(shouldSlotsBeEnabled, daysInFortnight);
                 })
             })

@@ -99,6 +99,20 @@
     function setHiddenDateValues(index, date, daysInFortnight) {
         const slots = getSlotValues(index, daysInFortnight);
         slots.forEach((v, i) => {
+            if (i == 0){
+                const totalSlotDateEl = document.querySelector(`#colTotal_date__${v}`);
+                totalSlotDateEl.setAttribute("value", date);
+                const [ y, m, d ]= date.split("-");
+                const realDate = new Date();
+                
+                realDate.setFullYear(parseInt(y), parseInt(m)-1, parseInt(d));
+                const isWeekend = realDate.getDay() === 0 || realDate.getDay() === 6;
+
+                if (isWeekend) {
+                    const totalSlotEl = document.querySelector(`#colTotal_${v}`);
+                    totalSlotEl.classList.add("weekend");
+                }
+            }
             const slotEl = document.querySelector(`#fractionSlot_${v} input:nth-child(2)`);
             slotEl.setAttribute("value", date);
         });
