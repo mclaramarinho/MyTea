@@ -79,19 +79,15 @@ namespace MyTeaApp.Controllers
             {
                 if (wBS.WbsCod.IsNullOrEmpty())
                 {
-                    wBS.WbsCod = "WBS"+ _random.Next(9999999).ToString();
+                    existingWBS = _context.WBS.Any(w => w.WbsCod == wBS.WbsCod);
                 }
 
-
-                var existingWBS = _context.WBS.Any(w => w.WbsCod == wBS.WbsCod);
-
-                if(existingWBS)
+                if(existingWBS || wBS.WbsCod.IsNullOrEmpty())
                 {
-                    ModelState.AddModelError("WBS", "Já existe uma WBS com esse código");
-                    _contextModificado = false;
-                    TempData["ToasterType"] = !_contextModificado ? "error" : "success";
-                    return RedirectToAction(nameof(Index));
-                   
+                    do
+                    {
+                        wBS.WbsCod = "WBS" + _random.Next(9999999).ToString();
+                    } while (_context.WBS.Any(w => w.WbsCod == wBS.WbsCod));
                 }
 
                 TempData["ToasterType"] = "success";
