@@ -17,7 +17,13 @@
     <header>
         <partial name="_NavbarPartial" />
     </header>
-    <div class="container">
+    <div class="@(_sm.IsSignedIn(User) ? "container-fluid" : "container")">
+        @if (TempData["ToasterType"] != null)
+        {
+            Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
+        }
+
+
         @if(_sm.IsSignedIn(User)){
             <main class="row">
                     <partial name="_SideMenuPartial"></partial>
