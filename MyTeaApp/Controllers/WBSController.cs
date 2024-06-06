@@ -94,7 +94,7 @@ namespace MyTeaApp.Controllers
                    
                 }
 
-                _contextModificado = true;
+                TempData["ToasterType"] = "success";
                 TempData["ToasterType"] = !_contextModificado ? "error" : "success";
 
 
@@ -102,7 +102,13 @@ namespace MyTeaApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            else
+            {
+                TempData["ToasterType"] = "error";
+
+
             return View(wBS);
+        }
         }
 
         // GET: WBS/Edit/5

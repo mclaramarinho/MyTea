@@ -122,7 +122,10 @@ namespace MyTeaApp.Controllers
             ValidationResponse validateRoleName = vm.ValidateRole();
             ModelState.AddModelError("RoleName", validateDepId.ErrorMessage ?? "");
 
-            if (!vm.FieldsValid) { return View(vm); }
+            if (!vm.FieldsValid) {
+                TempData["ToasterType"] = "error";
+                return View(vm);
+            }
 
             User user = new User()
             {
@@ -146,8 +149,11 @@ namespace MyTeaApp.Controllers
                     await _signInManager.PasswordSignInAsync(user.UserName, vm.Password, false, false);
                     return _redirectAfterLogin();
                 }
-                return RedirectToAction("Index", "Home");
+                TempData["ToasterType"] = "success";
+                return RedirectToAction("Index");
             }
+
+            TempData["ToasterType"] = "error";
             return View(vm);
 
         }
@@ -245,13 +251,14 @@ namespace MyTeaApp.Controllers
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
+                TempData["ToasterType"] = "error";
                 return View(data);
             }
             var updateRoleResult = await _userManager.AddToRoleAsync(user, data.RoleName);
             if(!updateRoleResult.Succeeded) { 
                 return View(data);
             }
-
+            TempData["ToasterType"] = "success";
             return RedirectToAction(nameof(Index));
 
         }
@@ -273,6 +280,7 @@ namespace MyTeaApp.Controllers
         {
             if (!ModelState.IsValid)
             {
+                TempData["ToasterType"] = "error";
                 return View(model);
             }
 
@@ -284,9 +292,10 @@ namespace MyTeaApp.Controllers
 
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
 
-            if (User.IsInRole("Admin"))
+            TempData["ToasterType"] = "error";
+            if (changePasswordResult.Succeeded)
             {
-                return RedirectToAction(nameof(Index));
+                TempData["ToasterType"] = "success";
             }
 
             return RedirectToAction("Index", "Home");
@@ -306,7 +315,8 @@ namespace MyTeaApp.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                TempData["ToasterType"] = "error";
+                return RedirectToAction("Logout", "Account");
             }
         }
 

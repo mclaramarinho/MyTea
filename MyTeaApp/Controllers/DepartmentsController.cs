@@ -75,8 +75,10 @@ namespace MyTeaApp.Controllers
             {
                 _context.Add(department);
                 await _context.SaveChangesAsync();
+                TempData["ToasterType"] = "success";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["ToasterType"] = "error";
             return View(department);
         }
 
@@ -136,6 +138,7 @@ namespace MyTeaApp.Controllers
         {
             if (id == null)
             {
+                TempData["ToasterType"] = "error";
                 return NotFound();
             }
 
@@ -143,9 +146,10 @@ namespace MyTeaApp.Controllers
                 .FirstOrDefaultAsync(m => m.DepartmentID == id);
             if (department == null)
             {
+                TempData["ToasterType"] = "error";
                 return NotFound();
             }
-
+            TempData["ToasterType"] = "success";
             return View(department);
         }
 
