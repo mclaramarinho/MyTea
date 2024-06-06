@@ -40,6 +40,20 @@ namespace MyTeaApp.Controllers
             return View(await wbs.ToListAsync());
         }
 
+        public async Task<IActionResult> IndexEmployee(string? filtroWbs)
+        {
+            var wbs = from w in _context.WBS
+                      select w;
+
+            if (!String.IsNullOrEmpty(filtroWbs))
+            {
+                wbs = wbs.Where(w => w.WbsCod.Contains(filtroWbs) || w.WbsName.Contains(filtroWbs));
+            }
+
+
+            return View(await wbs.ToListAsync());
+        }
+
         // GET: WBS/Details/5
         public async Task<IActionResult> Details(int? id)
         {
