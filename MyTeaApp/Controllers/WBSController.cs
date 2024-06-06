@@ -79,19 +79,19 @@ namespace MyTeaApp.Controllers
             {
                 if (wBS.WbsCod.IsNullOrEmpty())
                 {
-                    wBS.WbsCod = "WBS"+ _random.Next(9999999).ToString();
+                    wBS.WbsCod = "WBS" + _random.Next(9999999).ToString();
                 }
 
 
                 var existingWBS = _context.WBS.Any(w => w.WbsCod == wBS.WbsCod);
 
-                if(existingWBS)
+                if (existingWBS)
                 {
                     ModelState.AddModelError("WBS", "Já existe uma WBS com esse código");
                     _contextModificado = false;
                     TempData["ToasterType"] = !_contextModificado ? "error" : "success";
                     return RedirectToAction(nameof(Index));
-                   
+
                 }
 
                 _contextModificado = true;
@@ -134,7 +134,7 @@ namespace MyTeaApp.Controllers
                 _contextModificado = false;
                 TempData["ToasterType"] = !_contextModificado ? "error" : "success";
                 return NotFound();
-                
+
             }
 
             if (ModelState.IsValid)

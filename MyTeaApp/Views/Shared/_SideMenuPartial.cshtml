@@ -9,22 +9,28 @@
 
 @{
     List<DashboardOptions> options = new();
-    options.Add(new DashboardOptions { Name = "Overview", Section = "", IconName = "binoculars", Action = "Dashboard", Controller = "Home" });
-    options.Add(new DashboardOptions { Name = "Register Fortnight", Section = "record", IconName = "journals", Action = "Create", Controller = "Records" });
+    // options.Add(new DashboardOptions { Name = "Overview", Section = "", IconName = "binoculars", Action = "Dashboard", Controller = "Home" });
+    // options.Add(new DashboardOptions { Name = "Register Fortnight", Section = "record", IconName = "journals", Action = "Create", Controller = "Records" });
 
     if (User.IsInRole("Admin"))
     {
+        // Eu comentei a linha acima, pois cada tipo de usuário, terá um Overview difernte
+        options.Add(new DashboardOptions { Name = "Overview", Section = "", IconName = "binoculars", Action = "AdminOverview", Controller = "Home" });
         options.Add(new DashboardOptions { Name = "Departments", Section = "departments", IconName = "buildings", Action = "Index", Controller = "Departments" });
-        options.Add(new DashboardOptions { Name = "WBS", Section = "wbs", IconName = "upc-scan", Action = "Index", Controller = "WBS" });
+        options.Add(new DashboardOptions { Name = "Register Fortnight", Section = "record", IconName = "journals", Action = "Create", Controller = "Records" });
         options.Add(new DashboardOptions { Name = "Users", Section = "account", IconName = "people", Action = "Index", Controller = "Account" });
+        options.Add(new DashboardOptions { Name = "WBS", Section = "wbs", IconName = "upc-scan", Action = "Index", Controller = "WBS" });
     }
     else if (User.IsInRole("Employee"))
     {
-
+        options.Add(new DashboardOptions { Name = "Overview", Section = "", IconName = "binoculars", Action = "EmployeeOverview", Controller = "Home" });
+        options.Add(new DashboardOptions { Name = "Register Fortnight", Section = "record", IconName = "journals", Action = "Create", Controller = "Records" });
     }
     else if (User.IsInRole("Manager"))
     {
-
+        options.Add(new DashboardOptions { Name = "Overview", Section = "", IconName = "binoculars", Action = "ManagerOverview", Controller = "Home" });
+        options.Add(new DashboardOptions { Name = "Register Fortnight", Section = "record", IconName = "journals", Action = "Create", Controller = "Records" });
+        // Reports
     }
 
     string getIsSectionSelected(string sect)
@@ -40,36 +46,36 @@
 }
 
 
-        <aside class="col-auto">
-            <ul class="nav flex-column">
-                @foreach (var item in options)
-                {
-                    <li class="nav-item mb-4">
-                        <a class="text-decoration-none text-dark @getIsSectionSelected(item.Controller)"
-                        asp-action="@item.Action" asp-controller="@item.Controller">
-                            <i class="bi bi-@item.IconName"></i>
-                            @item.Name
-                        </a>
-                    </li>
-                }
-            </ul>
+<aside class="col-auto">
+    <ul class="nav flex-column">
+        @foreach (var item in options)
+        {
+            <li class="nav-item mb-4">
+                <a class="text-decoration-none text-dark @getIsSectionSelected(item.Controller)"
+                   asp-action="@item.Action" asp-controller="@item.Controller">
+                    <i class="bi bi-@item.IconName"></i>
+                    @item.Name
+                </a>
+            </li>
+        }
+    </ul>
 
-            <ul class="nav flex-column">
-                <li class="nav-item mb-4">
-                    <a class="text-decoration-none text-dark @getIsSectionSelected("settings")"
-                    asp-action="ChangePassword" asp-controller="Account" asp-route-section="settings">
-                        <i class="bi bi-gear"></i>
-                        Settings
-                    </a>
-                </li>
-                <form class="nav-item mb-4" asp-action="Logout" asp-controller="Account">
-                    <button type="submit" class="nav-link text-dark logout-btn">
-                        <i class="bi bi-box-arrow-right"></i>
-                        Logout
-                    </button>
-                </form>
-            </ul>
-        </aside>
+    <ul class="nav flex-column">
+        <li class="nav-item mb-4">
+            <a class="text-decoration-none text-dark @getIsSectionSelected("settings")"
+               asp-action="ChangePassword" asp-controller="Account" asp-route-section="settings">
+                <i class="bi bi-gear"></i>
+                Settings
+            </a>
+        </li>
+        <form class="nav-item mb-4" asp-action="Logout" asp-controller="Account">
+            <button type="submit" class="nav-link text-dark logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </button>
+        </form>
+    </ul>
+</aside>
 <style>
     aside > ul {
         font-size: 1.1rem;

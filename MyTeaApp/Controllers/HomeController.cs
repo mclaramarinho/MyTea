@@ -20,7 +20,19 @@ namespace MyTeaApp.Controllers
         }
 
         [Authorize]
-        public IActionResult Dashboard()
+        public IActionResult AdminOverview()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult EmployeeOverview()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult ManagerOverview()
         {
             return View();
         }
