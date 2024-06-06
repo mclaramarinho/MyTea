@@ -23,29 +23,6 @@ namespace MyTeaApp.Controllers
             _sm = sm;
         }
 
-        // GET: Records
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Records.ToListAsync());
-        }
-
-        // GET: Records/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @record = await _context.Records
-                .FirstOrDefaultAsync(m => m.RecordID == id);
-            if (@record == null)
-            {
-                return NotFound();
-            }
-
-            return View(@record);
-        }
 
         [Authorize]
         public async Task<IActionResult> Create(string? startDate, int? uid)
@@ -59,14 +36,6 @@ namespace MyTeaApp.Controllers
                 date = DateTime.ParseExact(startDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
             }
 
-            // TODO - encontrar a quinzena da data de hj
-            int firstDay = 1;
-            if (date.Day > 15)
-            {
-                firstDay = 16;
-            }
-
-            // TODO - guardar o primeiro dia da quinzena 
             date = new DateTime(date.Year, date.Month, firstDay);
 
             User userLog = await _um.FindByEmailAsync(User.Identity.Name);
@@ -84,7 +53,6 @@ namespace MyTeaApp.Controllers
 
             }
 
-            vm.user = userLog;
 
             // TODO - pegar id do user
 
@@ -109,10 +77,6 @@ namespace MyTeaApp.Controllers
 
 
             }
-            // TODO - senao, mandar a view model apenas com o o select list de wbs e o restante nulo
-
-
-            // Recupere os dados do banco de dados para o dropdown
             vm.WBS = _getWbsSelectList();
 
             return View(vm);
@@ -141,9 +105,6 @@ namespace MyTeaApp.Controllers
                 StartDate = dates.ElementAt(0),
                 SelectedWbs = wbs.ToList()
             };
-
-            int daysInFortnight = dates.Count/4;
-
 
             _context.Records.Add(record);
             await _context.SaveChangesAsync();
@@ -216,7 +177,6 @@ namespace MyTeaApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@record);
         }
 
         // GET: Records/Delete/5
