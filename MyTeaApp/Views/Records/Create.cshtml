@@ -103,7 +103,7 @@
                         </tfoot>
                     </table>
                 </div>
-                <input type="submit" value="Save" class="btn btn-primary" id="submitRecord_btn" />
+                <input type="submit" value="Save" class="btn btn-primary submit-button" id="submitRecord_btn" />
             </form>
         </div>
     </div>
@@ -113,7 +113,7 @@
         {
             <form asp-action="Delete" asp-controller="Records" asp-route-id="@Model.ExistingRecord.RecordID"
                   asp-route-startDate="@data.SelectedFortnight.ToString("yyyy-MM-dd")" asp-route-userId="@ViewData["userSelected"]">
-                <button type="submit">Delete</button>
+                <button class="btn delete-button" type="submit">Delete</button>
             </form>
         }
         <button class="btn edit-button" disabled>Edit</button>
@@ -134,6 +134,7 @@
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         // YAS
         const editButton = document.querySelector('.edit-button');
+        const submitButton = document.querySelector('.submit-button');
         // YAS
         const submitBtn = document.querySelector("#submitRecord_btn");
 
@@ -227,17 +228,18 @@
 
                 return response;
             }
+        
 
-            console.log(isTodayInSelectedFortnight())
 
-
-            if (isTodayInSelectedFortnight() || @adminRole === true) {
+            if (isTodayInSelectedFortnight() || @adminRole === "true") {
                 editButton.removeAttribute('disabled');
 
             } else {
-                editButton.setAttribute('disabled', 'disabled');
+                editButton.setAttribute('disabled', true);
+                submitButton.setAttribute('disabled', true);
             }
 
+        
             
             let wbsList = document.querySelectorAll(".wbsSelector"); 
             function toggleSelects() {

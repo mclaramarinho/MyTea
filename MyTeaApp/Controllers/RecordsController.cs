@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
+using MyTeaApp.Models;
+using MyTeaApp.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyTeaApp.Data;
-using MyTeaApp.Models;
-using MyTeaApp.Models.ViewModels;
 
 namespace MyTeaApp.Controllers
 {
@@ -23,116 +23,92 @@ namespace MyTeaApp.Controllers
             _sm = sm;
         }
 
-        // GET: Records
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Records.ToListAsync());
-        }
-
-        // GET: Records/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @record = await _context.Records
-                .FirstOrDefaultAsync(m => m.RecordID == id);
-            if (@record == null)
-            {
-                return NotFound();
-            }
-
-            return View(@record);
-        }
 
         [Authorize]
         public async Task<IActionResult> Create(string? startDate, int? uid)
         {
             RecordVM vm = new RecordVM();
 
-            DateTime date = DateTime.Now;
+            DateTime date = _GetDateToShowRecords(startDate);
 
-            if (startDate != null)
-            {
-                date = DateTime.ParseExact(startDate.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
-            }
+            int firstDay = _GetFirstDayOfFortnight(date);
 
-            // TODO - encontrar a quinzena da data de hj
-            int firstDay = 1;
-            if (date.Day > 15)
-            {
-                firstDay = 16;
-            }
-
-            // TODO - guardar o primeiro dia da quinzena 
             date = new DateTime(date.Year, date.Month, firstDay);
 
-            User userLog = await _um.FindByEmailAsync(User.Identity.Name);
+            User userToShow = await _um.FindByEmailAsync(User.Identity.Name);
             ViewData["userSelected"] = null;
             if (uid != null)
             {
-                IList<string> userRoleFromParam = await _um.GetRolesAsync(userLog);
-
-                if (userRoleFromParam[0] == "Admin")
+                if (await _IsAdmin() || uid == userToShow.UserID)
                 {
-                    userLog = await _context.Users.FirstAsync(u => u.UserID == uid);
+                    userToShow = await _context.Users.FirstAsync(u => u.UserID == uid);
+                }
+                else
+                {
+                    return RedirectToAction("Logout", "Account");
                 }
 
                 ViewData["userSelected"] = uid;
 
             }
-
-            vm.user = userLog;
-
-            // TODO - pegar id do user
+            vm.user = userToShow;
 
 
-            Record? existingRecord = null;
+            vm.ExistingRecord = null;
 
-            // TODO - procurar no banco de dados os records cuja startDate e userid sejam os procurados
-            if (_context.Records.Count() > 0)
+            //if (_context.Records.Count() > 0)
+            if (_context.Records.Any())
             {
-                existingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == vm.user.Id);
+                vm.ExistingRecord = await _context.Records.FirstOrDefaultAsync(r => (r.StartDate == date) && r.User.Id == vm.user.Id);
             }
 
 
-            // TODO - se achar algo no banco, preencher a view model com todas as informações necessárias para preencher o forms 
-            if (existingRecord != null)
+            if (vm.ExistingRecord != null)
             {
-                vm.ExistingRecord = existingRecord;
-
-                List<RecordFraction> rf = await _context.RecordFraction.ToListAsync();
-
-                vm.ExistingRecord.RecordFraction = rf.FindAll(f => f.RecordID == existingRecord.RecordID);
-
-
+                vm.ExistingRecord.RecordFraction = await _GetFractionsFromRecord(vm.ExistingRecord.RecordID);
             }
-            // TODO - senao, mandar a view model apenas com o o select list de wbs e o restante nulo
-
-
-            // Recupere os dados do banco de dados para o dropdown
             vm.WBS = _getWbsSelectList();
 
             return View(vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, string email, RecordVM vm)
+        public async Task<IActionResult> Create(int? rid, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, string email, RecordVM vm, bool isInEditMode = false)
         {
-            User user = await _um.FindByEmailAsync(User.Identity.Name);
+            User loggedUser = await _um.FindByEmailAsync(User.Identity.Name);
+            bool isLoggedUserAdmin = await _IsAdmin();
 
-            if (email != null)
+            User user = loggedUser;
+
+
+            int? userToPersist = null;
+
+            string canContinueCreate = _CanContinueCreateAction(email, isLoggedUserAdmin, loggedUser.Email, dates);
+
+            if (canContinueCreate == "view")
             {
-                IList<string> userRoleFromParam = await _um.GetRolesAsync(user);
-
-                if (userRoleFromParam[0] == "Admin")
-                {
-                    user = await _context.Users.FirstAsync(u => u.Email == email);
-                }
-
+                return View(vm);
             }
+            else if (canContinueCreate == "logout")
+            {
+                return RedirectToAction("Logout", "Account");
+            }
+            else if (canContinueCreate == "continue")
+            {
+                user = await _um.FindByEmailAsync(email);
+                userToPersist = user.UserID;
+            }
+
+            if (isInEditMode == true)
+            {
+                if (rid != null)
+                {
+                    var wasEdited = await EditRecord((int)rid, hours, dates, wbs, vm);
+                    return wasEdited ? RedirectToAction("Create", new { uid = userToPersist, startDate = dates.ElementAt(0).ToString("yyyy-MM-dd") }) : View(vm);
+                }
+                return View(vm);
+            }
+
 
             Record record = new Record()
             {
@@ -142,125 +118,68 @@ namespace MyTeaApp.Controllers
                 SelectedWbs = wbs.ToList()
             };
 
-            int daysInFortnight = dates.Count/4;
-
-
             _context.Records.Add(record);
             await _context.SaveChangesAsync();
 
             int recordId = record.RecordID;
 
-            for (int linha = 0; linha < 4; linha++)
+            record.RecordFraction = await _GetNewRecordData(recordId, record, hours, dates, wbs, false);
+
+            if (record.RecordFraction.Count > 0)
             {
-                WBS w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
-
-                for (int col = 0; col < daysInFortnight; col++)
-                {
-                    if (hours.ElementAt((daysInFortnight * linha) + col) != null)
-                    {
-                        RecordFraction rf = new RecordFraction()
-                        {
-                            Record = record,
-                            RecordDate = dates.ElementAt((daysInFortnight * linha) + col),
-                            TotalHoursFraction = hours.ElementAt((daysInFortnight * linha) + col).Value,
-                            Wbs = w
-                        };
-
-                        _context.RecordFraction.Add(rf);
-                        await _context.SaveChangesAsync();
-
-                        Record relatedRecord = await _context.Records.FirstAsync(r => r.RecordID == recordId);
-                        relatedRecord.RecordFraction.Add(rf);
-                        _context.Records.Update(relatedRecord);
-                        await _context.SaveChangesAsync();
-
-                        _recordCriada = true;
-                        TempData["ToasterType"] = !_recordCriada ? "error" : "success";
-                    }
-                }
+                _recordCriada = true;
+                TempData["ToasterType"] = !_recordCriada ? "error" : "success";
             }
+
 
             vm.WBS = _getWbsSelectList();
-            return View(vm);
+            return RedirectToAction("Create", new { uid = userToPersist, startDate = dates.ElementAt(0).ToString("yyyy-MM-dd") });
         }
 
-        // POST: Records/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RecordID,TotalHoursRecord")] Record @record)
+        public async Task<bool> EditRecord(int rid, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, RecordVM vm)
         {
-            if (id != @record.RecordID)
+            vm.WBS = _getWbsSelectList();
+
+            Record? existingRecord = await _context.Records.FirstOrDefaultAsync(rec => rec.RecordID == rid);
+
+
+            if (existingRecord == null)
             {
-                return NotFound();
+                return false;
             }
+            var fractions = await _GetNewRecordData(rid, existingRecord, hours, dates, wbs, true);
+            existingRecord.SelectedWbs = wbs.ToList();
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(@record);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RecordExists(@record.RecordID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(@record);
-        }
+            //existingRecord.RecordFraction = fractions;
 
-        // GET: Records/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @record = await _context.Records
-                .FirstOrDefaultAsync(m => m.RecordID == id);
-            if (@record == null)
-            {
-                return NotFound();
-            }
-
-            return View(@record);
-        }
-
-        // POST: Records/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var @record = await _context.Records.FindAsync(id);
-            if (@record != null)
-            {
-                _context.Records.Remove(@record);
-            }
-
+            _context.Records.Update(existingRecord);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return true;
         }
 
-        private bool RecordExists(int id)
+        public async Task<IActionResult> Delete(int? id, string? startDate, int? userId)
         {
-            return _context.Records.Any(e => e.RecordID == id);
+
+            if (id == null || !_context.Records.Any(r => r.RecordID == id))
+            {
+                return RedirectToAction("Create", new { uid = userId, startDate = startDate });
+            }
+
+            Record record = await _context.Records.FirstAsync(r => r.RecordID == id);
+            _context.Records.Remove(record);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Create", new { uid = userId, startDate = startDate });
         }
 
+        // ------------ UTILITIES ----------
         /// <summary>
+        /// 
         /// Retrieves all the WBS from database and returns a List of SelectListItem
         /// </summary>
         /// <returns>List with the SelectListItems for each WBS</returns>
+
         private List<SelectListItem> _getWbsSelectList()
         {
             List<SelectListItem> selectListItems = new List<SelectListItem>();
@@ -280,5 +199,134 @@ namespace MyTeaApp.Controllers
             });
             return selectListItems;
         }
+
+        private async Task<bool> _IsAdmin()
+        {
+            User userLog = await _um.FindByEmailAsync(User.Identity.Name);
+            IList<string> userRoles = await _um.GetRolesAsync(userLog);
+            return userRoles[0] == "Admin";
+        }
+
+        private int _GetFirstDayOfFortnight(DateTime date)
+        {
+            int firstDay = 1;
+            if (date.Day > 15)
+            {
+                firstDay = 16;
+            }
+
+            return firstDay;
+        }
+
+        private DateTime _GetDateToShowRecords(string? startDate)
+        {
+            DateTime date = DateTime.Now;
+
+            if (startDate != null)
+            {
+                date = DateTime.ParseExact(startDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            return date;
+        }
+
+        private async Task<List<RecordFraction>> _GetFractionsFromRecord(int RecordID)
+        {
+            List<RecordFraction> rf = await _context.RecordFraction.ToListAsync();
+            List<RecordFraction> response = rf.FindAll(f => f.RecordID == RecordID);
+
+            return response;
+        }
+        private string _CanContinueCreateAction(string email, bool isLoggedUserAdmin, string loggedUserEmail, ICollection<DateTime> dates)
+        {
+            // Returns: "view" (can't continue and should return the view) || "logout" (can't continue and should return to logout action) || "continue" (can proceed)  
+
+            string response = "view"; // can't continue and should return 
+
+            // 1 - find out if the email belongs to an user other than the person that is creating
+            if (loggedUserEmail != email)
+            {
+                // if true, find out if the current logged user is admin
+                if (!isLoggedUserAdmin)
+                {
+                    // if is not admin 
+                    response = "logout";
+                }
+                else
+                {
+                    // if is admin  
+                    response = "continue";
+                }
+            }
+            else
+            {
+                // if email from param is equal to the logged user
+
+                if (isLoggedUserAdmin)
+                {
+                    // if user is admin
+                    response = "continue";
+                }
+                else
+                {
+                    // if user is not admin, verify if today is in selected fortnight
+                    DateTime today = DateTime.Today;
+                    DateTime selectedFortnightStartDate = dates.First().Date;
+                    DateTime selectedFortnightEndDate = dates.Last().Date;
+
+                    if (today >= selectedFortnightStartDate && today <= selectedFortnightEndDate)
+                    {
+                        response = "continue";
+                    }
+                }
+
+
+            }
+
+            return response;
+        }
+        private async Task<List<RecordFraction>> _GetNewRecordData(int rid, Record record, ICollection<float?> hours, ICollection<DateTime> dates, ICollection<string> wbs, bool isInEditMode = false)
+        {
+            if (isInEditMode)
+            {
+                List<RecordFraction> existingFractions = _context.RecordFraction.Where(f => f.RecordID == rid).ToList();
+                foreach (RecordFraction fraction in existingFractions)
+                {
+                    _context.RecordFraction.Remove(fraction);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            List<RecordFraction> fractions = new List<RecordFraction>();
+
+            int daysInFortnight = dates.Count / 4;
+
+            for (int linha = 0; linha < 4; linha++)
+            {
+                WBS? w = await _context.WBS.FirstOrDefaultAsync(w => w.WbsCod == wbs.ElementAt(linha));
+
+                for (int col = 0; col < daysInFortnight; col++)
+                {
+                    if (hours.ElementAt((daysInFortnight * linha) + col) != null)
+                    {
+                        RecordFraction rf = new RecordFraction()
+                        {
+                            Record = record,
+                            RecordDate = dates.ElementAt((daysInFortnight * linha) + col),
+                            TotalHoursFraction = hours.ElementAt((daysInFortnight * linha) + col).Value,
+                            Wbs = w
+                        };
+
+                        _context.RecordFraction.Add(rf);
+                        await _context.SaveChangesAsync();
+
+
+                        fractions.Add(rf);
+                    }
+                }
+            }
+            return fractions;
+        }
+
+
     }
 }

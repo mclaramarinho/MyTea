@@ -35,13 +35,13 @@ namespace MyTeaApp.Views.Records
         private void SetSelectedFortnight(string url)
         {
             this._selectedFortnight = DateTime.Now;
-            
+
             if (url != null)
             {
-                this._selectedFortnight = DateTime.ParseExact(url.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                this._selectedFortnight = DateTime.ParseExact(url, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
         }
-        
+
         private void SetFirstDayOfFortnight()
         {
 
@@ -74,7 +74,7 @@ namespace MyTeaApp.Views.Records
             DateTime startDate = new DateTime(currentYear, index, 1);
             DateTime endDate = startDate.AddDays(14);
             bool isSelected = (startDate.Day == this.FortnightStart.Day && startDate.Month == this.FortnightStart.Month && startDate.Year == this.FortnightStart.Year);
-            if(isSelected == true)
+            if (isSelected == true)
             {
                 this._daysInSelectedFortnight = 15;
             }
@@ -102,8 +102,6 @@ namespace MyTeaApp.Views.Records
                 }
             } while (tempDate.Month == index);
 
-            Console.WriteLine("aaaaaa" + daysInSecondFortnight);
-
             int daysInMonth = DateTime.DaysInMonth(currentYear, index);
 
             DateTime startDate = new DateTime(currentYear, index, 16);
@@ -122,7 +120,7 @@ namespace MyTeaApp.Views.Records
             });
         }
 
-        
+
 
     }
 }
