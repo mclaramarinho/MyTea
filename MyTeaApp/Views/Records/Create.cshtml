@@ -20,106 +20,108 @@
 
 @* - IF RECORD NOT NULL SHOW FIELDS FILLED WITH DB DATA *@
 
-<partial name="_AlertMessagePartial"></partial>
+    <partial name="_AlertMessagePartial"></partial>
 
 
 @* - SHOW IF EXISTING RECORD IS NULL *@
-    <div class="col flex-wrap text-wrap table-responsive">
-        <h1>Create Record</h1>
+<div class="col flex-wrap text-wrap table-responsive">
+    <h1 class="title">Record</h1>
+    <div class="d-flex justify-content-end w-100">
+        <div class="form-group ms-1 col-3">
+            <label for="quinzenaSelector">Select Fortnight</label>
+            <select id="quinzenaSelector" class="form-control">
+                @foreach (var quinzena in data.Fortnights)
+                {
+                    <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
+                }
+            </select>
 
-        <h4>Record</h4>
-        @* <hr /> *@
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label for="quinzenaSelector">Select Fortnight</label>
-                    <select id="quinzenaSelector" class="form-control">
-                    @foreach (var quinzena in data.Fortnights)
-                        {
-                            <option value="@quinzena.Value" selected="@quinzena.Selected">@quinzena.Text</option>
-                        }
-                    </select>
-                </div>
-                <form asp-action="Create" method="post" id="registerRecordForm">
-                    <input type="hidden" name="isInEditMode" id="isInEditModeInput" value="false" />
-                    <input type="hidden" name="rid" value="@(Model.ExistingRecord != null ? Model.ExistingRecord.RecordID : null)" />
-                    <div id="records-list" class="">
-                        <table id="records-table" class="table">
-                            <thead>
-                                <tr>
-                                    <th class="text-nowrap">Charge Codes</th>
-                                @for (int i = 0; i < data.DaysInSelectedFortnight; i++)
-                                    {
-                                        <th class="date-column text-center"></th>
-                                    }
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @for (int i = 0; i < 4; i++)
-                                {
-                                    <tr class="grid">
-                                        <td class="g-col-auto">
-                                            <div>
-                                                <select class="form-select wbsSelector" asp-items="Model.WBS" name="wbs" id="wbsSelector_@i"></select>
-
-                                            </div>
-                                        </td>
-                                    @for (int j = 0; j < data.DaysInSelectedFortnight; j++)
-                                        {
-
-                                        <td class="g-col-1" id="fractionSlot_@((i * data.DaysInSelectedFortnight) + j)">
-
-                                                <input name="hours" type="number"  id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
-
-                                                <input name="dates" type="hidden" />
-
-                                            </td>
-                                        }
-                                        <td class="g-col-1">
-
-                                        <input id="rowTotal_@i" type="number" class="row-total" disabled style="max-width: 48px;" />
-                                        </td>
-                                    </tr>
-                                }
-                            <input name="email" type="hidden" value="@Model.user" />
-                            </tbody>
-                            <tfoot>
-                                <th>Total</th>
-                            @for (int i = 0; i < data.DaysInSelectedFortnight; i++)
-                                {
-                                    <td class="col-total">
-                                        <input id="colTotal_@i" type="number" class="col-total" disabled style="max-width: 40px;" />
-                                        <input id="colTotal_date__@i" type="hidden" />
-                                    </td>
-                                }
-                                <td class="col-total">
-                                    <input type="number" id="result" disabled class="" style="max-width: 48px;" />
-                                </td>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <input type="submit" value="Create" class="btn btn-primary" id="submitRecord_btn" />
-                <input type="submit" value="Save" class="btn btn-primary submit-button" id="submitRecord_btn" />
-                </form>
-            </div>
         </div>
+        <div class="mt-4 container-fluid d-flex justify-content-end">
 
-        <div>
-            @* se for alterar o lugar desse botão, tem que levar da linha 113 (if) até o fechamento do if (}) *@
             @if (Model.ExistingRecord != null)
             {
-                <form asp-action="Delete" asp-controller="Records" asp-route-id="@Model.ExistingRecord.RecordID" 
-                        asp-route-startDate="@data.SelectedFortnight.ToString("yyyy-MM-dd")" asp-route-userId="@ViewData["userSelected"]"
-                        asp-route-daysInFortnight="@data.DaysInSelectedFortnight" asp-route-email="@Model.user" asp-route-vm="@Model">
-                    <button type="submit">Delete</button>
+                <button class="btn btn-primary edit-button" disabled><i class="bi bi-pencil-square"></i></button>
+                <form asp-action="Delete" asp-controller="Records" class="ms-3" asp-route-id="@Model.ExistingRecord.RecordID"
+                      asp-route-startDate="@data.SelectedFortnight.ToString("yyyy-MM-dd")" asp-route-userId="@ViewData["userSelected"]"
+                      asp-route-daysInFortnight="@data.DaysInSelectedFortnight" asp-route-email="@Model.user" asp-route-vm="@Model">
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                 </form>
             }
 
-
-            <button class="btn edit-button" disabled>Edit</button>
         </div>
     </div>
+
+    <div class="row  table-responsive">
+        <div class="col">
+
+            <form asp-action="Create" method="post" id="registerRecordForm">
+                <input type="hidden" name="isInEditMode" id="isInEditModeInput" value="false" />
+                <input type="hidden" name="rid" value="@(Model.ExistingRecord != null ? Model.ExistingRecord.RecordID : null)" />
+                <div id="records-list" class="">
+                    <table id="records-table" class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-nowrap">Charge Codes</th>
+                                @for (int i = 0; i < data.DaysInSelectedFortnight; i++)
+                                {
+                                    <th class="date-column text-center"></th>
+                                }
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < 4; i++)
+                            {
+                                <tr class="grid">
+                                    <td class="g-col-auto">
+                                        <div>
+                                            <select class="form-select wbsSelector" asp-items="Model.WBS" name="wbs" id="wbsSelector_@i"></select>
+
+                                        </div>
+                                    </td>
+                                    @for (int j = 0; j < data.DaysInSelectedFortnight; j++)
+                                    {
+
+                                        <td class="g-col-1" id="fractionSlot_@((i * data.DaysInSelectedFortnight) + j)">
+
+                                            <input name="hours" type="number" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
+
+                                            <input name="dates" type="hidden" />
+
+                                        </td>
+                                    }
+                                    <td class="g-col-1">
+
+                                        <input id="rowTotal_@i" type="number" class="row-total" disabled style="max-width: 48px;" />
+                                    </td>
+                                </tr>
+                            }
+                            <input name="email" type="hidden" value="@Model.user" />
+                        </tbody>
+                        <tfoot>
+                        <th>Total</th>
+                            @for (int i = 0; i < data.DaysInSelectedFortnight; i++)
+                            {
+                            <td class="col-total">
+                                <input id="colTotal_@i" type="number" class="col-total" disabled style="max-width: 40px;" />
+                                <input id="colTotal_date__@i" type="hidden" />
+                            </td>
+                            }
+                        <td class="col-total">
+                            <input type="number" id="result" disabled class="" style="max-width: 48px;" />
+                        </td>
+                        </tfoot>
+                        </tfoot>
+                    </table>
+                </div>
+
+                @* esse bot�o submit precisa estar dentro desse form *@
+                <input type="submit" value="Save" class="btn btn-primary submit-button" id="submitRecord_btn" />
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <style>
@@ -130,6 +132,26 @@
         cursor: default;
     }
 </style>
+
+<style>
+    .title {
+        font-weight: bold;
+        color: #0097B2 !important;
+    }
+
+    .edit-button, .submit-button {
+        background-color: #0097B2 !important;
+        border-color: #0097B2 !important;
+        transition: 0.6s;
+    }
+
+        .edit-button:hover, .submit-button:hover {
+            background-color: #05b0cf !important;
+            border-color: #05b0cf !important;
+        }
+
+</style>
+
 
 @section Scripts {
     @{
@@ -146,7 +168,7 @@
         // YAS
         const editButton = document.querySelector('.edit-button');
         // YAS
-        const submitBtn = document.querySelector("#submitRecord_btn");
+        const submitBtn = document.querySelector(".submit-button");
         const submitButton = document.querySelector('.submit-button');
         let editModeInput = document.getElementById('isInEditModeInput');
         document.addEventListener('DOMContentLoaded', async function () {
@@ -186,7 +208,7 @@
             }
 
             isSlotEnabled(shouldSlotsBeEnabled, daysInFortnight);
-            
+
 
 
             // YAS
@@ -241,11 +263,11 @@
 
 
             if (isTodayInSelectedFortnight() || @adminRole === "true") {
-                editButton.removeAttribute('disabled');
+                editButton && editButton.removeAttribute('disabled');
                 submitButton.setAttribute('remove', true);
 
             } else {
-                editButton.setAttribute('disabled', true);
+                editButton && editButton.setAttribute('disabled', true);
                 submitButton.setAttribute('disabled', true);
             }
             // testtemp
@@ -285,7 +307,7 @@
             }
 
 
-            editButton.addEventListener('mouseup', function (event) {
+            editButton && editButton.addEventListener('mouseup', function (event) {
                 event.preventDefault();
                     
                 submitBtn.removeAttribute("disabled");
@@ -308,7 +330,7 @@
 
             /* EVENT LISTENERS */
 
-            const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
+            // const inputElements = document.querySelectorAll('input[id^="RecordFraction"]');
 
             inputElements.forEach(input => {
                 const [base, rowIndex, colIndex] = input.getAttribute('id').split("_");
