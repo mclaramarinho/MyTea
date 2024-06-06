@@ -68,9 +68,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapControllerRoute(
-    name: "account",
-    pattern: "{controller=Account}/{action=EditUser}/{uid?}");
 //app.MapRazorPages();
 
 using (var scope = app.Services.CreateScope())
