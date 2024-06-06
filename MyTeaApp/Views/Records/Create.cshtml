@@ -106,7 +106,17 @@
         </div>
 
         <div>
-            <a asp-action="Index">Back to List</a>
+            @* se for alterar o lugar desse botão, tem que levar da linha 113 (if) até o fechamento do if (}) *@
+            @if (Model.ExistingRecord != null)
+            {
+                <form asp-action="Delete" asp-controller="Records" asp-route-id="@Model.ExistingRecord.RecordID" 
+                        asp-route-startDate="@data.SelectedFortnight.ToString("yyyy-MM-dd")" asp-route-userId="@ViewData["userSelected"]"
+                        asp-route-daysInFortnight="@data.DaysInSelectedFortnight" asp-route-email="@Model.user" asp-route-vm="@Model">
+                    <button type="submit">Delete</button>
+                </form>
+            }
+
+
             <button class="btn edit-button" disabled>Edit</button>
         </div>
     </div>
