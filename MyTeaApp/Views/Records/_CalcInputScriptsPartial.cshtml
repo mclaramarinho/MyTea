@@ -34,14 +34,17 @@
          totalsByRow[rowIndex] = 0;
          totalsByColumn[colIndex] = 0;
 
+        const startDate = getFortnightStartDate();
+        const daysInFortnight = getDaysInFortnight(startDate);
          // Atualizar os totais
          for (let i = 0; i < 4; i++) {
-             totalsByRow[i] = 0; // Limpar o total da linha atual
-             for (let j = 0; j < 15; j++) {
+             totalsByRow[i] = 0; // Zera o total da linha atual
+             for (let j = 0; j < daysInFortnight; j++) {
                  const input = document.querySelector(`#records-table tr:nth-child(${i + 1}) td:nth-child(${j + 2}) input[id^="RecordFraction"]`);
                  const value = parseInt(input.value) || 0;
                  totalsByRow[i] += value;
                  totalsByColumn[j] += value;
+                 total += value; /////////
              }
          }
 
@@ -49,7 +52,7 @@
          for (let i = 0; i < 4; i++) {
              const rowTotalInput = document.getElementById(`rowTotal_${i}`);
              rowTotalInput.value = totalsByRow[i];
-             for (let j = 0; j < 15; j++) {
+             for (let j = 0; j < daysInFortnight; j++) {
                  updateColumnTotal(j);
              }
          }
