@@ -26,18 +26,29 @@ namespace MyTeaApp.Models.ViewModels
         public List<SelectListItem> Departments { get; set; }
 
         [Required]
+        [DisplayName("Currently employed?")]
+        public string IsActive { get; set; }
+        public List<SelectListItem> ActiveStates { get; set; }
+        
+        [Required]
         [DisplayName("Role")]
         public string RoleName { get; set; }
         public List<SelectListItem> Roles { get; set; }
 
         public void Populate(User user, string role, List<Department> deps, List<IdentityRole> roles)
         {
-            this.UserID = user.UserID;
+            this.UserID = user.UserSerial;
             this.UserDbId = user.Id;
             this.FullName = user.FullName;
             this.Email = user.Email;
             this.RoleName = role;
             this.DepartmentId = user.DepartmentId.ToString();
+
+            this.ActiveStates = new List<SelectListItem>()
+            {
+                new SelectListItem { Text = "Yes", Value = "yes", Selected = (user.UserActive == true)},
+                new SelectListItem { Text = "No", Value = "no", Selected = (user.UserActive == false)}
+            };
 
             this.Departments = new List<SelectListItem>();
             this.Roles = new List<SelectListItem>();

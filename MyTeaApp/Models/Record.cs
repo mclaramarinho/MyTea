@@ -5,14 +5,17 @@ namespace MyTeaApp.Models
 {
     public class Record
     {
-        public int RecordID { get; set; } 
+        public int RecordID { get; set; }
+
+        [Required]
+        public List<string> SelectedWbs { get; set; }
 
         [Required(ErrorMessage = "{0} Required")]
         [Display(Name = "Total")]
         public float TotalHoursRecord { get; set; }
 
-        [ForeignKey("UserID")]
-        public string? UserID;
+        [ForeignKey("Id")]
+        public string? IdUser;
         public virtual User User { get; set; }
 
         public DateTime StartDate { get; set; }

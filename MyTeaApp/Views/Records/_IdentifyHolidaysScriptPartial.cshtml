@@ -29,13 +29,15 @@
       * description - Checks if the selected fortnight has any holidays
       * returns - Array of integers populated with the indexes of the dates (0-14) that are considered holidays.
       */
-     async function hasHolidayInFortnight(date) {
+
+     // MOD -- dinamically gets the days of the fortnight
+     async function hasHolidayInFortnight(date, daysInFortnight) {
          return new Promise((res, rej) => {
              let fortnightHolidays = [];
 
              let fortnightDates = [];
 
-             for (let i = 1; i < 16; i++) {
+             for (let i = 0; i < daysInFortnight; i++) {
                  const tempDate = new Date(date);
                  tempDate.setDate(tempDate.getDate() + i);
                  fortnightDates.push(tempDate);
@@ -57,19 +59,29 @@
      /**
       * description - Removes attributes (disabled and value) from holiday slots
       */
-     function resetHolidaySlots() {
-         for (let i = 0; i < 60; i++) {
+     // MOD -- dinamically gets the days of the fortnight
+
+     function resetHolidaySlots(daysInFortnight) {
+         const selectToEnable = document.querySelector(`#wbsSelector_3`);
+         selectToEnable.classList.remove("disableSelect");
+
+
+         for (let i = 0; i < (4 * (daysInFortnight-1)); i++) {
              const slotEl = document.querySelector(`#fractionSlot_${i}>input`);
-             slotEl.removeAttribute("disabled");
-             slotEl.removeAttribute("value");
-             slotEl.classList.contains("holidaySlot") && slotEl.classList.remove("holidaySlot");
+             slotEl.classList.remove("weekend")
+             if (slotEl.classList.contains("holidaySlot")) {
+                slotEl.classList.remove("holidaySlot");
+                slotEl.removeAttribute("disabled");
+                slotEl.removeAttribute("value");
+             }
          }
      }
 
 
-     function markHolidaySlots(index, isWeekend = false, isHoliday = false) {
+     function markHolidaySlots(index, daysInFortnight, isWeekend = false, isHoliday = false) {
+         // MOD -- dinamically gets the days of the fortnight
 
-         const slotsValues = getSlotValues(index);
+         const slotsValues = getSlotValues(index, daysInFortnight);
 
          slotsValues.forEach((v, i) => {
              const slotEl = document.querySelector(`#fractionSlot_${v} > input`);
@@ -78,12 +90,24 @@
                  slotEl.setAttribute("value", 8);
                  slotEl.setAttribute("readonly", true);
                  slotEl.classList.add("holidaySlot");
+
+                 const allOptions = document.querySelectorAll(`#wbsSelector_3 option`);
+
+                 allOptions.forEach(el => { el.removeAttribute("selected"); el.removeAttribute("readonly") });
+
+                 const optionToSelect = document.querySelector(`#wbsSelector_3 option[value="WBS2534102"]`);
+                 optionToSelect.setAttribute("selected", true);
+
+                 const selectToDisable = document.querySelector(`#wbsSelector_3`);
+                 selectToDisable.classList.add("disableSelect");
+
              } else if (isWeekend) {
-                 slotEl.classList.add("holidaySlot");
+                 slotEl.classList.add("holidaySlot", "weekend");
              } else {
                  slotEl.readonly = false;
              }
          });
+         updateTotals();
      }
 
      // =========================================
@@ -92,13 +116,13 @@
          const day = date.getDay(); // 0 (domingo) a 6 (sábado)
          return day === 0 || day === 6; // Retorna true se for fim de semana
      }
-
-     function getSlotValues(index) {
+     // MOD -- dinamically gets the days of the fortnight
+     function getSlotValues(index, daysInFortnight) {
          return [
              index,
-             index + 15,
-             index + (15 * 2),
-             index + (15 * 3),
+             index + daysInFortnight,
+             index + (daysInFortnight * 2),
+             index + (daysInFortnight * 3),
          ];
      }
 

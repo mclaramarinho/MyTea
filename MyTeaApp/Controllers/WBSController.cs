@@ -37,6 +37,9 @@ namespace MyTeaApp.Controllers
             {
                 wbs = wbs.Where(w => w.WbsCod.Contains(filtroWbs) || w.WbsName.Contains(filtroWbs));
             }
+
+            TempData["SearchString"] = filtroWbs;
+
             return View(await wbs.ToListAsync());
         }
 
@@ -59,7 +62,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: WBS/Create
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public IActionResult Create()
         {
             return View();
@@ -70,42 +73,43 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Create([Bind("WbsId,WbsName,WbsCod,Description,IsChargeable")] WBS wBS)
         {
-            //bool created = _contextModificado;
-
             if (ModelState.IsValid)
             {
-                if (wBS.WbsCod.IsNullOrEmpty())
+                var existingWBS = false;
+                if (!wBS.WbsCod.IsNullOrEmpty())
                 {
-                    wBS.WbsCod = "WBS"+ _random.Next(9999999).ToString();
+                    existingWBS = _context.WBS.Any(w => w.WbsCod == wBS.WbsCod);
                 }
 
-
-                var existingWBS = _context.WBS.Any(w => w.WbsCod == wBS.WbsCod);
-
-                if(existingWBS)
+                if(existingWBS || wBS.WbsCod.IsNullOrEmpty())
                 {
-                    ModelState.AddModelError("WBS", "Já existe uma WBS com esse código");
-                    _contextModificado = false;
-                    TempData["ToasterType"] = !_contextModificado ? "error" : "success";
-                    return RedirectToAction(nameof(Index));
-                   
+                    do
+                    {
+                        wBS.WbsCod = "WBS" + _random.Next(9999999).ToString();
+                    } while (_context.WBS.Any(w => w.WbsCod == wBS.WbsCod));
                 }
 
-                _contextModificado = true;
-                TempData["ToasterType"] = !_contextModificado ? "error" : "success";
+                TempData["ToasterType"] = "success";
 
 
                 _context.Add(wBS);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(wBS);
+            else
+            {
+                TempData["ToasterType"] = "error";
+
+
+                return View(wBS);
+            }
         }
 
         // GET: WBS/Edit/5
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -126,7 +130,7 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Edit(int id, [Bind("WbsId,WbsName,WbsCod,Description,IsChargeable")] WBS wBS)
         {
             if (id != wBS.WbsId)
@@ -177,7 +181,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: WBS/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -198,17 +202,23 @@ namespace MyTeaApp.Controllers
         // POST: WBS/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var wBS = await _context.WBS.FindAsync(id);
             if (wBS != null)
             {
                 _context.WBS.Remove(wBS);
+                await _context.SaveChangesAsync();
+                TempData["ToasterType"] = "success";
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                TempData["ToasterType"] = "error";
+                return View(id);
+            }
+            
         }
 
         private bool WBSExists(int id)

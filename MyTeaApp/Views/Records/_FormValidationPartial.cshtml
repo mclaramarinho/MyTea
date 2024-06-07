@@ -1,0 +1,24 @@
+﻿<script>
+    function validateForm(formEvent) {
+
+        const divMensagemErro = document.getElementById('mensagemErro');
+        const inputs = document.querySelectorAll('input.col-total');
+
+        let aprovado = true;
+
+        inputs.forEach((input) => {
+            const value = parseInt(input.value);
+            const classes = input.classList;
+            const isWeekend = classes.contains("weekend");
+
+            if (!isWeekend && (value < 8 || value > 24)) {
+                divMensagemErro.style.display = 'block';
+                aprovado = false;
+            }
+        });
+
+        const toasterType = aprovado ? "success" : "error";
+        !aprovado && formEvent.preventDefault();
+        return aprovado;
+    }
+</script>

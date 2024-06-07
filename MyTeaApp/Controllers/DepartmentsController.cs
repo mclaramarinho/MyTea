@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyTeaApp.Data;
 using MyTeaApp.Models;
@@ -20,6 +16,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: Departments
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Index(string searchString)
         {
             var departments = from d in _context.Department
@@ -35,12 +32,16 @@ namespace MyTeaApp.Controllers
                     departments = departments.Where(d => d.DepartmentName!.Contains(searchString));
                 }
             }
+
+            TempData["SearchString"] = searchString;
+
             return View(await departments.ToListAsync());
         }
 
-        
+
 
         // GET: Departments/Details/5
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -59,6 +60,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: Departments/Create
+        [Authorize(Policy = "RequireAdmin")]
         public IActionResult Create()
         {
             return View();
@@ -69,14 +71,17 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Create([Bind("DepartmentID,DepartmentName")] Department department)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(department);
                 await _context.SaveChangesAsync();
+                TempData["ToasterType"] = "success";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["ToasterType"] = "error";
             return View(department);
         }
 
@@ -101,6 +106,7 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Edit(int id, [Bind("DepartmentID,DepartmentName")] Department department)
         {
             if (id != department.DepartmentID)
@@ -132,10 +138,12 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: Departments/Delete/5
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
+                TempData["ToasterType"] = "error";
                 return NotFound();
             }
 
@@ -143,15 +151,17 @@ namespace MyTeaApp.Controllers
                 .FirstOrDefaultAsync(m => m.DepartmentID == id);
             if (department == null)
             {
+                TempData["ToasterType"] = "error";
                 return NotFound();
             }
-
+            TempData["ToasterType"] = "success";
             return View(department);
         }
 
         // POST: Departments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var department = await _context.Department.FindAsync(id);

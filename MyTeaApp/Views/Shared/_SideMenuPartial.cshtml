@@ -9,27 +9,29 @@
 
 @{
     List<DashboardOptions> options = new();
-    options.Add(new DashboardOptions { Name = "Overview", Section = "", IconName = "binoculars", Action = "Dashboard", Controller = "Home" });
-    options.Add(new DashboardOptions { Name = "Register Fortnight", Section = "record", IconName = "journals", Action = "Create", Controller = "Records" });
+    options.Add(new DashboardOptions { Name = "Overview", Section = "/", IconName = "binoculars", Action = "Dashboard", Controller = "Home" });
+    options.Add(new DashboardOptions { Name = "Register Fortnight", Section = "Records", IconName = "journals", Action = "Create", Controller = "Records" });
+    options.Add(new DashboardOptions { Name = "WBS", Section = "WBS", IconName = "upc-scan", Action = "Index", Controller = "WBS" });
 
     if (User.IsInRole("Admin"))
     {
-        options.Add(new DashboardOptions { Name = "Departments", Section = "departments", IconName = "buildings", Action = "Index", Controller = "Departments" });
-        options.Add(new DashboardOptions { Name = "WBS", Section = "wbs", IconName = "upc-scan", Action = "Index", Controller = "WBS" });
-        options.Add(new DashboardOptions { Name = "Users", Section = "account", IconName = "people", Action = "Index", Controller = "Account" });
+        options.Add(new DashboardOptions { Name = "Departments", Section = "Departments", IconName = "buildings", Action = "Index", Controller = "Departments" });
+        // options.Add(new DashboardOptions { Name = "WBS", Section = "WBS", IconName = "upc-scan", Action = "Index", Controller = "WBS" });
+        options.Add(new DashboardOptions { Name = "Users", Section = "Account", IconName = "people", Action = "Index", Controller = "Account" });
     }
     else if (User.IsInRole("Employee"))
     {
-
     }
     else if (User.IsInRole("Manager"))
     {
-
+        // options.Add(new DashboardOptions { Name = "WBS", Section = "wbs", IconName = "upc-scan", Action = "Index", Controller = "WBS" });
+        options.Add(new DashboardOptions { Name = "Reports", Section = "Reports", IconName = "file-bar-graph", Action = "Index", Controller = "Reports" });
     }
 
     string getIsSectionSelected(string sect)
     {
-        var path = _httpContext.HttpContext.Request.Path;
+        PathString path = _httpContext.HttpContext.Request.Path;
+
         string stylingClass = "selected-item";
         if (path.Value.ToLower().Contains(sect.ToLower()))
         {
@@ -39,13 +41,26 @@
     }
 }
 
+<div class="w-100 d-md-none d-block mb-5">
+    <div class="d-inline-flex justify-content-center">
+        @foreach (var item in options)
+        {
+                <a class="text-decoration-none text-dark btn btn-md p-0 me-3 @getIsSectionSelected(item.Section)"
+                   asp-action="@item.Action" asp-controller="@item.Controller">
+                    <i class="bi bi-@item.IconName"></i>
+                    @item.Name
+                </a>
+        }
+    </div>
+</div>
 
-        <aside class="col-auto">
+
+        <aside class="col-auto d-none d-md-grid me-5">
             <ul class="nav flex-column">
                 @foreach (var item in options)
                 {
                     <li class="nav-item mb-4">
-                        <a class="text-decoration-none text-dark @getIsSectionSelected(item.Controller)"
+                        <a class="text-decoration-none text-dark @getIsSectionSelected(item.Section)"
                         asp-action="@item.Action" asp-controller="@item.Controller">
                             <i class="bi bi-@item.IconName"></i>
                             @item.Name
@@ -56,7 +71,7 @@
 
             <ul class="nav flex-column">
                 <li class="nav-item mb-4">
-                    <a class="text-decoration-none text-dark @getIsSectionSelected("settings")"
+                    <a class="text-decoration-none text-dark @getIsSectionSelected("ChangePassword")"
                     asp-action="ChangePassword" asp-controller="Account" asp-route-section="settings">
                         <i class="bi bi-gear"></i>
                         Settings
@@ -80,9 +95,9 @@
         display: grid;
     }
 
-        aside > ul:last-child {
-            align-self: end;
-        }
+    aside > ul:last-child {
+        align-self: end;
+    }
 
     .nav-item:hover {
         > a

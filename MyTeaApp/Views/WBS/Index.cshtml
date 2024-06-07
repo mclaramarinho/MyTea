@@ -1,28 +1,27 @@
-﻿@model IEnumerable<MyTeaApp.Models.WBS>
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> _sm;
+
+
+
+@model IEnumerable<MyTeaApp.Models.WBS>
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <div class="col">
+    <h1 class="title">WBS</h1>
 
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-
-    <form asp-controller="WBS" asp-action="Index" method="get">
-        <p>
-            Title: <input type="text" name="filtroWbs" />
-            <input type="submit" value="Filter" /> |
-            <a asp-action="Index">Back to List</a>
-        </p>
-    </form>
-
-
-    @if (TempData["ToasterType"] != null)
+    @if (User.IsInRole("Admin"))
     {
-        Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
+        <a class="btn btn-outline-info" asp-action="Create">Create New</a>
     }
+    <form asp-controller="WBS" asp-action="Index" method="get" class="my-4">
+        <label class="form-label">Search</label>   
+        <input type="text" value="@TempData["SearchString"]" name="filtroWbs" class="" />
+        <input type="submit" value="Filter" class="btn btn-info" />
+        <a asp-action="Index" class="text-decoration-none clear">Clear</a>
+    </form>
 
 
     <table class="table">
@@ -44,6 +43,10 @@
             </tr>
         </thead>
         <tbody>
+            @if (Model.Count() == 0)
+            {
+                <td colspan="5" class="text-center">No items to display</td>
+            }
     @foreach (var item in Model) {
             <tr>
                 <td>
@@ -56,13 +59,19 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.IsChargeable)
+                    @(item.IsChargeable == true ? "Yes" : "No")
                 </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.WbsId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.WbsId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.WbsId">Delete</a>
-                </td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.WbsId" class="me-3 text-decoration-none color-blue">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.WbsId" class="text-decoration-none clear">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    }   
             </tr>
     }
         </tbody>

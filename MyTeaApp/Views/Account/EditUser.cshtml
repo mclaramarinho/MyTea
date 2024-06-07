@@ -1,7 +1,7 @@
 ﻿@using MyTeaApp.Models.ViewModels;
 @model EditUserVM;
 <div class="col">
-<h1>Edit user info</h1>
+<h1 class="title">Edit user info</h1>
 <form asp-action="EditUser" asp-controller="Account" asp-route-uid="@Model.UserDbId" method="post" class="row">
     <div class="col-12 col-md-6">
         <div class="mb-3">
@@ -30,7 +30,11 @@
                 <label asp-for="RoleName" class="form-label"></label>
                 <select class="form-select" asp-for="RoleName" asp-items="@Model.Roles"></select>
             </div>
-            <button type="submit" class="btn btn-success">Submit</button>
+            <div class="mb-3">
+                <label asp-for="IsActive" class="form-label"></label>
+                <select class="form-select" asp-for="IsActive" asp-items="@Model.ActiveStates"></select>
+            </div>
+            <button type="submit" class="btn btn-info">Submit</button>
         </div>
     
     </form>

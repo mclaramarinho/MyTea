@@ -1,0 +1,155 @@
+﻿<script>
+    var quinzenaSelector = document.getElementById('quinzenaSelector');
+    var recordsTable = document.getElementById('records-table');
+    var dateColumns = recordsTable.querySelectorAll('.date-column');
+
+    // MOD -- dinamically gets the days of the fortnight
+    function isSlotEnabled(shouldCheck=true, daysInFortnight) {
+        for (let option = 0; option < 4; option++){
+            const optionEl = document.querySelectorAll(`.wbsSelector`)[option];
+
+            // let daysInFortnight = getDaysInFortnight(startDate);
+            if (!shouldCheck) {
+                for (let slot = 0; slot < daysInFortnight; slot++) {
+                    const slotIndex = (daysInFortnight * option) + slot;
+                    const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+                    slotEl.setAttribute("disabled", true);
+                }
+                continue;
+            }
+
+            if (optionEl.value === "-1") {
+                for (let slot = 0; slot < daysInFortnight; slot++) {
+                    const slotIndex = (daysInFortnight * option) + slot;
+                    const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+                    slotEl.setAttribute("readonly", true);
+                }
+            } else {
+                for (let slot = 0; slot < daysInFortnight; slot++) {
+                    const slotIndex = (daysInFortnight * option) + slot;
+                    const slotEl = document.querySelector(`#fractionSlot_${slotIndex} > input`);
+
+                    const isSlotWeekend = slotEl.classList.contains("weekend");
+                    const isWorkDay = !slotEl.classList.contains("holidaySlot") && !slotEl.classList.contains("weekend")
+
+                    if (isSlotWeekend || isWorkDay) {
+                        slotEl.removeAttribute("readonly");
+                    }
+                }
+            }
+        }
+    }
+
+
+    // MOD -- added this function to get the amount of days in fortnight
+    function getDaysInFortnight(startDate){
+        let daysInFortnight = 15;
+
+        startDate = new Date(startDate);
+        if (startDate.getDate() > 15) {
+            let tempDate = new Date(startDate);
+            const startMonth = tempDate.getMonth();
+            let count = 0;
+            while (tempDate.getMonth() === startMonth) {
+                tempDate.setDate(tempDate.getDate() + 1);
+                count++;
+            }
+            daysInFortnight = count;
+        }
+
+        return daysInFortnight;
+    }
+
+    function generateTable(startDate, fortnightHolidaysIndexes = [], daysInFortnight) {
+        resetHolidaySlots(daysInFortnight);
+
+        // MOD -- dinamically sets the dates of the fortnight
+
+        for (var i = 0; i < daysInFortnight; i++) {
+            let daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+            var date = new Date(startDate);
+            date.setDate(date.getDate() + i);
+
+
+            // Set the value of the day header - example: Sat 06/01
+            let m = (date.getMonth() + 1).toString().padStart(2, "0");
+            let d = (date.getDate()).toString().padStart(2, "0");
+            let dayOfWeek = daysOfWeek[date.getDay()];
+            
+            const stringDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+            setHiddenDateValues(i, stringDate, daysInFortnight);
+
+            dateColumns[i].textContent = `${dayOfWeek}\n${m}/${d}`;
+
+            const isWeekendDay = isWeekend(date);
+            const isHoliday = fortnightHolidaysIndexes.includes(i);
+
+
+            markHolidaySlots(i, daysInFortnight, isWeekendDay, isHoliday);
+
+        }
+    }
+
+    /**
+    * description sets the hidden date values properly
+    * returns void
+    */
+    // MOD -- dinamically gets the days of the fortnight
+    function setHiddenDateValues(index, date, daysInFortnight) {
+        const slots = getSlotValues(index, daysInFortnight);
+        slots.forEach((v, i) => {
+            if (i == 0){
+                const totalSlotDateEl = document.querySelector(`#colTotal_date__${v}`);
+                totalSlotDateEl.setAttribute("value", date);
+                const [ y, m, d ]= date.split("-");
+                const realDate = new Date();
+                
+                realDate.setFullYear(parseInt(y), parseInt(m)-1, parseInt(d));
+                const isWeekend = realDate.getDay() === 0 || realDate.getDay() === 6;
+
+                if (isWeekend) {
+                    const totalSlotEl = document.querySelector(`#colTotal_${v}`);
+                    totalSlotEl.classList.add("weekend");
+                }
+            }
+            const slotEl = document.querySelector(`#fractionSlot_${v} input:nth-child(2)`);
+            slotEl.setAttribute("value", date);
+        });
+
+    }
+    // MOD -- Added this function 
+    function getFortnightStartDate() {
+        const url = window.location.href;
+
+        let startDate = new Date();
+
+        if (url.includes("startDate=")) {
+            const urlStartDate = url.split("startDate=")[1];
+            const date = new Date(urlStartDate);
+            date.setDate(date.getDate() + 1);
+
+            startDate = date;
+        } else {
+            const todayDate = startDate.getDate();
+
+            let firstDayOfFortnight = 1;
+            if (todayDate > 15) {
+                firstDayOfFortnight = 16;
+            }
+
+            const date = new Date();
+            date.setDate(firstDayOfFortnight);
+            startDate = date;
+        }
+
+        return startDate;
+    }
+
+    // MOD -- now gets start date via a function called getFortnightStartDate 
+    async function identifyFortnightAndGenerateTable(startDate, daysInFortnight) {
+        const fortnightHolidays = await hasHolidayInFortnight(startDate, daysInFortnight);
+        generateTable(startDate.toISOString(), fortnightHolidays, daysInFortnight)
+    }
+
+</script>

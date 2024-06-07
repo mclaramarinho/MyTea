@@ -3,7 +3,7 @@
 
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+        <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Dashboard">
             <img src="~/assets/logoMyTea.png" alt="Logo" width="50" height="44" class="d-inline-block align-text-top">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -15,7 +15,11 @@
                 @if (_signInManager.IsSignedIn(User))
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Dashboard">Dashboard</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Dashboard">Dashboard</a>
+                    </li>
+
+                    <li class="nav-item d-md-none">
+                        <a class="nav-link logout-btn" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                     </li>
                 }
             </ul>
