@@ -12,7 +12,7 @@
 <div class="col">
     <h1 class="title">WBS</h1>
 
-
+        
     <a class="btn btn-outline-info" asp-action="Create">Create New</a>
 
     <form asp-controller="WBS" asp-action="Index" method="get" class="my-4">
@@ -58,14 +58,14 @@
                 </td>
                     @if (User.IsInRole("Admin"))
                     {
-                <td>
+                        <td>
                             <a asp-action="Edit" asp-route-id="@item.WbsId" class="me-3 text-decoration-none color-blue">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <a asp-action="Delete" asp-route-id="@item.WbsId" class="text-decoration-none clear">
                                 <i class="bi bi-trash"></i>
                             </a>
-                </td>
+                        </td>
                     }   
             </tr>
     }
