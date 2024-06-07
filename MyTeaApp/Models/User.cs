@@ -10,7 +10,7 @@ namespace MyTeaApp.Models
     public class User : IdentityUser
     {
         private static int _uid = 10000;
-        public int UserSerial { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -38,12 +38,12 @@ namespace MyTeaApp.Models
             if(db.Users.ToList().Count() == 0)
             {
                 Console.WriteLine("zero");
-                this.UserSerial = 10001;
+                this.UserId = 10001;
                 return;
             }
-            int maxId = db.Users.Max(u => u.UserSerial);
+            int maxId = db.Users.Max(u => u.UserId);
 
-            this.UserSerial = maxId + 1;
+            this.UserId = maxId + 1;
         }
     }
 }
