@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity;
+@using MyTeaApp.Models.HelperModels;
 
 @inject SignInManager<User> _sm;
 
@@ -18,9 +19,11 @@
         <partial name="_NavbarPartial" />
     </header>
     <div class="@(_sm.IsSignedIn(User) ? "container-fluid" : "container")">
+        
         @if (TempData["ToasterType"] != null)
         {
-            Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", (string)TempData["ToasterType"]);
+            NotificationModel notModel = new NotificationModel((string)TempData["ToasterType"], (string?)TempData["ToasterMessage"], (string?)TempData["ToasterBgColor"]);
+            Html.RenderPartial("~/Views/Partials/_NotificationPartial.cshtml", notModel);
         }
 
 

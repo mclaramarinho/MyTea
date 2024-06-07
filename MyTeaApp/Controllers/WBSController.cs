@@ -92,8 +92,8 @@ namespace MyTeaApp.Controllers
                     } while (_context.WBS.Any(w => w.WbsCod == wBS.WbsCod));
                 }
 
-                TempData["ToasterType"] = "success";
-
+                TempData["ToasterType"] = existingWBS ? "warning" : "success";
+                TempData["ToasterMessage"] = existingWBS ? "We created another wbs code. The one you informed was already taken." : "success";
 
                 _context.Add(wBS);
                 await _context.SaveChangesAsync();

@@ -217,6 +217,13 @@ namespace MyTeaApp.Controllers
                 return View(vm);
             }
 
+            User? user = await _userManager.FindByEmailAsync(vm.Email);
+            if (user == null || !user.UserActive)
+            {
+                ModelState.AddModelError("", "You no longer have permission to access this system.");
+                return View(vm);
+            }
+
             var result = await _signInManager.PasswordSignInAsync(vm.Email, vm.Password, vm.RememberMe, false);
 
             if (result.Succeeded)
