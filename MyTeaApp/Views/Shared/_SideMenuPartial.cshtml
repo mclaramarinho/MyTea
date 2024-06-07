@@ -9,7 +9,7 @@
 
 @{
     List<DashboardOptions> options = new();
-    options.Add(new DashboardOptions { Name = "Overview", Section = "", IconName = "binoculars", Action = "Dashboard", Controller = "Home" });
+    options.Add(new DashboardOptions { Name = "Overview", Section = "overview", IconName = "binoculars", Action = "Dashboard", Controller = "Home" });
     options.Add(new DashboardOptions { Name = "Register Fortnight", Section = "record", IconName = "journals", Action = "Create", Controller = "Records" });
 
     if (User.IsInRole("Admin"))
@@ -20,16 +20,17 @@
     }
     else if (User.IsInRole("Employee"))
     {
-
+        options.Add(new DashboardOptions { Name = "WBS", Section = "wbs", IconName = "upc-scan", Action = "Index", Controller = "WBS" });
     }
     else if (User.IsInRole("Manager"))
     {
-
+        options.Add(new DashboardOptions { Name = "WBS", Section = "wbs", IconName = "upc-scan", Action = "IndexEmployee", Controller = "WBS" });
+        options.Add(new DashboardOptions { Name = "Reports", Section = "reports", IconName = "file-bar-graph", Action = "-", Controller = "-" });
     }
 
     string getIsSectionSelected(string sect)
     {
-        var path = _httpContext.HttpContext.Request.Path;
+        PathString path = _httpContext.HttpContext.Request.Path;
         string stylingClass = "selected-item";
         if (path.Value.ToLower().Contains(sect.ToLower()))
         {
@@ -39,8 +40,21 @@
     }
 }
 
+<div class="w-100 d-md-none d-block mb-5">
+    <div class="d-inline-flex justify-content-center">
+        @foreach (var item in options)
+        {
+                <a class="text-decoration-none text-dark btn btn-md p-0 me-3 @getIsSectionSelected(item.Controller)"
+                   asp-action="@item.Action" asp-controller="@item.Controller">
+                    <i class="bi bi-@item.IconName"></i>
+                    @item.Name
+                </a>
+        }
+    </div>
+</div>
 
-        <aside class="col-auto">
+
+        <aside class="col-auto d-none d-md-grid me-5">
             <ul class="nav flex-column">
                 @foreach (var item in options)
                 {
@@ -80,9 +94,9 @@
         display: grid;
     }
 
-        aside > ul:last-child {
-            align-self: end;
-        }
+    aside > ul:last-child {
+        align-self: end;
+    }
 
     .nav-item:hover {
         > a
