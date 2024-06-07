@@ -41,6 +41,9 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("ElevatedPrivileges", 
         policy => policy.RequireRole(["Admin", "Manager"]));
+
+    options.AddPolicy("RequireManager",
+        policy => policy.RequireRole(["Manager"]));
 });
 
 var app = builder.Build();

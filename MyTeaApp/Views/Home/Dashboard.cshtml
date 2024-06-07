@@ -70,15 +70,15 @@
                 Action = "Create"
             }
         );
-        // data.Add(
-        //     new OverviewData
-        //     {
-        //         Title = "Reports",
-        //         Description = "As a manager, you can record your hours worked on specific activities by associating those hours with the respective WBS. By entering the hours worked in each WBS for each day, you ensure an accurate record of time spent on different projects or tasks. You can also navigate between fortnights, if it's a past fortnight, no changes are allowed, in the current fortnight, you can edit if necessary.",
-        //         Controller = "Reports",
-        //         Action = "Index"
-        //     }
-    // );
+        data.Add(
+            new OverviewData
+            {
+                Title = "Reports",
+                Description = "As the project manager responsible for overseeing the distribution of tasks and the progress of the team's activities, you have access to a report in Power BI that allows you to easily identify the Work Breakdown Structure (WBS), with the highest number of time notes, to make informed decisions about resource allocation and time management.",
+                Controller = "Reports",
+                Action = "Index"
+            }
+        );
     }
 
     else if(userRole == "Employee")
