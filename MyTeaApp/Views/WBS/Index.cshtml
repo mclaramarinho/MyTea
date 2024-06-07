@@ -54,11 +54,17 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.IsChargeable)
                 </td>
+                    @if (User.IsInRole("Admin"))
+                    {
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.WbsId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.WbsId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.WbsId">Delete</a>
+                            <a asp-action="Edit" asp-route-id="@item.WbsId" class="me-3 text-decoration-none color-blue">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.WbsId" class="text-decoration-none clear">
+                                <i class="bi bi-trash"></i>
+                            </a>
                 </td>
+                    }   
             </tr>
     }
         </tbody>
