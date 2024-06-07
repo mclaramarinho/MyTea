@@ -40,7 +40,7 @@ namespace MyTeaApp.Controllers
             UserInfoVM temp = new UserInfoVM()
             {
                 DbUserId = user.Id,
-                UserId = user.UserSerial,
+                UserId = user.UserId,
                 FullName = user.FullName,
                 Email = user.Email,
                 AdmissionDate = user.AdmissionDate,
@@ -87,7 +87,7 @@ namespace MyTeaApp.Controllers
                         UserInfoVM temp = new UserInfoVM()
                         {
                             DbUserId = user.Id,
-                            UserId = user.UserSerial,
+                            UserId = user.UserId,
                             FullName = user.FullName,
                             Email = user.Email,
                             AdmissionDate = user.AdmissionDate,

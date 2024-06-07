@@ -138,7 +138,7 @@ namespace MyTeaApp.Controllers
 
         private User? _GetUserById(int id)
         {
-            return _context.Users.FirstOrDefault(u => u.UserSerial == id);
+            return _context.Users.FirstOrDefault(u => u.UserId == id);
         }
         private async Task<IEnumerable<Record>>? _GetRecordsByUser(string guid)
         {

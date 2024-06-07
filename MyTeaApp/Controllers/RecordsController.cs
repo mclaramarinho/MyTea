@@ -39,9 +39,9 @@ namespace MyTeaApp.Controllers
             ViewData["userSelected"] = null;
             if (uid != null)
             {
-                if (await _IsAdmin() || uid == userToShow.UserSerial)
+                if (await _IsAdmin() || uid == userToShow.UserId)
                 {
-                    userToShow = await _context.Users.FirstAsync(u => u.UserSerial == uid);
+                    userToShow = await _context.Users.FirstAsync(u => u.UserId == uid);
                 }
                 else
                 {
@@ -95,7 +95,7 @@ namespace MyTeaApp.Controllers
             }else if(canContinueCreate == "continue")
             {
                 user = await _um.FindByEmailAsync(email);
-                userToPersist = loggedUser.Email != user.Email ? user.UserSerial : null;
+                userToPersist = loggedUser.Email != user.Email ? user.UserId : null;
             }
 
             if (isInEditMode == true)
