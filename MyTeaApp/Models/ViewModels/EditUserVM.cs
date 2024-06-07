@@ -37,7 +37,7 @@ namespace MyTeaApp.Models.ViewModels
 
         public void Populate(User user, string role, List<Department> deps, List<IdentityRole> roles)
         {
-            this.UserID = user.UserSerial;
+            this.UserID = user.UserId;
             this.UserDbId = user.Id;
             this.FullName = user.FullName;
             this.Email = user.Email;
