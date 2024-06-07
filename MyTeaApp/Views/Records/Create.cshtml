@@ -259,12 +259,14 @@
 
             console.log(isTodayInSelectedFortnight())
 
-
-            if (isTodayInSelectedFortnight() || @adminRole === "true") {
+            console.log(typeof(@adminRole));
+            if (isTodayInSelectedFortnight() || @adminRole === true) {
+                console.log("pode editar")
                 editButton && editButton.removeAttribute('disabled');
-                submitButton.setAttribute('remove', true);
+                // submitButton.removeAttribute('disabled');
 
             } else {
+                console.log("nao pode editar")
                 editButton && editButton.setAttribute('disabled', true);
                 submitButton.setAttribute('disabled', true);
             }
