@@ -235,6 +235,7 @@ namespace MyTeaApp.Controllers
 
 
         // LOGOUT ---------------------------------------------------------------------------------------------------
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

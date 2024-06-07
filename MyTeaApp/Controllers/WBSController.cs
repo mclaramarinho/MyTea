@@ -59,7 +59,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: WBS/Create
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public IActionResult Create()
         {
             return View();
@@ -70,7 +70,7 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Create([Bind("WbsId,WbsName,WbsCod,Description,IsChargeable")] WBS wBS)
         {
             if (ModelState.IsValid)
@@ -106,6 +106,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: WBS/Edit/5
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -126,7 +127,7 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Edit(int id, [Bind("WbsId,WbsName,WbsCod,Description,IsChargeable")] WBS wBS)
         {
             if (id != wBS.WbsId)
@@ -177,7 +178,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: WBS/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -198,7 +199,7 @@ namespace MyTeaApp.Controllers
         // POST: WBS/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var wBS = await _context.WBS.FindAsync(id);

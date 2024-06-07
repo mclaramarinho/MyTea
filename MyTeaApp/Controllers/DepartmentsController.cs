@@ -15,6 +15,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: Departments
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Index(string searchString)
         {
             var departments = from d in _context.Department
@@ -36,6 +37,7 @@ namespace MyTeaApp.Controllers
         
 
         // GET: Departments/Details/5
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -54,6 +56,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: Departments/Create
+        [Authorize(Policy = "RequireAdmin")]
         public IActionResult Create()
         {
             return View();
@@ -64,6 +67,7 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Create([Bind("DepartmentID,DepartmentName")] Department department)
         {
             if (ModelState.IsValid)
@@ -98,6 +102,7 @@ namespace MyTeaApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Edit(int id, [Bind("DepartmentID,DepartmentName")] Department department)
         {
             if (id != department.DepartmentID)
@@ -129,6 +134,7 @@ namespace MyTeaApp.Controllers
         }
 
         // GET: Departments/Delete/5
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -151,6 +157,7 @@ namespace MyTeaApp.Controllers
         // POST: Departments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireAdmin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var department = await _context.Department.FindAsync(id);
