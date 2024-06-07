@@ -86,7 +86,7 @@
                                     @for (int j = 0; j < data.DaysInSelectedFortnight; j++)
                                     {
 
-                                        <td class="g-col-1" id="fractionSlot_@((i * data.DaysInSelectedFortnight) + j)">
+                                        <td class="g-col-1 text-center" id="fractionSlot_@((i * data.DaysInSelectedFortnight) + j)">
 
                                             <input name="hours" type="number" id="RecordFraction_@(i)_@(j)" value="" min="0" max="24" style="max-width: 40px;" />
 
@@ -119,7 +119,7 @@
                     </table>
                 </div>
 
-                @* esse botão submit precisa estar dentro desse form *@
+                @* esse botÃ£o submit precisa estar dentro desse form *@
                 <input type="submit" value="Save" class="btn btn-info submit-button" id="submitRecord_btn" />
             </form>
         </div>
