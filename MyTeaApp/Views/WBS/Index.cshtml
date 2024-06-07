@@ -1,3 +1,8 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> _sm;
+
+
+
 ﻿@model IEnumerable<MyTeaApp.Models.WBS>
 
 @{
@@ -7,9 +12,6 @@
 <div class="col">
     <h1 class="title">WBS</h1>
 
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
 
     <a class="btn btn-outline-info" asp-action="Create">Create New</a>
 
@@ -52,7 +54,7 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.IsChargeable)
+                    @(item.IsChargeable == true ? "Yes" : "No")
                 </td>
                     @if (User.IsInRole("Admin"))
                     {
