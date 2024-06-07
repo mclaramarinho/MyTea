@@ -37,6 +37,9 @@ namespace MyTeaApp.Controllers
             {
                 wbs = wbs.Where(w => w.WbsCod.Contains(filtroWbs) || w.WbsName.Contains(filtroWbs));
             }
+
+            TempData["SearchString"] = filtroWbs;
+
             return View(await wbs.ToListAsync());
         }
 

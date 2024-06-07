@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyTeaApp.Data;
 using MyTeaApp.Models;
@@ -31,10 +32,13 @@ namespace MyTeaApp.Controllers
                     departments = departments.Where(d => d.DepartmentName!.Contains(searchString));
                 }
             }
+
+            TempData["SearchString"] = searchString;
+
             return View(await departments.ToListAsync());
         }
 
-        
+
 
         // GET: Departments/Details/5
         [Authorize(Policy = "RequireAdmin")]
