@@ -1,5 +1,119 @@
-﻿    <div class="col flex-wrap text-wrap text-break">
+﻿@*     <div class="col flex-wrap text-wrap text-break">
         <h1>Overview</h1>
     </div>
 
-@* Create 3 different overviews ("admin, employee and manager") *@
+@* Create 3 different overviews ("admin, employee and manager") *@ 
+@using Microsoft.AspNetCore.Identity;
+@using MyTeaApp.Views.Home;
+@inject UserManager<User> _userManager;
+@inject SignInManager<User> _signInManager;
+
+
+@{
+    User user = await _userManager.FindByEmailAsync(User.Identity.Name);
+
+    var roles = await _userManager.GetRolesAsync(user);
+    string userRole = roles[0];
+    string header = userRole == "Admin" ? "Administrator"
+                    : userRole == "Manager" ? userRole
+                    : "Employee";
+
+    List<OverviewData> data = new List<OverviewData>();
+    if(userRole == "Admin")
+    {
+        data.Add(
+            new OverviewData
+            {
+                Title = "Departments",
+                Description = "As an administrator, you can create a new department, as well as, view, update, and delete department records for the company.",
+                Controller = "Departments",
+                Action = "Index",
+
+            });
+        data.Add(
+            new OverviewData
+            {
+                Title = "Fortnight Records",
+                Description = "In this flow, it is possible to track the record of hours worked by users in specific activities, associating these hours with the respective WBS. Employees can enter the hours worked in each WBS for each day, ensuring an accurate record of the time spent on different projects or tasks.",
+                Controller = "Records",
+                Action = "Create",
+            });
+
+        data.Add(
+            new OverviewData
+            {
+                Title = "Users",
+                Description = "As an administrator, you can register a new collaborator, as well as, view, update, and delete these created records.",
+                Controller = "Account",
+                Action = "Index",
+            });
+
+
+        data.Add(
+            new OverviewData
+            {
+                Title = "WBS",
+                Description = "In this flow, you can create new WBS, which represent different activities or projects that users are involved in. In addition, you can edit and delete an existing WBS as needed, ensuring the accuracy and relevance of time records.",
+                Controller = "WBS",
+                Action = "Index",
+            });
+    }
+
+    else if(userRole == "Manager")
+    {
+        data.Add(
+            new OverviewData
+            {
+                Title = "Fortnight Records",
+                Description = "As a manager, you can record your hours worked on specific activities by associating those hours with the respective WBS. By entering the hours worked in each WBS for each day, you ensure an accurate record of time spent on different projects or tasks. You can also navigate between fortnights, if it's a past fortnight, no changes are allowed, in the current fortnight, you can edit if necessary.",
+                Controller = "Records",
+                Action = "Create"
+            }
+        );
+        // data.Add(
+        //     new OverviewData
+        //     {
+        //         Title = "Reports",
+        //         Description = "As a manager, you can record your hours worked on specific activities by associating those hours with the respective WBS. By entering the hours worked in each WBS for each day, you ensure an accurate record of time spent on different projects or tasks. You can also navigate between fortnights, if it's a past fortnight, no changes are allowed, in the current fortnight, you can edit if necessary.",
+        //         Controller = "Reports",
+        //         Action = "Index"
+        //     }
+    // );
+    }
+
+    else if(userRole == "Employee")
+    {
+      data.Add(
+            new OverviewData
+            {
+                Title = "Fortnight Records",
+                Description = "As a manager, you can record your hours worked on specific activities by associating those hours with the respective WBS. By entering the hours worked in each WBS for each day, you ensure an accurate record of time spent on different projects or tasks. You can also navigate between fortnights, if it's a past fortnight, no changes are allowed, in the current fortnight, you can edit if necessary.",
+                Controller = "Records",
+                Action = "Create"
+            }
+        );  
+    }
+}
+
+<div class="col flex-wrap text-wrap text-break text-center">
+    <h1 class="title">Welcome, @header!</h1>
+    <h3>What would you like to do?</h3>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-3">
+
+        @foreach(OverviewData card in data)
+        {
+            <div class="col container-fluid d-flex justify-content-center mb-3">
+                <div class="card">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title title">@card.Title</h5>
+                        <p class="card-text">@card.Description</p>
+                        <a asp-controller="@card.Controller" 
+                            asp-action="@card.Action" class="btn btn-info mt-auto">Go to</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
