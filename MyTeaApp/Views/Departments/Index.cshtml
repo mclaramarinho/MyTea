@@ -4,16 +4,17 @@
     ViewData["Title"] = "Department";
 }
 <div class="col">
-    <h1>Department</h1>
+    <h1 class="title">Departments</h1>
     <p>
-        <a asp-action="Create">Create New</a>
+        <a asp-action="Create" class="btn btn-outline-info">Create New</a>
     </p>
 
-    <form asp-controller="Departments" asp-action="Index" method="get">
-        <p>
-            Title: <input type="text" name="searchString" />
-            <input type="submit" value="Filter" />
-        </p>
+    <form asp-controller="Departments" asp-action="Index" method="get" class="my-4">
+            <label class="form-label">Search</label>
+            <input type="text" class="" name="searchString" />
+
+            <input type="submit" class="btn btn-info" value="Filter" />
+            <a class="clear text-decoration-none" asp-action="Index" asp-controller="Departments">Clear</a>
     </form>
 
 
@@ -40,9 +41,12 @@
                         @Html.DisplayFor(modelItem => item.DepartmentName)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.DepartmentID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.DepartmentID">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.DepartmentID">Delete</a>
+                        <a asp-action="Edit" class="text-decoration-none me-3 color-blue" asp-route-id="@item.DepartmentID">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.DepartmentID" class="text-decoration-none clear">
+                            <i class="bi bi-trash"></i>
+                        </a>
                     </td>
                 </tr>
             }

@@ -15,7 +15,11 @@
                 @if (_signInManager.IsSignedIn(User))
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Dashboard">Dashboard</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Dashboard">Dashboard</a>
+                    </li>
+
+                    <li class="nav-item d-md-none">
+                        <a class="nav-link logout-btn" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                     </li>
                 }
             </ul>
