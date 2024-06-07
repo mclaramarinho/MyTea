@@ -41,10 +41,13 @@
 
             @if (Model.ExistingRecord != null)
             {
-                <button class="btn btn-primary edit-button" disabled><i class="bi bi-pencil-square"></i></button>
+                <button class="btn edit-button btn-info text-decoration-none" disabled>
+                    <i class="bi bi-pencil-square"></i>
+                </button>
                 <form asp-action="Delete" asp-controller="Records" class="ms-3" asp-route-id="@Model.ExistingRecord.RecordID"
                       asp-route-startDate="@data.SelectedFortnight.ToString("yyyy-MM-dd")" asp-route-userId="@ViewData["userSelected"]"
                       asp-route-daysInFortnight="@data.DaysInSelectedFortnight" asp-route-email="@Model.user" asp-route-vm="@Model">
+
                     <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                 </form>
             }
@@ -134,12 +137,7 @@
 </style>
 
 <style>
-    .title {
-        font-weight: bold;
-        color: #0097B2 !important;
-    }
-
-    .edit-button, .submit-button {
+    /* .edit-button, .submit-button {
         background-color: #0097B2 !important;
         border-color: #0097B2 !important;
         transition: 0.6s;
@@ -148,7 +146,7 @@
         .edit-button:hover, .submit-button:hover {
             background-color: #05b0cf !important;
             border-color: #05b0cf !important;
-        }
+    } */
 
 </style>
 
