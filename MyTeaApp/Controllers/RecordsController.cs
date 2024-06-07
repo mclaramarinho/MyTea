@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyTeaApp.Data;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using System.Collections.Generic;
 
 namespace MyTeaApp.Controllers
 {
@@ -97,7 +95,7 @@ namespace MyTeaApp.Controllers
             }else if(canContinueCreate == "continue")
             {
                 user = await _um.FindByEmailAsync(email);
-                userToPersist = user.UserSerial;
+                userToPersist = loggedUser.Email != user.Email ? user.UserSerial : null;
             }
 
             if (isInEditMode == true)
@@ -169,7 +167,7 @@ namespace MyTeaApp.Controllers
 
             DateTime startDateAsDatetime = _GetDateToShowRecords(startDate);
             DateTime endDateAsDateTime = startDateAsDatetime;
-            endDateAsDateTime.AddDays(daysInFortnight);
+            endDateAsDateTime = endDateAsDateTime.AddDays(daysInFortnight);
             ICollection<DateTime> dates = [startDateAsDatetime, endDateAsDateTime];
             bool isLoggedUserAdmin = await _IsAdmin();
             User user = await _um.FindByEmailAsync(User.Identity.Name);
