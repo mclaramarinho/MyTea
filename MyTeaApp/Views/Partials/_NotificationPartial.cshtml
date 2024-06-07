@@ -1,14 +1,15 @@
-﻿@model string
+﻿@using MyTeaApp.Models.HelperModels;
+
+@model NotificationModel;
 
 @{
-    string bg = Model == "success" ? "bg-success" : Model == "error" ? "bg-danger" : "bg-warning";
-    string text = Model == "success" ? "Success!" : Model == "error" ? "Error!" : "Something bad happened!";
+    
 }
 
 @if (Model != null)
 {
-    <div class="@bg d-none position-fixed top-0 end-0 mt-5 me-3 px-3 py-2 w-100" id="notification">
-        <p class="fw-bold text-white m-0">@text</p>
+    <div class="@Model.BgColor d-none position-fixed top-0 end-0 mt-5 me-3 px-3 py-2 w-100" id="notification">
+        <p class="fw-bold text-white m-0">@Model.Message</p>
     </div>
 }
 <script>
@@ -25,7 +26,7 @@
 
 <style>
     #notification{
-        max-width: 300px;
+        max-width: 350px;
         border-radius: 10px;
     }
 </style>
