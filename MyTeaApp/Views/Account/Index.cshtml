@@ -10,7 +10,12 @@
 @model IEnumerable<UserInfoVM>;
 
 <div class="col">
-    <h1 class="mb-4 title">User Management</h1>
+    <div class="row justify-content-space-between align-items-center">
+        <h1 class="mb-4 title col">User Management</h1>
+        <div class="col-12 col-md-2 mb-3">
+            <a asp-action="Register" asp-controller="Account" class="btn btn-outline-info ">Create New</a>
+        </div>
+    </div>
     <partial name="_UserFilterPartial" model="Model" view-data="ViewData"></partial>
     
     @* <button type="button" id="generateBtn" class="btn btn-sm btn-success">Generate Report</button> *@
