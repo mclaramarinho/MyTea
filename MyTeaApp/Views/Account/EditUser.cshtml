@@ -34,7 +34,8 @@
                 <label asp-for="IsActive" class="form-label"></label>
                 <select class="form-select" asp-for="IsActive" asp-items="@Model.ActiveStates"></select>
             </div>
-            <button type="submit" class="btn btn-info">Submit</button>
+            <button type="submit" class="btn btn-info col me-3">Submit</button>
+            <a asp-action="Index" asp-controller="Account" class="text-decoration-none color-blue col">Back to list</a>
         </div>
     
     </form>

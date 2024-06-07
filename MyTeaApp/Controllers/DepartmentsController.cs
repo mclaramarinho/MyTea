@@ -154,7 +154,6 @@ namespace MyTeaApp.Controllers
                 TempData["ToasterType"] = "error";
                 return NotFound();
             }
-            TempData["ToasterType"] = "success";
             return View(department);
         }
 
@@ -169,8 +168,15 @@ namespace MyTeaApp.Controllers
             {
                 _context.Department.Remove(department);
             }
+            else
+            {
+                TempData["ToasterType"] = "error";
+
+            }
 
             await _context.SaveChangesAsync();
+            TempData["ToasterType"] = "success";
+
             return RedirectToAction(nameof(Index));
         }
 
